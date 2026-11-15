@@ -197,7 +197,10 @@ const dust = (tau: number) => Math.min(1, Math.max(0, (tau - 0.5) / 3.5));
   @keyframes cue { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(4px); } }
 
   .storm__steps { padding-block: clamp(40px, 6vw, 72px) 0; display: grid; gap: clamp(48px, 7vw, 88px); }
-  .step__in { display: grid; gap: 20px; }
+  .step__in { display: grid; gap: 16px; }
+  @media (min-width: 900px) {
+    .step__in:has(.step__fig) { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 28px; align-items: center; }
+  }
   .step__fig { border: 1px solid var(--hair); aspect-ratio: 16 / 9; overflow: hidden; background: #070a12; }
   .step__fig .frame { display: block; width: 100%; height: 100%; }
   .step__card { padding: 22px 24px 20px; max-width: 460px; background: rgba(11, 15, 26, 0.82); }
@@ -225,6 +228,7 @@ const dust = (tau: number) => Math.min(1, Math.max(0, (tau - 0.5) / 3.5));
     .hero__small li + li::before { margin: 0 7px; }
     .hero__cue { bottom: 12px; font-size: 13px; }
     .step__fig { aspect-ratio: 4 / 5; }
+    .step__fig .frame img { object-position: 50% 15%; }
   }
 
   /* ------------------------------------------------------------- enhanced */
