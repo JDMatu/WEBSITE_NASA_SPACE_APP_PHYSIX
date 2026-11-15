@@ -1,0 +1,49 @@
+---
+import { how } from '../content/site';
+import SectionHead from './SectionHead.astro';
+import Shot from './Shot.astro';
+---
+
+<section class="section section--tint how" id="how" aria-labelledby="how-title">
+  <div class="wrap">
+    <SectionHead kicker={how.kicker} title={how.title} lede={how.intro} id="how-title" />
+    <ol class="loop">
+      {
+        how.steps.map((s, i) => (
+          <li class="loop__step reveal" style={`--d:${i * 80}ms`}>
+            <p class="loop__n num">{String(i + 1).padStart(2, '0')}</p>
+            <h3 class="h3">{s.name}</h3>
+            <p class="loop__body">{s.body}</p>
+            <div class="shot loop__shot"><Shot name={s.shot} alt={s.alt} sizes="(max-width: 700px) 78vw, (max-width: 1100px) 44vw, 220px" widths={[280, 400, 560, 800]} /></div>
+          </li>
+        ))
+      }
+    </ol>
+    <div class="how__notes">
+      <p class="reveal">{how.note}</p>
+      <p class="reveal" style="--d:80ms">{how.sol0}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .loop { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; counter-reset: step; }
+  .loop__step { position: relative; display: flex; flex-direction: column; padding-top: 16px; border-top: 1px solid var(--hair-strong); }
+  .loop__step::before { content: ''; position: absolute; top: -1px; left: 0; width: 36px; height: 2px; background: var(--amber); }
+  .loop__n { font-size: 13px; color: var(--amber); letter-spacing: 0.08em; }
+  .loop__step .h3 { margin-top: 4px; font-size: 24px; letter-spacing: 0.08em; }
+  .loop__body { margin: 6px 0 16px; font-size: 15px; line-height: 1.45; color: var(--dim); min-height: 4.4em; }
+  .loop__shot { margin-top: auto; }
+  .how__notes { margin-top: clamp(32px, 5vw, 56px); display: grid; grid-template-columns: 1fr 1fr; gap: 20px 48px; font-size: 16px; color: var(--text); }
+  .how__notes p { padding-left: 16px; border-left: 2px solid var(--hair-strong); max-width: 56ch; }
+  @media (max-width: 1100px) {
+    .loop { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 16px; }
+    .loop__body { min-height: 0; }
+  }
+  @media (max-width: 700px) {
+    /* A swipeable strip: each step is one card, the next one peeks in. */
+    .loop { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 14px; margin-inline: calc(-1 * var(--pad)); padding-inline: var(--pad); padding-bottom: 12px; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.25) transparent; }
+    .loop__step { flex: 0 0 78%; scroll-snap-align: center; }
+    .how__notes { grid-template-columns: 1fr; }
+  }
+</style>

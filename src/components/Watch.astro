@@ -1,0 +1,96 @@
+---
+// The extended video and the play button, side by side. Third-party players are only loaded
+// after the visitor presses play, so opening the page sends nothing to a video host.
+import { getImage } from 'astro:assets';
+import { pending, watch } from '../content/site';
+import { href } from '../lib/util';
+import Icon from './Icon.astro';
+import PlayButton from './PlayButton.astro';
+import poster from '../assets/frames/sol04-wide.webp';
+
+const link = pending.videoExtendedUrl;
+const isFile = link ? /\.(mp4|webm)(\?.*)?$/i.test(link) : false;
+let embed: string | null = null;
+if (link && !isFile) {
+  const yt = link.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/);
+  const vimeo = link.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (yt) embed = `https://www.youtube-nocookie.com/embed/${yt[1]}?autoplay=1&rel=0`;
+  else if (vimeo) embed = `https://player.vimeo.com/video/${vimeo[1]}?autoplay=1&dnt=1`;
+}
+const img = await getImage({ src: poster, width: 1280, format: 'webp', quality: 70 });
+---
+
+<section class="section section--tint watch" id="watch" aria-labelledby="watch-title">
+  <div class="wrap watch__grid">
+    <div class="watch__copy reveal">
+      <p class="kicker">{watch.kicker}</p>
+      <h2 class="h2" id="watch-title">{watch.title}</h2>
+      <p class="lede">{watch.body}</p>
+      <div class="watch__cta">
+        <PlayButton note />
+        {pending.video30Url && <a class="link-arrow" href={href(pending.video30Url)}>{watch.short}<Icon name="arrow" /></a>}
+      </div>
+    </div>
+    <div class="watch__media reveal" style="--d:120ms">
+      {
+        !link ? (
+          <div class="video video--pending" data-pending="videoExtendedUrl" style={`background-image:url(${img.src})`}>
+            <div class="video__msg">
+              <span class="pending-mark">{watch.pendingTitle}</span>
+              <p>{watch.pendingBody}</p>
+            </div>
+          </div>
+        ) : isFile ? (
+          <video class="video" controls preload="none" poster={img.src} playsinline>
+            <source src={href(link)} />
+            <a href={href(link)}>{watch.playVideo}</a>
+          </video>
+        ) : (
+          <div class="video video--facade" style={`background-image:url(${img.src})`} data-embed={embed}>
+            <a class="video__play" href={link} data-video-play>
+              <span class="video__btn"><Icon name="play" /></span>
+              <span>{watch.playVideo}</span>
+            </a>
+            <p class="video__note">{watch.embedNote}</p>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .watch__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 5vw, 64px); align-items: center; }
+  .watch__copy .lede { margin-top: 18px; font-size: 18px; }
+  .watch__cta { margin-top: 26px; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+  .video { position: relative; width: 100%; aspect-ratio: 16 / 9; background-color: #070a12; background-size: cover; background-position: center; border: 1px solid var(--hair); display: block; }
+  .video--pending::before, .video--facade::before { content: ''; position: absolute; inset: 0; background: rgba(11, 15, 26, 0.55); }
+  .video--pending { border-style: dashed; border-color: rgba(246, 196, 69, 0.45); }
+  .video__msg { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 12px; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+  .video__msg p { font-size: 15px; color: var(--text); max-width: 34ch; }
+  .video__play { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 14px; align-items: center; justify-content: center; text-decoration: none; font-family: var(--font-head); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; font-size: 17px; }
+  .video__btn { width: 76px; height: 76px; border-radius: 50%; background: var(--simsup); color: var(--ink); display: flex; align-items: center; justify-content: center; transition: background 0.18s var(--ease), transform 0.18s var(--ease); }
+  .video__btn :global(svg) { width: 30px; height: 30px; margin-left: 4px; }
+  .video__play:hover .video__btn { background: var(--amber); transform: scale(1.05); }
+  .video__note { position: absolute; left: 0; right: 0; bottom: 10px; text-align: center; font-size: 12.5px; color: var(--dim); }
+  .video :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  @media (max-width: 900px) { .watch__grid { grid-template-columns: 1fr; } .watch__media { order: -1; } }
+</style>
+
+<script>
+  // Click-to-load: swap the poster for the player only when asked.
+  document.querySelectorAll<HTMLAnchorElement>('[data-video-play]').forEach((a) => {
+    a.addEventListener('click', (ev) => {
+      const box = a.closest<HTMLElement>('[data-embed]');
+      const src = box?.dataset.embed;
+      if (!box || !src) return; // unknown host: follow the link instead
+      ev.preventDefault();
+      const frame = document.createElement('iframe');
+      frame.src = src;
+      frame.title = 'PHYSIX video';
+      frame.allow = 'autoplay; fullscreen; picture-in-picture';
+      frame.allowFullscreen = true;
+      box.replaceChildren(frame);
+    });
+  });
+</script>

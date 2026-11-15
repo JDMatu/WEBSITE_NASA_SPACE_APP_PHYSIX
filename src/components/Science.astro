@@ -1,0 +1,96 @@
+---
+import { Image } from 'astro:assets';
+import { facts, science } from '../content/site';
+import { fill, url } from '../lib/util';
+import Icon from './Icon.astro';
+import pia from '../assets/PIA22930.jpg';
+---
+
+<section class="section science" id="science" aria-labelledby="science-title">
+  <div class="wrap">
+    <div class="science__top">
+      <div class="reveal">
+        <p class="kicker">{science.kicker}</p>
+        <h2 class="h2" id="science-title">{science.title}</h2>
+        <div class="prose science__body">
+          {science.body.map((p) => <p>{p}</p>)}
+        </div>
+        <p class="note science__honest"><Icon name="info" /><span>{science.honesty}</span></p>
+      </div>
+      <div class="science__real reveal" style="--d:120ms">
+        <figure class="science__img">
+          <a href={science.image.href} rel="noopener">
+            <Image src={pia} alt={science.image.alt} width={448} height={192} quality={90} />
+          </a>
+          <figcaption class="figcap">
+            {science.image.caption}<br /><span class="credit">{science.image.credit}</span>
+          </figcaption>
+        </figure>
+        <dl class="real">
+          {
+            science.real.map((r) => (
+              <div>
+                <dd class="num">{r.value}</dd>
+                <dt>{r.label}</dt>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="figcap">{science.realNote}</p>
+      </div>
+    </div>
+
+    <div class="science__table reveal">
+      <h3 class="h3">{science.tableTitle}</h3>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr><th scope="col">Quantity</th><th scope="col">Value</th><th scope="col">Source</th></tr>
+          </thead>
+          <tbody>
+            {
+              science.table.map((row) => (
+                <tr>
+                  <th scope="row">{row.what}</th>
+                  <td class="num">{row.value}</td>
+                  <td><a href={row.href} rel="noopener">{row.source}</a></td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="science__foot">
+        <p>{fill(science.count, facts.constants)}</p>
+        <p class="dim">{science.caveat}</p>
+        <p>{facts.donkiIntegrated ? science.dataDonki : science.dataPending}</p>
+        <p><a class="link-arrow" href={url('/sources/')}>{science.sourcesLink}<Icon name="arrow" /></a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .science__top { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+  .science__body { margin-top: 22px; font-size: 18px; }
+  .science__honest { margin-top: 24px; max-width: 480px; }
+  .science__img :global(img) { width: 100%; image-rendering: pixelated; border: 1px solid var(--hair); background: #000; }
+  .credit { color: var(--text); }
+  .real { margin-top: 22px; display: grid; grid-template-columns: repeat(3, auto); gap: 12px 24px; justify-content: start; }
+  .real dd { font-size: clamp(22px, 2.4vw, 30px); line-height: 1.1; color: var(--simsup); white-space: nowrap; }
+  .real dt { margin-top: 6px; font-size: 13.5px; line-height: 1.35; color: var(--dim); max-width: 18ch; }
+  .science__table { margin-top: clamp(40px, 6vw, 72px); }
+  .tablewrap { margin-top: 16px; overflow-x: auto; border: 1px solid var(--hair); }
+  table { width: 100%; border-collapse: collapse; font-size: 15.5px; min-width: 560px; }
+  th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--hair); vertical-align: baseline; }
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+  thead th { font-family: var(--font-head); font-weight: 600; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); background: rgba(255, 255, 255, 0.03); }
+  tbody th { font-weight: 400; }
+  td.num { white-space: nowrap; color: var(--simsup); }
+  .science__foot { margin-top: 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 48px; font-size: 15.5px; }
+  .science__foot p { max-width: 60ch; }
+  @media (max-width: 900px) {
+    .science__top, .science__foot { grid-template-columns: 1fr; }
+    .real { grid-template-columns: 1fr 1fr; }
+  }
+</style>

@@ -1,0 +1,121 @@
+---
+import { ai } from '../content/site';
+import Icon from './Icon.astro';
+import Shot from './Shot.astro';
+---
+
+<section class="section section--tint airule" id="ai" aria-labelledby="ai-title">
+  <div class="wrap">
+    <div class="airule__top">
+      <header class="reveal">
+        <p class="kicker">{ai.kicker}</p>
+        <h2 class="h2" id="ai-title">{ai.title}</h2>
+      </header>
+      <div class="prose airule__body reveal" style="--d:100ms">
+        {ai.body.map((p) => <p>{p}</p>)}
+      </div>
+    </div>
+
+    <!-- The pipeline, drawn in HTML: an accepted plan flows through; an impossible one stops at the list. -->
+    <div class="pipe panel panel--ticks reveal" role="img" aria-label="Diagram: the player's words go to the AI instructor, which can only pick from a closed list of ten actions. The simulator checks the limits and computes the result. An impossible request has no action and is refused.">
+      <ol class="pipe__row" aria-hidden="true">
+        {
+          ai.pipeline.map((node, i) => (
+            <li class:list={['pipe__node', i === 3 && 'pipe__node--sim', i === 1 && 'pipe__node--ai']} style={`--i:${i}`}>
+              <span class="pipe__label">{node.label}</span>
+              <span class="pipe__sub">{node.sub}</span>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="pipe__reject" aria-hidden="true">
+        <span class="pipe__x"><Icon name="x" /></span>
+        <span class="pipe__label">{ai.pipelineReject.label}</span>
+        <span class="pipe__sub">{ai.pipelineReject.sub}</span>
+      </div>
+    </div>
+
+    <div class="airule__shots">
+      {
+        [ai.shots.accepted, ai.shots.refused].map((s, i) => (
+          <figure class="reveal" style={`--d:${i * 100}ms`}>
+            <div class="shot"><Shot name={s.shot} alt={s.alt} sizes="(max-width: 800px) 92vw, 560px" widths={[400, 560, 776]} /></div>
+            <figcaption class="figcap">{s.caption}</figcaption>
+          </figure>
+        ))
+      }
+    </div>
+    <p class="airule__shotnote">{ai.shotsNote}</p>
+
+    <ul class="airule__points">
+      {
+        ai.points.map((p, i) => (
+          <li class="reveal" style={`--d:${i * 80}ms`}>
+            <span class="airule__n num">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{p.title}</h3>
+            <p>{p.body}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="note airule__notice"><Icon name="info" /><span>{ai.notice}</span></p>
+  </div>
+</section>
+
+<style>
+  .airule__top { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(24px, 5vw, 72px); align-items: end; margin-bottom: clamp(32px, 5vw, 56px); }
+  .airule__body { font-size: 18px; }
+
+  .pipe { padding: clamp(18px, 3vw, 30px); }
+  .pipe__row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 30px; }
+  .pipe__node { position: relative; padding: 14px 14px 16px; border: 1px solid var(--hair-strong); background: rgba(11, 15, 26, 0.6); display: flex; flex-direction: column; gap: 6px; min-height: 104px; }
+  .pipe__node:not(:last-child)::after {
+    content: ''; position: absolute; top: 50%; right: -24px; width: 16px; height: 10px; transform: translateY(-50%);
+    background: linear-gradient(var(--dim), var(--dim)) left center / 100% 1px no-repeat;
+    clip-path: none; border-right: 1px solid var(--dim);
+  }
+  .pipe__node:not(:last-child)::before {
+    content: ''; position: absolute; top: 50%; right: -24px; width: 7px; height: 7px; border-top: 1px solid var(--dim); border-right: 1px solid var(--dim);
+    transform: translateY(-50%) rotate(45deg);
+  }
+  .pipe__node:not(:last-child)::after { border-right: 0; }
+  .pipe__label { font-family: var(--font-head); font-weight: 600; font-size: 17px; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1.15; }
+  .pipe__sub { font-size: 13.5px; line-height: 1.4; color: var(--dim); }
+  .pipe__node--ai { border-color: rgba(243, 234, 214, 0.55); }
+  .pipe__node--ai .pipe__label { color: var(--simsup); }
+  .pipe__node--sim { border-color: var(--amber); background: rgba(246, 196, 69, 0.08); }
+  .pipe__node--sim .pipe__label { color: var(--amber); }
+  .pipe__reject {
+    margin-top: 16px; margin-left: calc(40% + 12px); width: calc(40% - 12px); padding: 12px 14px; border: 1px dashed rgba(255, 90, 60, 0.6); background: rgba(255, 90, 60, 0.06);
+    display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; align-items: center; position: relative;
+  }
+  .pipe__reject::before { content: ''; position: absolute; left: 24px; top: -17px; height: 16px; border-left: 1px dashed rgba(255, 90, 60, 0.7); }
+  .pipe__x { grid-row: 1 / 3; width: 26px; height: 26px; color: var(--alert); display: flex; align-items: center; }
+  .pipe__reject .pipe__label { font-size: 15px; color: var(--alert); text-transform: none; letter-spacing: 0.04em; }
+
+  /* The plan walks the pipeline once when the diagram scrolls into view. */
+  :global(html.rv) .pipe.reveal .pipe__node { opacity: 0.25; transition: opacity 0.45s var(--ease); transition-delay: calc(0.35s + var(--i) * 0.38s); }
+  :global(html.rv) .pipe.reveal.is-in .pipe__node { opacity: 1; }
+  :global(html.rv) .pipe.reveal .pipe__reject { opacity: 0; transform: translateY(-6px); transition: opacity 0.5s var(--ease) 2.4s, transform 0.5s var(--ease) 2.4s; }
+  :global(html.rv) .pipe.reveal.is-in .pipe__reject { opacity: 1; transform: none; }
+
+  .airule__shots { margin-top: clamp(28px, 4vw, 44px); display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .airule__shotnote { margin-top: 14px; font-size: 14px; color: var(--dim); max-width: 78ch; }
+  .airule__points { margin-top: clamp(36px, 5vw, 56px); display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 32px; }
+  .airule__points li { padding-top: 16px; border-top: 1px solid var(--hair-strong); }
+  .airule__n { font-size: 13px; color: var(--amber); }
+  .airule__points h3 { font-size: 18px; font-weight: 600; margin-top: 4px; line-height: 1.3; }
+  .airule__points p { margin-top: 6px; font-size: 15.5px; color: var(--dim); line-height: 1.5; }
+  .airule__notice { margin-top: 32px; max-width: 520px; }
+
+  @media (max-width: 900px) {
+    .airule__top { grid-template-columns: 1fr; align-items: start; }
+    .pipe__row { grid-template-columns: 1fr; gap: 26px; }
+    .pipe__node { min-height: 0; }
+    .pipe__node:not(:last-child)::after { top: auto; bottom: -20px; right: auto; left: 24px; width: 1px; height: 14px; transform: none; background: var(--dim); }
+    .pipe__node:not(:last-child)::before { top: auto; bottom: -19px; right: auto; left: 21px; transform: rotate(135deg); }
+    .pipe__reject { margin-left: 0; width: 100%; }
+    .pipe__reject::before { display: none; }
+    .airule__shots, .airule__points { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,28 @@
+---
+import { problem } from '../content/site';
+import Shot from './Shot.astro';
+---
+
+<section class="section problem" id="problem" aria-labelledby="problem-title">
+  <div class="wrap problem__grid">
+    <div class="reveal">
+      <p class="kicker">{problem.kicker}</p>
+      <h2 class="h2" id="problem-title">{problem.title}</h2>
+      <div class="prose problem__body">
+        {problem.body.map((p) => <p>{p}</p>)}
+      </div>
+      <p class="problem__ctx">{problem.context}</p>
+    </div>
+    <figure class="reveal" style="--d:120ms">
+      <div class="shot"><Shot name="game-storm" alt={problem.shotAlt} sizes="(max-width: 900px) 92vw, 640px" widths={[480, 720, 1000, 1440]} /></div>
+      <figcaption class="figcap">{problem.shotCaption}</figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .problem__grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 7fr); gap: clamp(28px, 5vw, 72px); align-items: center; }
+  .problem__body { margin-top: 22px; font-size: 18px; }
+  .problem__ctx { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--hair); font-size: 14.5px; color: var(--dim); max-width: 52ch; }
+  @media (max-width: 900px) { .problem__grid { grid-template-columns: 1fr; } }
+</style>

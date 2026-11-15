@@ -1,0 +1,16 @@
+---
+interface Props {
+  kicker: string;
+  title: string;
+  lede?: string;
+  wide?: boolean;
+  id?: string;
+}
+const { kicker, title, lede, wide = false, id } = Astro.props;
+---
+
+<header class="head reveal">
+  <p class="kicker">{kicker}</p>
+  <h2 class:list={['h2', wide && 'h2--wide']} id={id}>{title}</h2>
+  {lede && <p class="lede">{lede}</p>}
+</header>

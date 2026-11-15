@@ -1,0 +1,46 @@
+---
+import Subpage from '../components/Subpage.astro';
+import { aiUse } from '../content/site';
+---
+
+<Subpage title={aiUse.title} intro={aiUse.intro} back={aiUse.back}>
+  <h2>{aiUse.runtimeTitle}</h2>
+  {aiUse.runtimeBody.map((p) => <p>{p}</p>)}
+
+  <h3>{aiUse.jobsTitle}</h3>
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr><th scope="col">Job</th><th scope="col">Model</th><th scope="col">What it can affect</th><th scope="col">What it cannot affect</th><th scope="col">Without AI</th></tr>
+      </thead>
+      <tbody>
+        {
+          aiUse.jobs.map((j) => (
+            <tr>
+              <th scope="row">{j.name}</th>
+              <td>{j.model}</td>
+              <td>{j.can}</td>
+              <td>{j.cannot}</td>
+              <td class="dim">{j.fallback}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:14px">{aiUse.jobsNote}</p>
+
+  <h2>{aiUse.buildTitle}</h2>
+  {aiUse.buildBody.map((p) => <p>{p}</p>)}
+
+  <h2>{aiUse.siteTitle}</h2>
+  {aiUse.siteBody.map((p) => <p>{p}</p>)}
+
+  <h2>{aiUse.imagesTitle}</h2>
+  {aiUse.imagesBody.map((p) => <p>{p}</p>)}
+
+  <h2>{aiUse.reviewTitle}</h2>
+  <ul class="plain">
+    {aiUse.review.map((r) => <li>{r}</li>)}
+  </ul>
+</Subpage>

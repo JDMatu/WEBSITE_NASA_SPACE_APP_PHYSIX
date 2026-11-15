@@ -1,0 +1,27 @@
+---
+import { closing, hero, pending } from '../content/site';
+import Frame from './Frame.astro';
+import Icon from './Icon.astro';
+import PlayButton from './PlayButton.astro';
+---
+
+<section class="closing" aria-labelledby="closing-title">
+  <div class="closing__bg" aria-hidden="true"><Frame id="sol03" alt="" /></div>
+  <div class="wrap closing__in reveal">
+    <h2 class="h2 h2--wide" id="closing-title">{closing.title}</h2>
+    <p class="lede">{closing.body}</p>
+    <div class="closing__cta">
+      <PlayButton note />
+      {pending.videoExtendedUrl && <a class="btn btn-ghost" href="#watch"><Icon name="play" />{hero.watchLabel}</a>}
+    </div>
+  </div>
+</section>
+
+<style>
+  .closing { position: relative; isolation: isolate; padding-block: clamp(96px, 14vw, 180px); overflow: hidden; border-top: 1px solid var(--hair); }
+  .closing__bg { position: absolute; inset: 0; z-index: -2; }
+  .closing__bg :global(.frame) { position: absolute; inset: 0; }
+  .closing::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(11, 15, 26, 0.92) 0, rgba(11, 15, 26, 0.7) 40%, rgba(11, 15, 26, 0.25) 100%), linear-gradient(180deg, rgba(11, 15, 26, 0.5), rgba(11, 15, 26, 0) 30%, rgba(11, 15, 26, 0.6)); }
+  .closing .lede { margin-top: 16px; }
+  .closing__cta { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+</style>

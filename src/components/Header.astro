@@ -1,0 +1,21 @@
+---
+import { meta, nav } from '../content/site';
+import PlayButton from './PlayButton.astro';
+import { url } from '../lib/util';
+
+interface Props {
+  home?: boolean;
+}
+const { home = false } = Astro.props;
+const link = (hash: string) => (home ? hash : `${url('/')}${hash}`);
+---
+
+<header class="site-head">
+  <div class="wrap site-head__in">
+    <a class="wordmark" href={home ? '#top' : url('/')} aria-label={`${meta.name} home`}><i></i>{meta.name}</a>
+    <nav class="site-nav" aria-label="Sections">
+      {nav.map((item) => <a href={link(item.href)}>{item.label}</a>)}
+    </nav>
+    <div class="site-head__cta"><PlayButton size="sm" /></div>
+  </div>
+</header>

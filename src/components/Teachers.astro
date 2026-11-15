@@ -1,0 +1,53 @@
+---
+import { pending, teachers } from '../content/site';
+import Icon from './Icon.astro';
+
+const icons = ['screen', 'lock', 'wifi', 'lang'] as const;
+---
+
+<section class="section teachers" id="teachers" aria-labelledby="teachers-title">
+  <div class="wrap teachers__grid">
+    <div class="reveal">
+      <p class="kicker">{teachers.kicker}</p>
+      <h2 class="h2" id="teachers-title">{teachers.title}</h2>
+      <p class="lede teachers__lede">{teachers.body}</p>
+      <p class="note teachers__note"><Icon name="info" /><span>{teachers.notice}</span></p>
+      <p class="teachers__contact">
+        {
+          pending.contactEmail ? (
+            <a class="link-arrow" href={`mailto:${pending.contactEmail}`}>{teachers.contactLabel}: {pending.contactEmail}<Icon name="arrow" /></a>
+          ) : (
+            <span class="pending-mark" data-pending="contactEmail">{teachers.contactPending}</span>
+          )
+        }
+      </p>
+    </div>
+    <ul class="teachers__points">
+      {
+        teachers.points.map((p, i) => (
+          <li class="reveal" style={`--d:${i * 70}ms`}>
+            <span class="teachers__icon"><Icon name={icons[i]!} /></span>
+            <div>
+              <h3>{p.title}</h3>
+              <p>{p.body}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .teachers__grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+  .teachers__lede { margin-top: 20px; }
+  .teachers__note { margin-top: 24px; max-width: 520px; }
+  .teachers__contact { margin-top: 20px; }
+  .teachers__points { display: grid; gap: 0; border-top: 1px solid var(--hair); }
+  .teachers__points li { display: grid; grid-template-columns: 44px 1fr; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--hair); }
+  .teachers__icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--hair-strong); color: var(--simsup); }
+  .teachers__icon :global(svg) { width: 22px; height: 22px; }
+  .teachers__points h3 { font-size: 18px; font-weight: 600; line-height: 1.3; }
+  .teachers__points p { margin-top: 4px; font-size: 15.5px; color: var(--dim); line-height: 1.5; }
+  @media (max-width: 900px) { .teachers__grid { grid-template-columns: 1fr; } }
+</style>

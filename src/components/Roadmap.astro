@@ -1,0 +1,47 @@
+---
+import { facts, roadmap } from '../content/site';
+import Icon from './Icon.astro';
+import SectionHead from './SectionHead.astro';
+
+// When DONKI ships, the first "next" item moves to "works today".
+const works = facts.donkiIntegrated ? [...roadmap.works, roadmap.donkiWorks] : roadmap.works;
+const next = facts.donkiIntegrated ? roadmap.next.slice(1) : roadmap.next;
+---
+
+<section class="section roadmap" id="status" aria-labelledby="status-title">
+  <div class="wrap">
+    <SectionHead kicker={roadmap.kicker} title={roadmap.title} wide id="status-title" />
+    <div class="rm__cols">
+      <div class="rm__col rm__col--works panel reveal">
+        <h3 class="h3"><Icon name="check" />{roadmap.worksTitle}</h3>
+        <ul>
+          {works.map((w) => <li><Icon name="check" /><span>{w}</span></li>)}
+        </ul>
+      </div>
+      <div class="rm__col rm__col--next panel reveal" style="--d:100ms">
+        <h3 class="h3"><Icon name="next" />{roadmap.nextTitle}</h3>
+        <ul>
+          {next.map((w) => <li><Icon name="next" /><span>{w}</span></li>)}
+        </ul>
+      </div>
+    </div>
+    <p class="rm__note">{roadmap.note}</p>
+  </div>
+</section>
+
+<style>
+  .rm__cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .rm__col { padding: clamp(20px, 3vw, 32px); }
+  .rm__col .h3 { display: flex; align-items: center; gap: 10px; padding-bottom: 14px; border-bottom: 1px solid var(--hair); }
+  .rm__col .h3 :global(svg) { width: 20px; height: 20px; }
+  .rm__col--works { border-top: 2px solid var(--good); }
+  .rm__col--works .h3 { color: var(--good); }
+  .rm__col--next { border-top: 2px solid var(--dim); }
+  .rm__col ul { margin-top: 8px; }
+  .rm__col li { display: grid; grid-template-columns: 18px 1fr; gap: 12px; padding: 9px 0; font-size: 16px; line-height: 1.45; align-items: start; }
+  .rm__col li :global(svg) { width: 16px; height: 16px; margin-top: 4px; }
+  .rm__col--works li :global(svg) { color: var(--good); }
+  .rm__col--next li :global(svg) { color: var(--dim); }
+  .rm__note { margin-top: 24px; font-size: 15px; color: var(--dim); max-width: 86ch; }
+  @media (max-width: 800px) { .rm__cols { grid-template-columns: 1fr; } }
+</style>

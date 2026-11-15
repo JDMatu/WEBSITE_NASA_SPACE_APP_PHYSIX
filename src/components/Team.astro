@@ -1,0 +1,56 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { pending, team } from '../content/site';
+import { fill } from '../lib/util';
+
+const photos = import.meta.glob<{ default: ImageMetadata }>('../assets/team/*.{jpg,jpeg,png,webp}', { eager: true });
+const photoOf = (file: string | null) => (file ? Object.entries(photos).find(([p]) => p.endsWith(`/${file}`))?.[1].default : undefined);
+const initials = (name: string | null, i: number) =>
+  name ? name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]!.toUpperCase()).join('') : String(i + 1).padStart(2, '0');
+---
+
+<section class="section section--tint team" id="team" aria-labelledby="team-title">
+  <div class="wrap">
+    <header class="head reveal">
+      <p class="kicker">{team.kicker}{pending.teamName ? ` · ${pending.teamName}` : ''}</p>
+      <h2 class="h2" id="team-title">{team.title}</h2>
+      <p class="lede" data-pending={pending.localEvent ? undefined : 'localEvent'}>
+        {pending.localEvent ? fill(team.builtAt, { event: pending.localEvent }) : team.builtAtPending}
+      </p>
+    </header>
+    <ul class="crew">
+      {
+        pending.team.map((m, i) => {
+          const photo = photoOf(m.photo);
+          const missing = !m.name;
+          return (
+            <li class:list={['member', 'reveal', missing && 'member--pending']} style={`--d:${i * 60}ms`} data-pending={missing ? `team[${i}]` : undefined}>
+              <div class="member__photo">
+                {photo ? <Image src={photo} alt={m.name ?? ''} width={320} height={320} /> : <span class="num">{initials(m.name, i)}</span>}
+              </div>
+              <h3>{m.name ?? team.memberPending.name}</h3>
+              <p class="member__role">{m.role ?? team.memberPending.role}</p>
+              <p class="member__built">{m.built ?? team.memberPending.built}</p>
+            </li>
+          );
+        })
+      }
+    </ul>
+    <p class="team__closing">{team.closing}</p>
+  </div>
+</section>
+
+<style>
+  .crew { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+  .member { padding: 14px; background: rgba(17, 23, 39, 0.72); border: 1px solid var(--hair); }
+  .member--pending { border-style: dashed; border-color: rgba(246, 196, 69, 0.4); }
+  .member__photo { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.04); margin-bottom: 14px; overflow: hidden; color: var(--dim); font-size: 30px; }
+  .member__photo :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .member h3 { font-size: 17px; font-weight: 600; line-height: 1.25; }
+  .member__role { margin-top: 4px; font-family: var(--font-head); font-weight: 600; font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); }
+  .member__built { margin-top: 6px; font-size: 14px; line-height: 1.4; color: var(--dim); }
+  .team__closing { margin-top: 28px; font-size: 15.5px; color: var(--dim); }
+  @media (max-width: 1100px) { .crew { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .crew { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>

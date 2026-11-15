@@ -1,0 +1,44 @@
+---
+import { footer, meta, pending } from '../content/site';
+import { url } from '../lib/util';
+---
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h3>{footer.aiTitle}</h3>
+        <p>{footer.ai}</p>
+        <p><a href={url('/ai-use/')}>{footer.aiLink}</a></p>
+      </div>
+      <div>
+        <h3>{footer.privacyTitle}</h3>
+        <p>{footer.privacy}</p>
+      </div>
+      <div>
+        <h3>{footer.contactTitle}</h3>
+        {
+          pending.contactEmail ? (
+            <p><a href={`mailto:${pending.contactEmail}`}>{pending.contactEmail}</a></p>
+          ) : (
+            <p data-pending="contactEmail">{footer.contactPending}</p>
+          )
+        }
+        {
+          pending.repoUrl ? (
+            <p><a href={pending.repoUrl}>{footer.repoLabel}</a></p>
+          ) : (
+            <p data-pending="repoUrl">{footer.repoPending}</p>
+          )
+        }
+        <p>
+          {footer.licenseTitle}: {pending.license ?? <span data-pending="license">{footer.licensePending}</span>}
+        </p>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <strong>{meta.nonAffiliation}</strong>
+      <span>{footer.made}</span>
+    </div>
+  </div>
+</footer>

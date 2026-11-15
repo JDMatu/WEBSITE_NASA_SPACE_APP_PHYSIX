@@ -1,0 +1,1296 @@
+{
+  "syncedFrom": "docs/SOURCES.md of the game repository",
+  "dataPack": "2026.11.1",
+  "counts": {
+    "measured": 24,
+    "derived": 5,
+    "sourced": 29,
+    "gameDesign": 118,
+    "total": 147,
+    "citations": 19
+  },
+  "measured": [
+    {
+      "id": "o2_consumption_kg_per_person_day",
+      "value": "0.82 (0.816–0.84)",
+      "unit": "kg/person/day",
+      "source": {
+        "text": "NASA",
+        "url": "https://ntrs.nasa.gov/citations/20180001338"
+      },
+      "status": "verified",
+      "note": "BVAD Rev1 (2018) Table 3-33 gives 0.816 kg/CM-d; Table 4-1 gives 0.818 nominal; earlier BVAD editions used 0.84."
+    },
+    {
+      "id": "co2_production_kg_per_person_day",
+      "value": "1.04",
+      "unit": "kg/person/day",
+      "source": {
+        "text": "NASA",
+        "url": "https://ntrs.nasa.gov/citations/20180001338"
+      },
+      "status": "verified",
+      "note": "BVAD Rev1 (2018) Table 3-33, carbon dioxide load."
+    },
+    {
+      "id": "water_consumption_kg_per_person_day",
+      "value": "2.5",
+      "unit": "kg/person/day",
+      "source": {
+        "text": "NASA",
+        "url": "https://ntrs.nasa.gov/citations/20180001338"
+      },
+      "status": "verified",
+      "note": "BVAD Rev1 (2018) Table 3-33, potable water consumed (drinks plus food hydration)."
+    },
+    {
+      "id": "food_consumption_kg_per_person_day",
+      "value": "1.5 (1.5–1.51)",
+      "unit": "kg/person/day",
+      "source": {
+        "text": "NASA",
+        "url": "https://ntrs.nasa.gov/citations/20180001338"
+      },
+      "status": "verified",
+      "note": "BVAD Rev1 (2018) Table 3-33: 1.51 kg/CM-d of food without packaging."
+    },
+    {
+      "id": "water_recovery_iss_legacy",
+      "value": "0.93 (0.93–0.94)",
+      "unit": "fraction",
+      "source": {
+        "text": "NASA",
+        "url": "https://www.nasa.gov/missions/station/iss-research/nasa-achieves-water-recovery-milestone-on-international-space-station/"
+      },
+      "status": "verified",
+      "note": "\"Before the BPA, our total water recovery was between 93 and 94% overall.\" The base uses this as its maximum recovery."
+    },
+    {
+      "id": "water_recovery_iss_bpa",
+      "value": "0.98",
+      "unit": "fraction",
+      "source": {
+        "text": "NASA",
+        "url": "https://www.nasa.gov/missions/station/iss-research/nasa-achieves-water-recovery-milestone-on-international-space-station/"
+      },
+      "status": "verified",
+      "note": "Demonstrated in 2023 with the Brine Processor Assembly. Shown by the tutor; not used by the engine."
+    },
+    {
+      "id": "mars_surface_dose_msv_per_day",
+      "value": "0.67",
+      "unit": "mSv/day",
+      "source": {
+        "text": "Southwest Research Institute / Curiosity RAD team",
+        "url": "https://www.swri.org/press-release/swri-scientists-publish-first-radiation-measurements-surface-mars"
+      },
+      "status": "verified",
+      "note": "Curiosity RAD, average GCR dose-equivalent rate, August 2012 to June 2013 (Hassler et al., Science, 2014; NTRS 20180007641)."
+    },
+    {
+      "id": "transit_dose_msv_per_day",
+      "value": "1.8",
+      "unit": "mSv/day",
+      "source": {
+        "text": "Southwest Research Institute / Curiosity RAD team",
+        "url": "https://www.swri.org/press-release/swri-scientists-publish-first-radiation-measurements-surface-mars"
+      },
+      "status": "verified",
+      "note": "Curiosity RAD inside the spacecraft during cruise (Zeitlin et al., Science, 2013). Shown by the tutor; not used by the engine."
+    },
+    {
+      "id": "lunar_surface_dose_msv_per_day",
+      "value": "1.4 (1.37–1.44)",
+      "unit": "mSv/day",
+      "source": {
+        "text": "Science Advances / Kiel University",
+        "url": "https://doi.org/10.1126/sciadv.aaz1334"
+      },
+      "status": "verified",
+      "note": "Chang'e-4 LND: about 60 µSv/h equivalent dose (Kiel University release), about 1.44 mSv/day; coverage of the paper quotes 1,369 µSv/day. Not a NASA measurement."
+    },
+    {
+      "id": "tau_mars_normal",
+      "value": "0.5",
+      "unit": "tau",
+      "source": {
+        "text": "NASA Jet Propulsion Laboratory Education",
+        "url": "https://www.jpl.nasa.gov/edu/resources/teachable-moment/mars-rover-mission-comes-to-an-end-but-science-legacy-live-on/"
+      },
+      "status": "verified",
+      "note": "\"An average tau for Opportunity's location is 0.5.\""
+    },
+    {
+      "id": "tau_storm_2018_peak",
+      "value": "10.8",
+      "unit": "tau",
+      "source": {
+        "text": "NASA Jet Propulsion Laboratory",
+        "url": "https://www.jpl.nasa.gov/news/opportunity-hunkers-down-during-dust-storm/"
+      },
+      "status": "verified",
+      "note": "Estimated tau of 10.8 on 10 June 2018 over Opportunity; NASA GSFC (Smith and Guzewich, 2019) gives a lower limit of 10.7, the highest ever measured at Mars."
+    },
+    {
+      "id": "opportunity_energy_before_storm_wh",
+      "value": "645",
+      "unit": "Wh/sol",
+      "source": {
+        "text": "The Planetary Society",
+        "url": "https://www.planetary.org/articles/06-mer-update-opportunity-dust-storm-sleep"
+      },
+      "status": "verified",
+      "note": "About 645 Wh on 1 June 2018, \"more than two-thirds original capability on landing\"."
+    },
+    {
+      "id": "opportunity_energy_storm_low_wh",
+      "value": "22",
+      "unit": "Wh/sol",
+      "source": {
+        "text": "The Planetary Society",
+        "url": "https://www.planetary.org/articles/06-mer-update-opportunity-dust-storm-sleep"
+      },
+      "status": "verified",
+      "note": "About a week after 1 June 2018 the rover was producing just 22 Wh, about 100 Wh below what was considered necessary for survival."
+    },
+    {
+      "id": "spe_2017_surface_dose_factor",
+      "value": "2",
+      "unit": "x background",
+      "source": {
+        "text": "NASA Jet Propulsion Laboratory",
+        "url": "https://www.jpl.nasa.gov/news/large-solar-storm-sparks-global-aurora-and-doubles-radiation-levels-on-the-martian-surface/"
+      },
+      "status": "verified",
+      "note": "Lower bound. Curiosity RAD measured surface radiation \"more than double any previously measured\" after the 11 September 2017 solar event. The game uses a 1.5x to 3x multiplier range."
+    },
+    {
+      "id": "spe_2017_duration_days",
+      "value": "2",
+      "unit": "days",
+      "source": {
+        "text": "NASA Jet Propulsion Laboratory",
+        "url": "https://www.jpl.nasa.gov/news/large-solar-storm-sparks-global-aurora-and-doubles-radiation-levels-on-the-martian-surface/"
+      },
+      "status": "verified",
+      "note": "\"The high readings lasted more than two days.\""
+    },
+    {
+      "id": "earth_mars_delay_min_minutes",
+      "value": "4",
+      "unit": "minutes one way",
+      "source": {
+        "text": "NASA Jet Propulsion Laboratory",
+        "url": "https://www.jpl.nasa.gov/podcasts/on-a-mission-season-1/season-4-mars-rovers/episode-8-how-to-drive-a-mars-rover/"
+      },
+      "status": "verified",
+      "note": "JPL rover driver: \"anywhere from 4 minutes to 22 minutes just for a one-way light time signal\". CLAUDE.md listed 3 minutes; the cited JPL source says 4."
+    },
+    {
+      "id": "earth_mars_delay_max_minutes",
+      "value": "22",
+      "unit": "minutes one way",
+      "source": {
+        "text": "NASA Jet Propulsion Laboratory",
+        "url": "https://www.jpl.nasa.gov/podcasts/on-a-mission-season-1/season-4-mars-rovers/episode-8-how-to-drive-a-mars-rover/"
+      },
+      "status": "verified",
+      "note": ""
+    },
+    {
+      "id": "lunar_night_earth_days",
+      "value": "14",
+      "unit": "Earth days",
+      "source": {
+        "text": "NASA Science",
+        "url": "https://science.nasa.gov/moon/moonlight/"
+      },
+      "status": "verified",
+      "note": "NASA: lunar day and night are each about two Earth weeks long (away from the poles)."
+    },
+    {
+      "id": "mars_sol_hours",
+      "value": "24.6",
+      "unit": "hours",
+      "source": {
+        "text": "NASA Science",
+        "url": "https://science.nasa.gov/mars/facts/"
+      },
+      "status": "verified",
+      "note": "NASA: Mars completes one rotation every 24.6 hours. Daily consumption rates are scaled by 24.6/24 per sol."
+    },
+    {
+      "id": "moxie_peak_o2_g_per_hour",
+      "value": "12",
+      "unit": "g/hour",
+      "source": {
+        "text": "NASA",
+        "url": "https://www.nasa.gov/missions/mars-2020-perseverance/perseverance-rover/nasas-oxygen-generating-experiment-moxie-completes-mars-mission/"
+      },
+      "status": "verified",
+      "note": "MOXIE on Perseverance, at 98% purity or better; it made 122 g in total."
+    },
+    {
+      "id": "moxie_total_o2_g",
+      "value": "122",
+      "unit": "g",
+      "source": {
+        "text": "NASA",
+        "url": "https://www.nasa.gov/missions/mars-2020-perseverance/perseverance-rover/nasas-oxygen-generating-experiment-moxie-completes-mars-mission/"
+      },
+      "status": "verified",
+      "note": ""
+    },
+    {
+      "id": "lettuce_cycle_days",
+      "value": "28",
+      "unit": "days",
+      "source": {
+        "text": "NASA",
+        "url": "https://ntrs.nasa.gov/citations/20180001338"
+      },
+      "status": "verified",
+      "note": "BVAD Rev1 p. 177: lettuce growth period 28 days after planting (about 14 with transplanting)."
+    },
+    {
+      "id": "spirit_cleaning_energy_before_wh",
+      "value": "210",
+      "unit": "Wh/sol",
+      "source": {
+        "text": "NASA Jet Propulsion Laboratory",
+        "url": "https://www.jpl.nasa.gov/news/spirit-gets-energy-boost-from-cleaner-solar-panels/"
+      },
+      "status": "verified",
+      "note": ""
+    },
+    {
+      "id": "spirit_cleaning_energy_after_wh",
+      "value": "240",
+      "unit": "Wh/sol",
+      "source": {
+        "text": "NASA Jet Propulsion Laboratory",
+        "url": "https://www.jpl.nasa.gov/news/spirit-gets-energy-boost-from-cleaner-solar-panels/"
+      },
+      "status": "verified",
+      "note": ""
+    }
+  ],
+  "derived": [
+    {
+      "id": "electrolysis_o2_kg_per_kg_water",
+      "value": "0.889",
+      "unit": "kg O2/kg H2O",
+      "source": {
+        "text": "NASA Marshall Space Flight Center",
+        "url": "https://www.nasa.gov/wp-content/uploads/2016/01/174687main_eclss_facts.pdf"
+      },
+      "status": "verified",
+      "note": "The ISS Oxygen Generation Assembly electrolyzes water (cited). The mass ratio is stoichiometry: 2 H2O -> 2 H2 + O2, so 16/18 of the water mass becomes oxygen."
+    },
+    {
+      "id": "tau_solar_recharge_threshold",
+      "value": "2",
+      "unit": "tau",
+      "source": {
+        "text": "NASA Jet Propulsion Laboratory",
+        "url": "https://www.jpl.nasa.gov/news/six-things-about-opportunitys-recovery-efforts/"
+      },
+      "status": "verified",
+      "note": "JPL engineering estimate: \"a tau of less than 2.0\" before the rover could recharge."
+    },
+    {
+      "id": "solar_tau_attenuation",
+      "value": "0.328",
+      "unit": "1/tau",
+      "source": {
+        "text": "The Planetary Society",
+        "url": "https://www.planetary.org/articles/06-mer-update-opportunity-dust-storm-sleep"
+      },
+      "status": "verified",
+      "note": "Fit of sunlight = exp(-k (tau - 0.5)) to Opportunity: 645 Wh at about tau 0.5 and 22 Wh at tau 10.8 give k = ln(645/22)/(10.8 - 0.5) = 0.328. A rough fit: it ignores panel dust, season and diffuse light details."
+    },
+    {
+      "id": "nasa_career_dose_limit_msv",
+      "value": "600",
+      "unit": "mSv",
+      "source": {
+        "text": "NASA Office of the Chief Health and Medical Officer",
+        "url": "https://www.nasa.gov/wp-content/uploads/2023/03/radiation-protection-technical-brief-ochmo.pdf"
+      },
+      "status": "verified",
+      "note": "Policy limit, NASA-STD-3001 Vol 1 Rev B [V1 4030]: career effective dose shall be less than 600 mSv (set from a 3% cancer-mortality risk). Not a measurement."
+    },
+    {
+      "id": "nasa_spe_event_limit_msv",
+      "value": "250",
+      "unit": "mSv",
+      "source": {
+        "text": "NASA Office of the Chief Health and Medical Officer",
+        "url": "https://www.nasa.gov/wp-content/uploads/2023/03/radiation-protection-technical-brief-ochmo.pdf"
+      },
+      "status": "verified",
+      "note": "NASA-STD-3001 short-term limit for solar particle events: 250 mSv effective dose per event."
+    }
+  ],
+  "gameDesign": [
+    {
+      "id": "battery_capacity_kwh",
+      "value": "150",
+      "unit": "kWh",
+      "why": "Sized to carry the base for about two sols of essential loads with no sun, so a long storm needs planning."
+    },
+    {
+      "id": "battery_start_fraction",
+      "value": "0.8",
+      "unit": "fraction",
+      "why": "Starts below full so charging before the storm is a choice."
+    },
+    {
+      "id": "array_clear_sky_kwh_per_sol",
+      "value": "120",
+      "unit": "kWh/sol",
+      "why": "Clean, healthy array at tau 0.5. About 35% more than the nominal loads: a surplus in clear weather, never enough in a storm."
+    },
+    {
+      "id": "panel_dust_start",
+      "value": "0.08",
+      "unit": "fraction",
+      "why": "A little dust from previous sols."
+    },
+    {
+      "id": "panel_dust_per_sol",
+      "value": "0.004",
+      "unit": "fraction/sol",
+      "why": "Slow background accumulation so panel cleaning stays useful."
+    },
+    {
+      "id": "load_life_support_kwh",
+      "value": "30",
+      "unit": "kWh/sol",
+      "why": "Oxygen generation, water recovery, CO2 removal and fans for four people."
+    },
+    {
+      "id": "load_heating_kwh",
+      "value": "18",
+      "unit": "kWh/sol",
+      "why": "Keeps the habitat warm through the cold Martian night."
+    },
+    {
+      "id": "load_greenhouse_kwh",
+      "value": "24",
+      "unit": "kWh/sol",
+      "why": "LED grow lights and pumps. The greenhouse is fully artificial-light."
+    },
+    {
+      "id": "load_lab_kwh",
+      "value": "16",
+      "unit": "kWh/sol",
+      "why": "Instruments and sample analysis."
+    },
+    {
+      "id": "heating_comfort_level",
+      "value": "0.6",
+      "unit": "fraction",
+      "why": "Below this fraction of heating power the crew is cold: morale and health drop."
+    },
+    {
+      "id": "eclss_o2_capacity_factor",
+      "value": "1.05",
+      "unit": "x crew need",
+      "why": "At full power and health the generator makes 5% more oxygen than the crew breathes, slowly refilling the tanks."
+    },
+    {
+      "id": "oxygen_start_kg",
+      "value": "12",
+      "unit": "kg",
+      "why": "About three and a half sols of breathing for four people: a buffer, not a solution."
+    },
+    {
+      "id": "oxygen_tank_max_kg",
+      "value": "30",
+      "unit": "kg",
+      "why": "Caps how much oxygen can be stockpiled."
+    },
+    {
+      "id": "water_start_kg",
+      "value": "120",
+      "unit": "kg",
+      "why": "Enough for the mission if the recycler keeps working; not if it fails or leaks."
+    },
+    {
+      "id": "water_tank_max_kg",
+      "value": "300",
+      "unit": "kg",
+      "why": "Caps stored water."
+    },
+    {
+      "id": "life_support_comfort_days",
+      "value": "10",
+      "unit": "days",
+      "why": "The life support gauge is full with ten days of oxygen and water at the current net use."
+    },
+    {
+      "id": "food_start_kg",
+      "value": "45",
+      "unit": "kg",
+      "why": "About seven sols for four people: the greenhouse harvest or rationing is needed to finish ten sols."
+    },
+    {
+      "id": "food_comfort_days",
+      "value": "8",
+      "unit": "days",
+      "why": "The food gauge is full with eight days of stored food at the current ration."
+    },
+    {
+      "id": "crop_cycle_sols",
+      "value": "8",
+      "unit": "sols",
+      "why": "Compressed from the real 28-day lettuce cycle so a harvest fits inside a ten-sol mission."
+    },
+    {
+      "id": "crop_start_growth",
+      "value": "0.4",
+      "unit": "fraction",
+      "why": "The crop is mid-cycle when the mission starts."
+    },
+    {
+      "id": "crop_start_health",
+      "value": "0.9",
+      "unit": "fraction",
+      "why": "Healthy plants."
+    },
+    {
+      "id": "crop_full_yield_kg",
+      "value": "20",
+      "unit": "kg food",
+      "why": "Food-equivalent mass of one full harvest (about three sols of food for four people)."
+    },
+    {
+      "id": "crop_water_kg_per_sol",
+      "value": "1",
+      "unit": "kg/sol",
+      "why": "Most transpired water is recovered; this is the net loss at full greenhouse power."
+    },
+    {
+      "id": "crop_stress_dark_per_sol",
+      "value": "0.06",
+      "unit": "health/sol",
+      "why": "Crop health lost per sol with the grow lights off."
+    },
+    {
+      "id": "crop_stress_neglect_per_sol",
+      "value": "0.05",
+      "unit": "health/sol",
+      "why": "Crop health lost per sol with no farming hours."
+    },
+    {
+      "id": "crop_stress_dry_per_sol",
+      "value": "0.12",
+      "unit": "health/sol",
+      "why": "Crop health lost per sol when the base runs out of water."
+    },
+    {
+      "id": "crop_recovery_per_sol",
+      "value": "0.04",
+      "unit": "health/sol",
+      "why": "Crop health regained per sol in good conditions."
+    },
+    {
+      "id": "crop_bonus_growth",
+      "value": "0.2",
+      "unit": "fraction",
+      "why": "Extra growth rate (and half the stress) while Mission Control crop advice is active."
+    },
+    {
+      "id": "crop_growth_without_care",
+      "value": "0.5",
+      "unit": "fraction",
+      "why": "Plants still grow at half speed with no farming hours; care adds the other half."
+    },
+    {
+      "id": "crop_recovery_min_light",
+      "value": "0.8",
+      "unit": "fraction",
+      "why": "Crop health only recovers with at least this much grow-light power, full care and water."
+    },
+    {
+      "id": "blight_relief",
+      "value": "0.5",
+      "unit": "x",
+      "why": "Blight damage is multiplied by this with Mission Control crop advice, and again with extra care."
+    },
+    {
+      "id": "blight_extra_care_factor",
+      "value": "1.5",
+      "unit": "x needed hours",
+      "why": "Farming hours at or above this multiple of the need count as extra care."
+    },
+    {
+      "id": "harvest_early_efficiency",
+      "value": "0.6",
+      "unit": "fraction",
+      "why": "Harvesting early gives 60% of what the plants would give at that growth."
+    },
+    {
+      "id": "harvest_early_min_growth",
+      "value": "0.25",
+      "unit": "fraction",
+      "why": "Seedlings give nothing to eat."
+    },
+    {
+      "id": "harvest_early_crew_hours",
+      "value": "4",
+      "unit": "crew-hours",
+      "why": "Crew time to harvest the whole crop early."
+    },
+    {
+      "id": "mission_dose_budget_msv",
+      "value": "5.5",
+      "unit": "mSv",
+      "why": "ALARA-style mission rule, not a health limit: ten sols at the habitat with no extra shielding gives about 5.9 mSv, so the crew must build shielding or shelter to stay under it. Real limits are far higher (600 mSv career)."
+    },
+    {
+      "id": "shielding_base",
+      "value": "0.15",
+      "unit": "fraction",
+      "why": "Fraction of the surface dose the bare habitat blocks."
+    },
+    {
+      "id": "shielding_max",
+      "value": "0.85",
+      "unit": "fraction",
+      "why": "Regolith never blocks everything: galactic cosmic rays make secondary particles."
+    },
+    {
+      "id": "regolith_scale_cm",
+      "value": "40",
+      "unit": "cm",
+      "why": "Shielding approaches its maximum after a few multiples of this thickness. The Chang'e-4 team suggested at least 50 cm of lunar soil for a base."
+    },
+    {
+      "id": "regolith_cm_per_crew_hour",
+      "value": "1.5",
+      "unit": "cm/crew-hour",
+      "why": "With the rover and its blade."
+    },
+    {
+      "id": "regolith_max_cm",
+      "value": "100",
+      "unit": "cm",
+      "why": "Structural limit of the habitat."
+    },
+    {
+      "id": "rover_kwh_per_crew_hour",
+      "value": "0.5",
+      "unit": "kWh/crew-hour",
+      "why": "Battery energy the rover uses while moving regolith."
+    },
+    {
+      "id": "shelter_shielding",
+      "value": "0.9",
+      "unit": "fraction",
+      "why": "A small storm shelter surrounded by water tanks and regolith."
+    },
+    {
+      "id": "shelter_work_loss",
+      "value": "0.6",
+      "unit": "fraction",
+      "why": "Fraction of work hours lost for the time spent in the shelter (only small tasks fit inside)."
+    },
+    {
+      "id": "crew_work_hours_per_person",
+      "value": "8",
+      "unit": "hours",
+      "why": "The rest of the sol is sleep, meals, exercise and personal time."
+    },
+    {
+      "id": "default_hours_maintenance",
+      "value": "4",
+      "unit": "crew-hours/sol",
+      "why": "Default standing assignment."
+    },
+    {
+      "id": "default_hours_farming",
+      "value": "6",
+      "unit": "crew-hours/sol",
+      "why": "Default standing assignment."
+    },
+    {
+      "id": "default_hours_science",
+      "value": "12",
+      "unit": "crew-hours/sol",
+      "why": "Default standing assignment."
+    },
+    {
+      "id": "maintenance_hours_needed",
+      "value": "4",
+      "unit": "crew-hours/sol",
+      "why": "Below this, hardware wears out."
+    },
+    {
+      "id": "farming_hours_needed",
+      "value": "6",
+      "unit": "crew-hours/sol",
+      "why": "Below this, plants grow slower and get stressed."
+    },
+    {
+      "id": "crew_health_start",
+      "value": "100",
+      "unit": "0..100",
+      "why": "Healthy crew."
+    },
+    {
+      "id": "crew_morale_start",
+      "value": "80",
+      "unit": "0..100",
+      "why": "Good spirits."
+    },
+    {
+      "id": "work_health_weight",
+      "value": "0.5",
+      "unit": "fraction",
+      "why": "Work hours = base x (1 - w + w x health) x (1 - m + m x morale)."
+    },
+    {
+      "id": "work_morale_weight",
+      "value": "0.3",
+      "unit": "fraction",
+      "why": "See work_health_weight."
+    },
+    {
+      "id": "morale_target",
+      "value": "75",
+      "unit": "0..100",
+      "why": "Morale drifts toward this value when nothing bothers the crew."
+    },
+    {
+      "id": "morale_recovery_per_sol",
+      "value": "3",
+      "unit": "points/sol",
+      "why": "Drift toward the resting value."
+    },
+    {
+      "id": "morale_overwork_threshold",
+      "value": "0.9",
+      "unit": "fraction",
+      "why": "Using more than this fraction of the available hours leaves no rest."
+    },
+    {
+      "id": "morale_overwork_penalty",
+      "value": "4",
+      "unit": "points/sol",
+      "why": "Per sol of overwork."
+    },
+    {
+      "id": "morale_ration_food_penalty",
+      "value": "15",
+      "unit": "points/sol at zero",
+      "why": "Multiplied by the cut (1 - ration level)."
+    },
+    {
+      "id": "morale_ration_water_penalty",
+      "value": "20",
+      "unit": "points/sol at zero",
+      "why": "Multiplied by the cut (1 - ration level)."
+    },
+    {
+      "id": "morale_cold_penalty",
+      "value": "6",
+      "unit": "points/sol",
+      "why": "At zero heating; scaled by how far below the comfortable level."
+    },
+    {
+      "id": "morale_brownout_penalty",
+      "value": "4",
+      "unit": "points/sol",
+      "why": "Lights going out is scary."
+    },
+    {
+      "id": "morale_shelter_penalty",
+      "value": "4",
+      "unit": "points/sol",
+      "why": "For a full sol in a cramped shelter."
+    },
+    {
+      "id": "morale_harvest_bonus",
+      "value": "8",
+      "unit": "points",
+      "why": "Fresh food lifts spirits."
+    },
+    {
+      "id": "health_recovery_per_sol",
+      "value": "2",
+      "unit": "points/sol",
+      "why": "When nothing harms the crew and morale is not low."
+    },
+    {
+      "id": "health_low_morale",
+      "value": "40",
+      "unit": "0..100",
+      "why": "Below this morale the crew does not recover health."
+    },
+    {
+      "id": "health_oxygen_deficit_penalty",
+      "value": "45",
+      "unit": "points/sol at full deficit",
+      "why": "Scaled by the fraction of oxygen missing."
+    },
+    {
+      "id": "health_co2_penalty",
+      "value": "10",
+      "unit": "points/sol at zero scrubbing",
+      "why": "When life support cannot remove CO2."
+    },
+    {
+      "id": "health_water_deficit_penalty",
+      "value": "30",
+      "unit": "points/sol at full deficit",
+      "why": "Scaled by the fraction of water missing."
+    },
+    {
+      "id": "health_starvation_penalty",
+      "value": "15",
+      "unit": "points/sol at full deficit",
+      "why": "Scaled by the fraction of food missing."
+    },
+    {
+      "id": "health_ration_food_penalty",
+      "value": "5",
+      "unit": "points/sol at zero",
+      "why": "Multiplied by the cut."
+    },
+    {
+      "id": "health_ration_water_penalty",
+      "value": "12",
+      "unit": "points/sol at zero",
+      "why": "Multiplied by the cut."
+    },
+    {
+      "id": "health_cold_penalty",
+      "value": "3",
+      "unit": "points/sol",
+      "why": "At zero heating; scaled."
+    },
+    {
+      "id": "eva_block_tau",
+      "value": "5",
+      "unit": "tau",
+      "why": "Above this opacity visibility and wind make work outside too dangerous."
+    },
+    {
+      "id": "eva_max_hours_per_person",
+      "value": "4",
+      "unit": "hours/sol",
+      "why": "Suit consumables limit time outside."
+    },
+    {
+      "id": "eva_clean_dust_per_crew_hour",
+      "value": "0.05",
+      "unit": "fraction/crew-hour",
+      "why": "Brushing panels by hand. Less effective in a dusty sky."
+    },
+    {
+      "id": "eva_efficiency_at_block_tau",
+      "value": "0.5",
+      "unit": "fraction",
+      "why": "Work outside gets less done as the sky darkens: full at clear sky, this fraction at the opacity that blocks EVAs."
+    },
+    {
+      "id": "eva_samples_points_per_hour",
+      "value": "1",
+      "unit": "points/crew-hour",
+      "why": "Field work is the best science, but it is outside."
+    },
+    {
+      "id": "eva_ice_kg_per_hour",
+      "value": "2.5",
+      "unit": "kg water/crew-hour",
+      "why": "Digging and melting shallow ground ice."
+    },
+    {
+      "id": "eva_ice_kwh_per_hour",
+      "value": "1",
+      "unit": "kWh/crew-hour",
+      "why": "Heating the ice into water."
+    },
+    {
+      "id": "science_points_per_hour",
+      "value": "0.5",
+      "unit": "points/crew-hour",
+      "why": "At full lab power."
+    },
+    {
+      "id": "science_unpowered_fraction",
+      "value": "0.25",
+      "unit": "fraction",
+      "why": "Notes and analysis on laptops still count a little."
+    },
+    {
+      "id": "repair_per_crew_hour",
+      "value": "0.05",
+      "unit": "health/crew-hour",
+      "why": "Ten crew-hours restore half of a component."
+    },
+    {
+      "id": "repair_bonus_multiplier",
+      "value": "1.5",
+      "unit": "x",
+      "why": "Repairs go faster with a Mission Control procedure."
+    },
+    {
+      "id": "repair_full_threshold",
+      "value": "0.98",
+      "unit": "fraction",
+      "why": "Components above this have nothing to repair."
+    },
+    {
+      "id": "wear_unmaintained_per_sol",
+      "value": "0.04",
+      "unit": "health/sol",
+      "why": "Spread over the hardware when maintenance hours fall short (scaled by the shortfall)."
+    },
+    {
+      "id": "component_offline_health",
+      "value": "0.1",
+      "unit": "fraction",
+      "why": "Below this a component is offline."
+    },
+    {
+      "id": "comms_min_health",
+      "value": "0.3",
+      "unit": "fraction",
+      "why": "Below this the base cannot reach Earth."
+    },
+    {
+      "id": "random_failure_chance_trainee",
+      "value": "0.015",
+      "unit": "per sol",
+      "why": "Seeded wear-and-tear surprises. Half the Cadet chance: a beginner meets fewer surprises on top of the storm."
+    },
+    {
+      "id": "random_failure_chance_cadet",
+      "value": "0.03",
+      "unit": "per sol",
+      "why": "Seeded wear-and-tear surprises."
+    },
+    {
+      "id": "random_failure_chance_specialist",
+      "value": "0.06",
+      "unit": "per sol",
+      "why": "Seeded wear-and-tear surprises."
+    },
+    {
+      "id": "random_failure_chance_commander",
+      "value": "0.1",
+      "unit": "per sol",
+      "why": "Seeded wear-and-tear surprises."
+    },
+    {
+      "id": "random_failure_damage_min",
+      "value": "0.05",
+      "unit": "health",
+      "why": "Range of a small failure."
+    },
+    {
+      "id": "random_failure_damage_max",
+      "value": "0.15",
+      "unit": "health",
+      "why": "Range of a small failure."
+    },
+    {
+      "id": "mission_control_requests",
+      "value": "3",
+      "unit": "requests",
+      "why": "Earth has many missions to support."
+    },
+    {
+      "id": "mission_control_delay_sols",
+      "value": "1",
+      "unit": "sols",
+      "why": "The signal takes minutes (4 to 22 one way); analysing the problem and answering takes about a sol."
+    },
+    {
+      "id": "mission_control_forecast_sols",
+      "value": "4",
+      "unit": "sols",
+      "why": "A forecast request reveals this many sols ahead."
+    },
+    {
+      "id": "mission_control_bonus_sols",
+      "value": "3",
+      "unit": "sols",
+      "why": "Repair procedures and crop advice help for this long."
+    },
+    {
+      "id": "electrolysis_kwh_per_kg_water",
+      "value": "6",
+      "unit": "kWh/kg water",
+      "why": "About 1.4 times the thermodynamic minimum (about 4.4 kWh per kg of water)."
+    },
+    {
+      "id": "isru_o2_kg_per_kwh",
+      "value": "0.04",
+      "unit": "kg O2/kWh",
+      "why": "A scaled-up MOXIE-type unit (MOXIE made up to 12 g per hour). Expensive in energy on purpose."
+    },
+    {
+      "id": "rank_reserve_multiplier_trainee",
+      "value": "1.4",
+      "unit": "x",
+      "why": "Trainee starts with 40% more oxygen, water and food, and a full battery (the battery cannot hold more than its capacity). Entry rank: room to learn from a mistake."
+    },
+    {
+      "id": "rank_reserve_multiplier_cadet",
+      "value": "1.2",
+      "unit": "x",
+      "why": "Cadet starts with 20% more oxygen, water, food and battery charge."
+    },
+    {
+      "id": "rank_reserve_multiplier_specialist",
+      "value": "1",
+      "unit": "x",
+      "why": "Reference rank."
+    },
+    {
+      "id": "rank_reserve_multiplier_commander",
+      "value": "0.9",
+      "unit": "x",
+      "why": "Commander starts with 10% less."
+    },
+    {
+      "id": "rank_wear_multiplier_trainee",
+      "value": "0.4",
+      "unit": "x",
+      "why": "Hardware wears slowest for Trainees: skipping maintenance is a small lesson, not a mission ender."
+    },
+    {
+      "id": "rank_wear_multiplier_cadet",
+      "value": "0.6",
+      "unit": "x",
+      "why": "Hardware wears slower for Cadets."
+    },
+    {
+      "id": "rank_wear_multiplier_specialist",
+      "value": "1",
+      "unit": "x",
+      "why": "Reference rank."
+    },
+    {
+      "id": "rank_wear_multiplier_commander",
+      "value": "1.3",
+      "unit": "x",
+      "why": "Hardware wears faster for Commanders."
+    },
+    {
+      "id": "weather_tau_jitter",
+      "value": "0.08",
+      "unit": "fraction",
+      "why": "Seeded day-to-day variation of the sky opacity, so two seeds never feel identical."
+    },
+    {
+      "id": "radiation_jitter",
+      "value": "0.05",
+      "unit": "fraction",
+      "why": "Seeded day-to-day variation of the surface dose rate."
+    },
+    {
+      "id": "harvest_jitter",
+      "value": "0.1",
+      "unit": "fraction",
+      "why": "Seeded variation of each harvest."
+    },
+    {
+      "id": "storm_rise_fraction",
+      "value": "0.34",
+      "unit": "fraction",
+      "why": "Storms reach their peak opacity in the first third of their duration."
+    },
+    {
+      "id": "storm_start_fraction",
+      "value": "0.5",
+      "unit": "fraction",
+      "why": "First sol at half the peak excess opacity."
+    },
+    {
+      "id": "storm_end_fraction",
+      "value": "0.4",
+      "unit": "fraction",
+      "why": "Dust settles slowly: the last sol keeps 40% of the peak excess opacity."
+    },
+    {
+      "id": "gauge_warning_level",
+      "value": "0.5",
+      "unit": "fraction",
+      "why": "Gauges below this show a warning."
+    },
+    {
+      "id": "gauge_critical_level",
+      "value": "0.25",
+      "unit": "fraction",
+      "why": "Gauges below this show critical."
+    },
+    {
+      "id": "trend_threshold",
+      "value": "0.02",
+      "unit": "fraction",
+      "why": "Gauge changes smaller than this count as \"same\"."
+    },
+    {
+      "id": "forecast_horizon_sols",
+      "value": "5",
+      "unit": "sols",
+      "why": "How far ahead the base instruments estimate the sky."
+    }
+  ],
+  "eventsReal": [
+    {
+      "id": "dust_storm",
+      "name": "Dust storm",
+      "sites": "mars",
+      "affects": "power, food, life_support",
+      "duration": "3–7",
+      "warning": "2",
+      "effects": "tau_peak: 3 → 10.8; dust_deposit: 0.01 → 0.04",
+      "source": {
+        "text": "NASA Jet Propulsion Laboratory",
+        "url": "https://www.jpl.nasa.gov/news/opportunity-hunkers-down-during-dust-storm/"
+      }
+    },
+    {
+      "id": "solar_particle_event",
+      "name": "Solar storm",
+      "sites": "mars, moon",
+      "affects": "radiation",
+      "duration": "1–3",
+      "warning": "1",
+      "effects": "radiation_multiplier: 1.5 → 3",
+      "source": {
+        "text": "NASA Jet Propulsion Laboratory",
+        "url": "https://www.jpl.nasa.gov/news/large-solar-storm-sparks-global-aurora-and-doubles-radiation-levels-on-the-martian-surface/"
+      }
+    },
+    {
+      "id": "lunar_night",
+      "name": "Lunar night",
+      "sites": "moon",
+      "affects": "power, food, life_support",
+      "duration": "3–10",
+      "warning": "3",
+      "effects": "darkness: 1 → 1",
+      "source": {
+        "text": "NASA Science",
+        "url": "https://science.nasa.gov/moon/moonlight/"
+      }
+    },
+    {
+      "id": "dust_devil_cleaning",
+      "name": "Cleaning dust devil",
+      "sites": "mars",
+      "affects": "power",
+      "duration": "1–1",
+      "warning": "0",
+      "effects": "dust_deposit: -0.08 → -0.3",
+      "source": {
+        "text": "NASA Jet Propulsion Laboratory",
+        "url": "https://www.jpl.nasa.gov/news/spirit-gets-energy-boost-from-cleaner-solar-panels/"
+      }
+    }
+  ],
+  "eventsTraining": [
+    {
+      "id": "eclss_fault",
+      "name": "Life support fault",
+      "sites": "mars, moon",
+      "affects": "life_support",
+      "duration": "1–1",
+      "warning": "0",
+      "effects": "component_damage(eclss): 0.15 → 0.6",
+      "source": null
+    },
+    {
+      "id": "solar_array_fault",
+      "name": "Solar array fault",
+      "sites": "mars, moon",
+      "affects": "power",
+      "duration": "1–1",
+      "warning": "0",
+      "effects": "component_damage(solar_array): 0.1 → 0.5",
+      "source": null
+    },
+    {
+      "id": "battery_fault",
+      "name": "Damaged battery cells",
+      "sites": "mars, moon",
+      "affects": "power",
+      "duration": "1–1",
+      "warning": "0",
+      "effects": "component_damage(battery): 0.1 → 0.4",
+      "source": null
+    },
+    {
+      "id": "water_line_leak",
+      "name": "Water line leak",
+      "sites": "mars, moon",
+      "affects": "life_support, food",
+      "duration": "2–4",
+      "warning": "0",
+      "effects": "resource_leak(water): 3 → 10",
+      "source": null
+    },
+    {
+      "id": "crop_blight",
+      "name": "Greenhouse blight",
+      "sites": "mars, moon",
+      "affects": "food",
+      "duration": "2–4",
+      "warning": "0",
+      "effects": "crop_stress: 0.04 → 0.15",
+      "source": null
+    },
+    {
+      "id": "comms_blackout",
+      "name": "Comms blackout",
+      "sites": "mars, moon",
+      "affects": "life_support, food",
+      "duration": "1–3",
+      "warning": "1",
+      "effects": "comms_blackout: 1 → 1",
+      "source": null
+    }
+  ],
+  "citations": [
+    {
+      "id": "nasa-bvad-2018",
+      "title": "Life Support Baseline Values and Assumptions Document (NASA/TP-2015-218570/REV1)",
+      "organisation": "NASA",
+      "year": "2018",
+      "url": "https://ntrs.nasa.gov/citations/20180001338"
+    },
+    {
+      "id": "nasa-iss-water-2023",
+      "title": "NASA Achieves Water Recovery Milestone on International Space Station",
+      "organisation": "NASA",
+      "year": "2023",
+      "url": "https://www.nasa.gov/missions/station/iss-research/nasa-achieves-water-recovery-milestone-on-international-space-station/"
+    },
+    {
+      "id": "nasa-eclss-facts-2004",
+      "title": "NASA Facts: The ISS Environmental Control and Life Support System (FS-2004-12-175-MSFC)",
+      "organisation": "NASA Marshall Space Flight Center",
+      "year": "2004",
+      "url": "https://www.nasa.gov/wp-content/uploads/2016/01/174687main_eclss_facts.pdf"
+    },
+    {
+      "id": "swri-rad-surface-2013",
+      "title": "SwRI scientists publish first radiation measurements from the surface of Mars (Hassler et al., Science, 2013)",
+      "organisation": "Southwest Research Institute / Curiosity RAD team",
+      "year": "2013",
+      "url": "https://www.swri.org/press-release/swri-scientists-publish-first-radiation-measurements-surface-mars"
+    },
+    {
+      "id": "nasa-ntrs-rad-surface-2014",
+      "title": "Mars' Surface Radiation Environment Measured with the Mars Science Laboratory's Curiosity Rover",
+      "organisation": "NASA Technical Reports Server (Hassler et al., Science 343)",
+      "year": "2014",
+      "url": "https://ntrs.nasa.gov/citations/20180007641"
+    },
+    {
+      "id": "jpl-opportunity-2018",
+      "title": "Opportunity Hunkers Down During Dust Storm",
+      "organisation": "NASA Jet Propulsion Laboratory",
+      "year": "2018",
+      "url": "https://www.jpl.nasa.gov/news/opportunity-hunkers-down-during-dust-storm/"
+    },
+    {
+      "id": "jpl-opportunity-recovery-2018",
+      "title": "Six Things About Opportunity's Recovery Efforts",
+      "organisation": "NASA Jet Propulsion Laboratory",
+      "year": "2018",
+      "url": "https://www.jpl.nasa.gov/news/six-things-about-opportunitys-recovery-efforts/"
+    },
+    {
+      "id": "jpl-edu-opportunity-end",
+      "title": "Mars Rover Mission Comes to an End, But Science, Legacy Live on (Teachable Moment)",
+      "organisation": "NASA Jet Propulsion Laboratory Education",
+      "year": "—",
+      "url": "https://www.jpl.nasa.gov/edu/resources/teachable-moment/mars-rover-mission-comes-to-an-end-but-science-legacy-live-on/"
+    },
+    {
+      "id": "planetary-opportunity-2018",
+      "title": "The Mars Exploration Rovers Update Special Report: Opportunity Pummeled by Massive Dust Storm, Hunkers Down to Sleep",
+      "organisation": "The Planetary Society",
+      "year": "2018",
+      "url": "https://www.planetary.org/articles/06-mer-update-opportunity-dust-storm-sleep"
+    },
+    {
+      "id": "nasa-gsfc-dust-storm-2018",
+      "title": "The Mars Global Dust Storm of 2018 (ICES-2019-181, Smith and Guzewich)",
+      "organisation": "NASA Goddard Space Flight Center",
+      "year": "2019",
+      "url": "https://ntrs.nasa.gov/api/citations/20190027303/downloads/20190027303.pdf"
+    },
+    {
+      "id": "jpl-pia22930",
+      "title": "PIA22930: Last Images Opportunity Took",
+      "organisation": "NASA Jet Propulsion Laboratory",
+      "year": "2019",
+      "url": "https://www.jpl.nasa.gov/images/pia22930-last-images-opportunity-took/"
+    },
+    {
+      "id": "jpl-solar-storm-2017",
+      "title": "Large Solar Storm Sparks Global Aurora and Doubles Radiation Levels on the Martian Surface",
+      "organisation": "NASA Jet Propulsion Laboratory",
+      "year": "2017",
+      "url": "https://www.jpl.nasa.gov/news/large-solar-storm-sparks-global-aurora-and-doubles-radiation-levels-on-the-martian-surface/"
+    },
+    {
+      "id": "nasa-std-3001-radiation",
+      "title": "NASA-STD-3001 Technical Brief: Design for Ionizing Radiation Protection (OCHMO-TB-020 Rev E)",
+      "organisation": "NASA Office of the Chief Health and Medical Officer",
+      "year": "2022",
+      "url": "https://www.nasa.gov/wp-content/uploads/2023/03/radiation-protection-technical-brief-ochmo.pdf"
+    },
+    {
+      "id": "zhang-2020-lunar-dose",
+      "title": "First measurements of the radiation dose on the lunar surface (Zhang et al., Science Advances 6(39), Chang'e-4 LND)",
+      "organisation": "Science Advances / Kiel University",
+      "year": "2020",
+      "url": "https://doi.org/10.1126/sciadv.aaz1334"
+    },
+    {
+      "id": "jpl-podcast-driving",
+      "title": "On a Mission, Episode 8: How to Drive a Mars Rover",
+      "organisation": "NASA Jet Propulsion Laboratory",
+      "year": "—",
+      "url": "https://www.jpl.nasa.gov/podcasts/on-a-mission-season-1/season-4-mars-rovers/episode-8-how-to-drive-a-mars-rover/"
+    },
+    {
+      "id": "nasa-moonlight",
+      "title": "Moonlight",
+      "organisation": "NASA Science",
+      "year": "—",
+      "url": "https://science.nasa.gov/moon/moonlight/"
+    },
+    {
+      "id": "nasa-mars-facts",
+      "title": "Mars: Facts",
+      "organisation": "NASA Science",
+      "year": "—",
+      "url": "https://science.nasa.gov/mars/facts/"
+    },
+    {
+      "id": "nasa-moxie-2023",
+      "title": "NASA's Oxygen-Generating Experiment MOXIE Completes Mars Mission",
+      "organisation": "NASA",
+      "year": "2023",
+      "url": "https://www.nasa.gov/missions/mars-2020-perseverance/perseverance-rover/nasas-oxygen-generating-experiment-moxie-completes-mars-mission/"
+    },
+    {
+      "id": "jpl-spirit-cleaning-2009",
+      "title": "Spirit Gets Energy Boost from Cleaner Solar Panels",
+      "organisation": "NASA Jet Propulsion Laboratory",
+      "year": "2009",
+      "url": "https://www.jpl.nasa.gov/news/spirit-gets-energy-boost-from-cleaner-solar-panels/"
+    }
+  ]
+}
