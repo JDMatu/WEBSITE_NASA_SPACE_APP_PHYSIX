@@ -14,8 +14,10 @@ Short record of the choices made while building the site, and why. Newest contex
 
 ## Scroll sequence
 
-- **Pre-rendered frames of the real game scene, not live Three.js.** The game's 3D base is rendered ahead of time through its own test bench (`?harness=scene`) at six states, in a wide and a tall framing. On the site they are ordinary images that cross-fade on scroll, with a small 2D canvas for dust. Reasons: it runs smoothly on a modest laptop and a phone, needs no WebGL and no fallback image (it is the image), adds about 15 kB of script instead of a 3D engine, and still shows the actual product.
-- **Numbers are one real run of the simulator**: seed 1, Trainee rank, a scripted crew that always takes the first option, rules director. They are in `storm.steps` in the content file. The frames are rendered at those values with the same formulas the game uses to draw its state. The panel dust level per sol is approximated.
+- **Pre-rendered frames of the real game scene, not live Three.js.** The game's 3D base is rendered ahead of time through its own test bench (`?harness=scene`) at six states, in a wide and a tall framing. On the site they are ordinary images that cross-fade on scroll, with a small 2D canvas for dust. Reasons: it runs smoothly on a modest laptop and a phone, needs no WebGL and no fallback image (it is the image), adds about 5 kB of script instead of a 3D engine, and still shows the actual product.
+- **Numbers are one real run of the simulator**: seed 1, Trainee rank, a scripted crew that always takes the first option, rules director. They are in `facts.stormRun` in the content file. The frames are rendered at those values with the same formulas the game uses to draw its state. The panel dust level per sol is approximated.
+- **On upright phones the hero shows a shorter paragraph** (`hero.bodyShort`) so the base stays in view.
+- **Measured, not assumed**: scrolling the sequence in headless Chrome with software rendering and the CPU slowed four to six times held 60 frames per second (median frame 16.7 ms). This was not measured on a real phone.
 - **The readout shows the game's sky opacity (peak 4.0 in this run).** The real 2018 value (10.8) is only in the science section, away from game images.
 - **Progressive enhancement.** The plain page (no JavaScript, or reduced motion) shows each sol as a figure with its caption and numbers. The script moves the same pictures into a pinned stage, so nothing is downloaded twice.
 - **Reveal animations cannot hide content**: the hidden state is applied only after the reveal script itself is running.
@@ -38,6 +40,7 @@ Short record of the choices made while building the site, and why. Newest contex
 
 - **Fonts are self-hosted** through Fontsource packages, the same three families and the same source as the game. No request to a font service.
 - **No analytics, no cookies, no third-party scripts.**
-- **English only for now.** The content file is one object per section so a Spanish copy can be added as a second file later.
+- **English first, Spanish second.** English is at the root (the challenge requires English for everything linked from the project page). Spanish is under `/es/`, reached from the EN / ES switch. Spanish words are in `site.es.ts`; links, figures and placeholders stay in `site.ts` and are shared. The screenshots and the source tables remain in English on the Spanish pages, and those pages say so. The Spanish headline is "Cada decisión cuesta algo" (the idea of the video's first line) rather than a literal translation.
+- **Numbers never live in sentences that change.** Storm captions and evaluation lines use placeholders filled from `facts`, formatted per language (decimal comma in Spanish).
 - **GitHub Pages workflow is manual-only** (`workflow_dispatch`). Nothing publishes on push.
 - **Preview image for links** is the sol 3 frame, generated at build time; it needs `SITE_URL` to be set.
