@@ -564,7 +564,8 @@ export const credits = {
       ],
     },
   ],
-  musicNote: 'No music or audio is used on this site.',
+  // TODO(team): if the videos use a voice-over, music or sound effects, list them here (the challenge form asks for them).
+  musicNote: 'This site plays no music or audio of its own.',
 };
 
 export const footer = {
@@ -644,7 +645,7 @@ export const aiUse = {
   imagesTitle: 'Images, audio and video',
   imagesBody: [
     'No AI-generated images are used, in the game or on this site. The 3D base is procedural geometry written in code. The images on this site are screenshots of the running game and renders of its 3D scene. The only photo is a public-domain NASA image (PIA22930, credit NASA/JPL-Caltech/Cornell/ASU).',
-    'The game has no audio. This site has no audio.',
+    'The game has no audio. This site plays no audio of its own.',
   ],
   reviewTitle: 'Human review still required',
   review: [

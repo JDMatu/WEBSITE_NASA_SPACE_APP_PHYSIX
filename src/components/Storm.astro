@@ -232,14 +232,15 @@ const dust = (tau: number) => Math.min(1, Math.max(0, (tau - 0.5) / 3.5));
   }
 
   /* ------------------------------------------------------------- enhanced */
-  .storm.is-enhanced .storm__stage { display: block; position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
-  .storm.is-enhanced .storm__track { position: relative; z-index: 2; margin-top: -100vh; margin-top: -100svh; }
+  /* The stage uses the largest viewport height so it still fills the screen when a phone's address bar hides. */
+  .storm.is-enhanced .storm__stage { display: block; position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; }
+  .storm.is-enhanced .storm__track { position: relative; z-index: 2; margin-top: -100vh; margin-top: -100lvh; }
   .storm.is-enhanced .storm__frames, .storm.is-enhanced .storm__dust, .storm.is-enhanced .storm__shade { position: absolute; inset: 0; }
   .storm.is-enhanced .storm__frames { z-index: 0; isolation: isolate; }
   .storm.is-enhanced .storm__dust { z-index: 1; }
   .storm.is-enhanced .storm__shade { z-index: 2; }
   .hud { z-index: 3; }
-  .storm.is-enhanced .storm__frames .frame { position: absolute; inset: 0; opacity: 0; visibility: hidden; will-change: opacity; }
+  .storm.is-enhanced .storm__frames .frame { position: absolute; inset: 0; opacity: 0; visibility: hidden; }
   .storm.is-enhanced .storm__frames .frame:first-child { opacity: 1; visibility: visible; }
   .storm.is-enhanced .storm__dust { width: 100%; height: 100%; pointer-events: none; }
   .storm.is-enhanced .storm__shade {
@@ -250,15 +251,26 @@ const dust = (tau: number) => Math.min(1, Math.max(0, (tau - 0.5) / 3.5));
   }
   .storm.is-enhanced .hero::before { display: none; }
   .storm.is-enhanced .storm__steps { padding: 0; gap: 0; }
-  .storm.is-enhanced .step { min-height: 100vh; min-height: 100svh; display: flex; align-items: center; }
-  .storm.is-enhanced .step:last-child { min-height: 120vh; min-height: 120svh; }
+  .storm.is-enhanced .step { min-height: 90vh; min-height: 90svh; display: flex; align-items: center; }
+  .storm.is-enhanced .step:last-child { min-height: 110vh; min-height: 110svh; }
   .storm.is-enhanced .step__nums { display: none; }
-  .storm.is-enhanced .step__card { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45); }
+  /* No backdrop blur here: it would be recomputed on every frame of the dust layer behind it. */
+  .storm.is-enhanced .step__card { background: rgba(11, 15, 26, 0.9); box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45); }
   .storm.is-enhanced .storm__foot { margin-top: 0; padding-block: 0 28px; position: relative; top: -64px; margin-bottom: -40px; text-shadow: 0 1px 8px rgba(11, 15, 26, 0.9); }
+
+  @media (max-height: 520px) {
+    .hero { padding-top: calc(var(--head-h) + 8px); }
+    .hero__eyebrow { margin-bottom: 8px; }
+    .hero__title { font-size: 34px; }
+    .hero__body { margin-top: 10px; font-size: 14.5px; line-height: 1.4; max-width: 62ch; }
+    .hero__title, .hero__body { max-width: none; }
+    .hero__cta { margin-top: 14px; }
+    .hero__cta .btn { min-height: 44px; }
+  }
 
   .hud {
     position: absolute; top: calc(var(--head-h) + 20px); right: var(--pad); width: 276px; padding: 14px 16px 12px;
-    background: var(--glass-strong); border: 1px solid var(--hair); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    background: rgba(11, 15, 26, 0.92); border: 1px solid var(--hair);
     opacity: var(--hud, 0); transform: translateY(calc((1 - var(--hud, 0)) * -10px)); font-size: 14px;
   }
   .hud__top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid var(--hair); }
@@ -344,12 +356,11 @@ const dust = (tau: number) => Math.min(1, Math.max(0, (tau - 0.5) / 3.5));
 
     // Anchor of each step: the middle of its text block, in document coordinates.
     let anchors: number[] = [];
+    let tops: number[] = [];
+    const texts = steps.map((s) => s.querySelector<HTMLElement>('.step__card, .hero__copy') ?? s);
     const measure = () => {
-      anchors = steps.map((s) => {
-        const target = s.querySelector<HTMLElement>('.step__card, .hero__copy') ?? s;
-        const r = target.getBoundingClientRect();
-        return r.top + window.scrollY + r.height / 2;
-      });
+      tops = texts.map((t) => t.getBoundingClientRect().top + window.scrollY);
+      anchors = texts.map((t, k) => tops[k]! + t.offsetHeight / 2);
     };
     const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
     const smooth = (a: number, b: number, t: number) => {
@@ -397,8 +408,17 @@ const dust = (tau: number) => Math.min(1, Math.max(0, (tau - 0.5) / 3.5));
         bars.battery.style.setProperty('--v', String(battery / maxBatt));
         battRow.classList.toggle('is-low', battery / maxBatt < 0.2);
       }
+      // Captions fade out before they reach the readout at the top, so the two never overlap.
+      const vh = window.innerHeight;
+      texts.forEach((text, k) => {
+        // The hero (title, buttons and scroll cue) fades as a whole; the other captions fade near the top.
+        const target = k === 0 ? steps[0]! : text;
+        const o = k === 0 ? 1 - smooth(0.06, 0.4, i === 0 ? t : 1) : smooth(0.17, 0.3, (tops[k]! - window.scrollY) / vh);
+        target.style.opacity = o > 0.995 ? '' : o.toFixed(3);
+        if (k === 0) target.style.visibility = o < 0.01 ? 'hidden' : '';
+      });
       // The readout fades in as the hero leaves and stays for the rest of the sequence.
-      hud.style.setProperty('--hud', i === 0 ? String(smooth(0.35, 0.8, t)) : '1');
+      hud.style.setProperty('--hud', i === 0 ? String(smooth(0.45, 0.85, t)) : '1');
       dustLevel = lerp(from.dust, to.dust, e);
     };
 

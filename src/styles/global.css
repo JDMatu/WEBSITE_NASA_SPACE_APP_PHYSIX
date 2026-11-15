@@ -158,7 +158,8 @@ a:hover { text-decoration-color: var(--amber); }
   transition: background 0.25s var(--ease), border-color 0.25s var(--ease);
   border-bottom: 1px solid transparent;
 }
-.site-head.is-stuck { background: rgba(11, 15, 26, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom-color: var(--hair); }
+/* Without JavaScript the bar cannot react to scrolling, so it is always solid. */
+.no-js .site-head, .site-head.is-stuck { background: rgba(11, 15, 26, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom-color: var(--hair); }
 .site-head__in { display: flex; align-items: center; gap: 24px; }
 .wordmark {
   font-family: var(--font-head); font-weight: 700; font-size: 24px; letter-spacing: 0.22em; text-decoration: none; color: var(--text);
