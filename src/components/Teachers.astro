@@ -1,6 +1,9 @@
 ---
-import { pending, teachers } from '../content/site';
+import { copy, pending } from '../content';
 import Icon from './Icon.astro';
+
+const L = Astro.currentLocale;
+const { teachers, ui } = copy(L);
 
 const icons = ['screen', 'lock', 'wifi', 'lang'] as const;
 ---

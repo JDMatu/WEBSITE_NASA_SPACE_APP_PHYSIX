@@ -1,11 +1,14 @@
 ---
-import { evidence, facts } from '../content/site';
-import { fill, url } from '../lib/util';
+import { copy, facts } from '../content';
+import { fill, longDate, url } from '../lib/util';
 import Icon from './Icon.astro';
 import SectionHead from './SectionHead.astro';
 
-const values: Record<string, Record<string, string | number>> = {
-  current: { ...facts.evalCurrentRules, tests: facts.tests.passing, files: facts.tests.files, asOf: facts.tests.asOf },
+const L = Astro.currentLocale;
+const { evidence, ui } = copy(L);
+
+const values: Record<string, Record<string, unknown>> = {
+  current: { ...facts.evalCurrentRules, tests: facts.tests.passing, files: facts.tests.files, asOf: longDate(facts.tests.asOf, L) },
   previous: { ...facts.evalPreviousAi },
 };
 const missValues = facts.evalPreviousAi;
@@ -26,9 +29,9 @@ const missValues = facts.evalPreviousAi;
               {
                 g.stats.map((s) => (
                   <li>
-                    <p class="ev__value num">{fill(s.value, values[g.id]!)}</p>
+                    <p class="ev__value num">{fill(s.value, values[g.id]!, L)}</p>
                     <p class="ev__label">{s.label}</p>
-                    <p class="ev__note">{fill(s.note, values[g.id]!)}</p>
+                    <p class="ev__note">{fill(s.note, values[g.id]!, L)}</p>
                   </li>
                 ))
               }
@@ -41,7 +44,7 @@ const missValues = facts.evalPreviousAi;
       <div class="reveal">
         <h3 class="h3">{evidence.missesTitle}</h3>
         <ul class="ev__list">
-          {evidence.misses.map((m) => <li>{fill(m, missValues)}</li>)}
+          {evidence.misses.map((m) => <li>{fill(m, missValues, L)}</li>)}
         </ul>
       </div>
       <div class="reveal" style="--d:100ms">
@@ -51,7 +54,7 @@ const missValues = facts.evalPreviousAi;
         </ul>
       </div>
     </div>
-    <p class="ev__more"><a class="link-arrow" href={url('/sources/#evaluation')}>{evidence.evalsLink}<Icon name="arrow" /></a></p>
+    <p class="ev__more"><a class="link-arrow" href={url('/sources/', L) + '#evaluation'}>{evidence.evalsLink}<Icon name="arrow" /></a></p>
   </div>
 </section>
 

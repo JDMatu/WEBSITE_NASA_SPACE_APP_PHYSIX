@@ -1,6 +1,9 @@
 ---
-import { footer, meta, pending } from '../content/site';
+import { copy, pending } from '../content';
 import { url } from '../lib/util';
+
+const L = Astro.currentLocale;
+const { footer, meta, ui } = copy(L);
 ---
 
 <footer class="site-foot">
@@ -9,7 +12,7 @@ import { url } from '../lib/util';
       <div>
         <h3>{footer.aiTitle}</h3>
         <p>{footer.ai}</p>
-        <p><a href={url('/ai-use/')}>{footer.aiLink}</a></p>
+        <p><a href={url('/ai-use/', L)}>{footer.aiLink}</a></p>
       </div>
       <div>
         <h3>{footer.privacyTitle}</h3>

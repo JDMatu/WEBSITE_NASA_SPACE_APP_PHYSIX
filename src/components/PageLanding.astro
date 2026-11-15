@@ -1,0 +1,39 @@
+---
+// The landing page, shared by every language (the language comes from the URL).
+import { getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Storm from './Storm.astro';
+import Move from './Move.astro';
+import Watch from './Watch.astro';
+import Problem from './Problem.astro';
+import How from './How.astro';
+import Ranks from './Ranks.astro';
+import AiRule from './AiRule.astro';
+import Science from './Science.astro';
+import Evidence from './Evidence.astro';
+import Teachers from './Teachers.astro';
+import Team from './Team.astro';
+import Roadmap from './Roadmap.astro';
+import Closing from './Closing.astro';
+import Credits from './Credits.astro';
+import shareSrc from '../assets/frames/sol03-wide.webp';
+
+const share = await getImage({ src: shareSrc, width: 1200, height: 630, format: 'jpg', quality: 80 });
+---
+
+<Base home shareImage={share.src}>
+  <Storm />
+  <Move />
+  <Watch />
+  <Problem />
+  <How />
+  <Ranks />
+  <AiRule />
+  <Science />
+  <Evidence />
+  <Teachers />
+  <Team />
+  <Roadmap />
+  <Closing />
+  <Credits />
+</Base>

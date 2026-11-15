@@ -1,8 +1,11 @@
 ---
-import { move } from '../content/site';
+import { copy } from '../content';
 import Icon from './Icon.astro';
 import SectionHead from './SectionHead.astro';
 import Shot from './Shot.astro';
+
+const L = Astro.currentLocale;
+const { move, ui } = copy(L);
 ---
 
 <section class="section move" id="move" aria-labelledby="move-title">

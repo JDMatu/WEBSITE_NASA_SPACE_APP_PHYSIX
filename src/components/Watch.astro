@@ -2,11 +2,14 @@
 // The extended video and the play button, side by side. Third-party players are only loaded
 // after the visitor presses play, so opening the page sends nothing to a video host.
 import { getImage } from 'astro:assets';
-import { pending, watch } from '../content/site';
+import { copy, pending } from '../content';
 import { href } from '../lib/util';
 import Icon from './Icon.astro';
 import PlayButton from './PlayButton.astro';
 import poster from '../assets/frames/sol04-wide.webp';
+
+const L = Astro.currentLocale;
+const { ui, watch } = copy(L);
 
 const link = pending.videoExtendedUrl;
 const isFile = link ? /\.(mp4|webm)(\?.*)?$/i.test(link) : false;
@@ -46,7 +49,7 @@ const img = await getImage({ src: poster, width: 1280, format: 'webp', quality: 
             <a href={href(link)}>{watch.playVideo}</a>
           </video>
         ) : (
-          <div class="video video--facade" style={`background-image:url(${img.src})`} data-embed={embed}>
+          <div class="video video--facade" style={`background-image:url(${img.src})`} data-embed={embed} data-title={ui.videoTitle}>
             <a class="video__play" href={link} data-video-play>
               <span class="video__btn"><Icon name="play" /></span>
               <span>{watch.playVideo}</span>
@@ -87,7 +90,7 @@ const img = await getImage({ src: poster, width: 1280, format: 'webp', quality: 
       ev.preventDefault();
       const frame = document.createElement('iframe');
       frame.src = src;
-      frame.title = 'PHYSIX video';
+      frame.title = box.dataset.title ?? '';
       frame.allow = 'autoplay; fullscreen; picture-in-picture';
       frame.allowFullscreen = true;
       box.replaceChildren(frame);

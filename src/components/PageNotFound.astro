@@ -1,0 +1,8 @@
+---
+import Subpage from './Subpage.astro';
+import { copy } from '../content';
+
+const { aiUse, ui } = copy(Astro.currentLocale);
+---
+
+<Subpage title={ui.notFoundTitle} intro={ui.notFoundBody} back={aiUse.back} />

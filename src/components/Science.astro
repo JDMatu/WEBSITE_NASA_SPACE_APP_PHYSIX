@@ -1,9 +1,12 @@
 ---
 import { Image } from 'astro:assets';
-import { facts, science } from '../content/site';
+import { copy, facts } from '../content';
 import { fill, url } from '../lib/util';
 import Icon from './Icon.astro';
 import pia from '../assets/PIA22930.jpg';
+
+const L = Astro.currentLocale;
+const { science, ui } = copy(L);
 ---
 
 <section class="section science" id="science" aria-labelledby="science-title">
@@ -45,7 +48,7 @@ import pia from '../assets/PIA22930.jpg';
       <div class="tablewrap">
         <table>
           <thead>
-            <tr><th scope="col">Quantity</th><th scope="col">Value</th><th scope="col">Source</th></tr>
+            <tr><th scope="col">{ui.quantity}</th><th scope="col">{ui.value}</th><th scope="col">{ui.source}</th></tr>
           </thead>
           <tbody>
             {
@@ -61,10 +64,10 @@ import pia from '../assets/PIA22930.jpg';
         </table>
       </div>
       <div class="science__foot">
-        <p>{fill(science.count, facts.constants)}</p>
+        <p>{fill(science.count, facts.constants, L)}</p>
         <p class="dim">{science.caveat}</p>
         <p>{facts.donkiIntegrated ? science.dataDonki : science.dataPending}</p>
-        <p><a class="link-arrow" href={url('/sources/')}>{science.sourcesLink}<Icon name="arrow" /></a></p>
+        <p><a class="link-arrow" href={url('/sources/', L)}>{science.sourcesLink}<Icon name="arrow" /></a></p>
       </div>
     </div>
   </div>

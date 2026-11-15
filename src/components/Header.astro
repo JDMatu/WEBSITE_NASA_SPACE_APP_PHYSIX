@@ -1,21 +1,39 @@
 ---
-import { meta, nav } from '../content/site';
+import { copy } from '../content';
 import PlayButton from './PlayButton.astro';
-import { url } from '../lib/util';
+import { inLocale, url } from '../lib/util';
+import { locales } from '../content';
+
+const L = Astro.currentLocale;
+const { meta, nav, ui } = copy(L);
 
 interface Props {
   home?: boolean;
 }
 const { home = false } = Astro.props;
-const link = (hash: string) => (home ? hash : `${url('/')}${hash}`);
+const link = (hash: string) => (home ? hash : `${url('/', L)}${hash}`);
+const current = L === 'es' ? 'es' : 'en';
 ---
 
 <header class="site-head">
   <div class="wrap site-head__in">
-    <a class="wordmark" href={home ? '#top' : url('/')} aria-label={`${meta.name} home`}><i></i>{meta.name}</a>
-    <nav class="site-nav" aria-label="Sections">
+    <a class="wordmark" href={home ? '#top' : url('/', L)} aria-label={`${meta.name} ${ui.home}`}><i></i>{meta.name}</a>
+    <nav class="site-nav" aria-label={ui.sections}>
       {nav.map((item) => <a href={link(item.href)}>{item.label}</a>)}
     </nav>
-    <div class="site-head__cta"><PlayButton size="sm" /></div>
+    <div class="site-head__cta">
+      <span class="lang" role="group" aria-label={ui.language}>
+        {
+          locales.map((l) =>
+            l === current ? (
+              <span class="lang__on" aria-current="true">{l.toUpperCase()}</span>
+            ) : (
+              <a href={inLocale(Astro.url.pathname, l)} hreflang={l} lang={l}>{l.toUpperCase()}</a>
+            ),
+          )
+        }
+      </span>
+      <PlayButton size="sm" />
+    </div>
   </div>
 </header>

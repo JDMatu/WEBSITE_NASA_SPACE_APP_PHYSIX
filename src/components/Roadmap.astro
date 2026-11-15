@@ -1,7 +1,10 @@
 ---
-import { facts, roadmap } from '../content/site';
+import { copy, facts } from '../content';
 import Icon from './Icon.astro';
 import SectionHead from './SectionHead.astro';
+
+const L = Astro.currentLocale;
+const { roadmap, ui } = copy(L);
 
 // When DONKI ships, the first "next" item moves to "works today".
 const works = facts.donkiIntegrated ? [...roadmap.works, roadmap.donkiWorks] : roadmap.works;

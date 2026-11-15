@@ -1,6 +1,9 @@
 ---
-import { problem } from '../content/site';
+import { copy } from '../content';
 import Shot from './Shot.astro';
+
+const L = Astro.currentLocale;
+const { problem, ui } = copy(L);
 ---
 
 <section class="section problem" id="problem" aria-labelledby="problem-title">

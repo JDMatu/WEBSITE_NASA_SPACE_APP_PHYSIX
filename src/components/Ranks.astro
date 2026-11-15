@@ -1,7 +1,10 @@
 ---
-import { facts, ranks } from '../content/site';
+import { copy, facts } from '../content';
 import SectionHead from './SectionHead.astro';
 import Shot from './Shot.astro';
+
+const L = Astro.currentLocale;
+const { ranks, ui } = copy(L);
 
 const win = facts.evalCurrentRules.winRateByRank;
 ---
@@ -30,11 +33,11 @@ const win = facts.evalCurrentRules.winRateByRank;
       <h3 class="h3" id="win-title">{ranks.chartTitle}</h3>
       <ul class="winchart__bars">
         {
-          win.map((w) => (
+          win.map((pct, i) => (
             <li>
-              <span class="winchart__label">{w.rank}</span>
-              <span class="winchart__track"><i style={`--v:${w.pct / 100}`} /></span>
-              <span class="winchart__val num">{w.pct} %</span>
+              <span class="winchart__label">{ranks.items[i]!.name}</span>
+              <span class="winchart__track"><i style={`--v:${pct / 100}`} /></span>
+              <span class="winchart__val num">{pct} %</span>
             </li>
           ))
         }

@@ -8,6 +8,8 @@ export default defineConfig({
   site: process.env.SITE_URL || undefined,
   base: process.env.BASE_PATH || '/',
   trailingSlash: 'ignore',
+  // English at the root, Spanish under /es/. Components read the language from the URL.
+  i18n: { locales: ['en', 'es'], defaultLocale: 'en' },
   compressHTML: true,
   build: { inlineStylesheets: 'auto' },
   devToolbar: { enabled: false },

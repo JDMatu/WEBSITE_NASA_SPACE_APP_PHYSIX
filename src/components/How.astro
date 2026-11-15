@@ -1,7 +1,10 @@
 ---
-import { how } from '../content/site';
+import { copy } from '../content';
 import SectionHead from './SectionHead.astro';
 import Shot from './Shot.astro';
+
+const L = Astro.currentLocale;
+const { how, ui } = copy(L);
 ---
 
 <section class="section section--tint how" id="how" aria-labelledby="how-title">
@@ -19,6 +22,7 @@ import Shot from './Shot.astro';
         ))
       }
     </ol>
+    {ui.shotsLanguageNote && <p class="figcap how__lang">{ui.shotsLanguageNote}</p>}
     <div class="how__notes">
       <p class="reveal">{how.note}</p>
       <p class="reveal" style="--d:80ms">{how.sol0}</p>

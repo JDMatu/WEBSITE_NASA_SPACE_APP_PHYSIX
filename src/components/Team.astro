@@ -1,8 +1,11 @@
 ---
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import { pending, team } from '../content/site';
+import { copy, pending } from '../content';
 import { fill } from '../lib/util';
+
+const L = Astro.currentLocale;
+const { team, ui } = copy(L);
 
 const photos = import.meta.glob<{ default: ImageMetadata }>('../assets/team/*.{jpg,jpeg,png,webp}', { eager: true });
 const photoOf = (file: string | null) => (file ? Object.entries(photos).find(([p]) => p.endsWith(`/${file}`))?.[1].default : undefined);
@@ -16,7 +19,7 @@ const initials = (name: string | null, i: number) =>
       <p class="kicker">{team.kicker}{pending.teamName ? ` · ${pending.teamName}` : ''}</p>
       <h2 class="h2" id="team-title">{team.title}</h2>
       <p class="lede" data-pending={pending.localEvent ? undefined : 'localEvent'}>
-        {pending.localEvent ? fill(team.builtAt, { event: pending.localEvent }) : team.builtAtPending}
+        {pending.localEvent ? fill(team.builtAt, { event: pending.localEvent }, L) : team.builtAtPending}
       </p>
     </header>
     <ul class="crew">

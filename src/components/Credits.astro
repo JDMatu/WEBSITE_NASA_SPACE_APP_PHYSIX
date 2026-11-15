@@ -1,6 +1,9 @@
 ---
-import { credits } from '../content/site';
+import { copy } from '../content';
 import SectionHead from './SectionHead.astro';
+
+const L = Astro.currentLocale;
+const { credits, ui } = copy(L);
 ---
 
 <section class="section credits" id="credits" aria-labelledby="credits-title">

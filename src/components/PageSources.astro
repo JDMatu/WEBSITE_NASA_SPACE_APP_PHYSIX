@@ -1,0 +1,118 @@
+---
+import Subpage from './Subpage.astro';
+import { copy, facts } from '../content';
+import data from '../content/sources.json';
+import { fill, longDate } from '../lib/util';
+
+const L = Astro.currentLocale;
+const { sourcesPage: c, ui } = copy(L);
+
+// The headline counts in the content file must match the synced source list.
+for (const key of ['total', 'sourced', 'measured', 'derived', 'gameDesign', 'citations'] as const) {
+  if (facts.constants[key] !== data.counts[key]) {
+    throw new Error(`facts.constants.${key} is ${facts.constants[key]} in src/content/site.ts but ${data.counts[key]} in src/content/sources.json. Update site.ts.`);
+  }
+}
+const winRates = facts.evalCurrentRules.winRateByRank.map((p) => `${p} %`).join(' / ');
+const evalValues: Record<string, unknown>[] = [{ ...facts.evalCurrentRules, winRates }, facts.evalPreviousAi];
+const testValues = { tests: facts.tests.passing, files: facts.tests.files, asOf: longDate(facts.tests.asOf, L) };
+const kindCounts = [data.counts.measured, data.counts.derived, data.counts.gameDesign];
+type Row = { id: string; value: string; unit: string; source: { text: string; url: string | null } | null; note: string };
+---
+
+<Subpage title={c.title} intro={c.intro} back={c.back}>
+  <ul class="plain" style="margin-top:28px">
+    {c.kinds.map((k, i) => <li><strong>{k.name} ({kindCounts[i]}).</strong> {k.body}</li>)}
+  </ul>
+  <p class="note" style="margin-top:20px"><span>{c.caveat}</span></p>
+  {ui.tablesNote && <p class="dim" style="margin-top:14px;font-size:15px">{ui.tablesNote}</p>}
+
+  {
+    ([[c.measuredTitle, data.measured], [c.derivedTitle, data.derived]] as [string, Row[]][]).map(([title, rows]) => (
+      <>
+        <h2>{title} ({rows.length})</h2>
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr><th scope="col">{ui.constant}</th><th scope="col">{ui.value}</th><th scope="col">{ui.unit}</th><th scope="col">{ui.source}</th><th scope="col">{ui.note}</th></tr>
+            </thead>
+            <tbody>
+              {
+                rows.map((r) => (
+                  <tr>
+                    <th scope="row"><code>{r.id}</code></th>
+                    <td class="num">{r.value}</td>
+                    <td>{r.unit}</td>
+                    <td>{r.source?.url ? <a href={r.source.url} rel="noopener">{r.source.text}</a> : r.source?.text}</td>
+                    <td class="dim">{r.note}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </>
+    ))
+  }
+
+  <h2>{c.designTitle} ({data.gameDesign.length})</h2>
+  <p>{c.designIntro}</p>
+  <details>
+    <summary>{c.designToggle}</summary>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th scope="col">{ui.constant}</th><th scope="col">{ui.value}</th><th scope="col">{ui.unit}</th><th scope="col">{ui.why}</th></tr>
+        </thead>
+        <tbody>
+          {data.gameDesign.map((r) => <tr><th scope="row"><code>{r.id}</code></th><td class="num">{r.value}</td><td>{r.unit}</td><td class="dim">{r.why}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <h2>{c.eventsRealTitle} ({data.eventsReal.length})</h2>
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr><th scope="col">{ui.event}</th><th scope="col">{ui.affects}</th><th scope="col">{ui.effects}</th><th scope="col">{ui.source}</th></tr>
+      </thead>
+      <tbody>
+        {data.eventsReal.map((e) => <tr><th scope="row">{e.name}</th><td>{e.affects.replace(/_/g, ' ')}</td><td class="num">{e.effects}</td><td>{e.source?.url ? <a href={e.source.url} rel="noopener">{e.source.text}</a> : ''}</td></tr>)}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>{c.eventsTrainingTitle} ({data.eventsTraining.length})</h2>
+  <p>{c.eventsTrainingIntro}</p>
+  <ul class="plain" style="margin-top:12px">
+    {data.eventsTraining.map((e) => <li>{e.name}</li>)}
+  </ul>
+
+  <h2>{c.citationsTitle} ({data.citations.length})</h2>
+  <ul class="plain">
+    {data.citations.map((x) => <li><a href={x.url} rel="noopener">{x.title}</a>. {x.organisation}, {x.year}.</li>)}
+  </ul>
+
+  <h2 id="evaluation">{c.evalTitle}</h2>
+  <p>{c.evalIntro}</p>
+  {
+    c.evalRuns.map((run, i) => (
+      <>
+        <h3>{run.title}</h3>
+        <p class="dim">{fill(run.scope, evalValues[i]!, L)}</p>
+        <div class="tablewrap">
+          <table style="min-width:520px">
+            <tbody>
+              {run.rows.map(([k, v]) => <tr><th scope="row">{fill(k!, evalValues[i]!, L)}</th><td class="num">{fill(v!, evalValues[i]!, L)}</td></tr>)}
+            </tbody>
+          </table>
+        </div>
+      </>
+    ))
+  }
+  <h3>{c.evalLimitsTitle}</h3>
+  <ul class="plain">
+    {c.evalLimits.map((l) => <li>{fill(l, testValues, L)}</li>)}
+  </ul>
+</Subpage>

@@ -72,7 +72,7 @@ export const facts = {
   constants: { total: 147, sourced: 29, measured: 24, derived: 5, gameDesign: 118, citations: 19 },
 
   /** README.md, "Testing and tools". */
-  tests: { passing: 349, files: 31, asOf: 'November 14, 2026' },
+  tests: { passing: 349, files: 31, asOf: '2026-11-14' },
 
   /**
    * The current four-rank game. Rules only, no AI model. docs/PENDING.md, "Not verified".
@@ -85,12 +85,8 @@ export const facts = {
     violations: 0,
     optionsValid: 1885,
     optionsTotal: 1885,
-    winRateByRank: [
-      { rank: 'Trainee', pct: 90 },
-      { rank: 'Cadet', pct: 64 },
-      { rank: 'Specialist', pct: 57 },
-      { rank: 'Commander', pct: 25 },
-    ],
+    /** In rank order: Trainee, Cadet, Specialist, Commander (names come from `ranks.items`). */
+    winRateByRank: [90, 64, 57, 25],
   },
 
   /** The previous three-rank version, with the real AI model. docs/EVALS.md (2026-11-14). */
@@ -98,6 +94,7 @@ export const facts = {
     games: 50,
     directorDecisions: 500,
     directorValidFirstTry: 499,
+    directorAccepted: 500,
     states: 1050,
     violations: 0,
     narrationLines: 2184,
@@ -115,13 +112,33 @@ export const facts = {
     costPerSessionUsd: 0.112,
   },
 
+  /**
+   * The storm sequence at the top of the page. One real run of the game's simulator: seed 1,
+   * Trainee rank, a scripted crew that always takes the first option, rules director
+   * (`npm run play -- --rank trainee --policy first_option --seed 1 --locale en` in the game repo).
+   * `tau` is the sky opacity in the GAME (it peaks at 4.0 in this run). Never put the real 2018
+   * value (10.8) on these images. `frame` is the image pair in src/assets/frames/.
+   */
+  stormRun: {
+    /** kWh the base uses per sol. */
+    demand: 88,
+    steps: [
+      { sol: 1, frame: 'sol01', tau: 0.5, solar: 110, battery: 150, state: 'clear' },
+      { sol: 2, frame: 'sol02', tau: 2.2, solar: 63, battery: 123, state: 'storm' },
+      { sol: 3, frame: 'sol03', tau: 3.1, solar: 45, battery: 78, state: 'storm' },
+      { sol: 4, frame: 'sol04', tau: 4.0, solar: 29, battery: 19, state: 'storm' },
+      /** `available`: kWh the base actually had on the brownout sol. */
+      { sol: 5, frame: 'sol05', tau: 4.0, solar: 32, battery: 0, state: 'brownout', available: 51.5 },
+      { sol: 8, frame: 'sol08', tau: 0.5, solar: 111, battery: 27, state: 'clear' },
+    ] as { sol: number; frame: string; tau: number; solar: number; battery: number; state: 'clear' | 'storm' | 'brownout'; available?: number }[],
+  },
+
   /** Is NASA DONKI space-weather data integrated in the game? Flip to true only when it ships. */
   donkiIntegrated: false,
 
   /** The closed action vocabulary: packages/contracts/src/actions.ts. */
   actionCount: 10,
   solsPerMission: 10,
-  ages: '7 to 15',
 };
 
 // ============================================================================================
@@ -134,7 +151,40 @@ export const meta = {
   description:
     'PHYSIX is a browser mission trainer for students aged 7 to 15. Run a Mars base through the real 2018 dust storm. An AI instructor proposes; a simulator built on published NASA values decides.',
   lang: 'en',
+  /** Shown in the language switch. */
+  langName: 'English',
   nonAffiliation: 'PHYSIX is not affiliated with or endorsed by NASA.',
+};
+
+/** Small interface words: labels, table headings, accessibility text. */
+export const ui = {
+  skip: 'Skip to content',
+  sections: 'Sections',
+  home: 'home',
+  language: 'Language',
+  playSoonShort: 'Play: soon',
+  videoTitle: 'PHYSIX video',
+  quantity: 'Quantity',
+  value: 'Value',
+  source: 'Source',
+  constant: 'Constant',
+  unit: 'Unit',
+  note: 'Note',
+  why: 'Why',
+  event: 'Event',
+  affects: 'Affects',
+  effects: 'Effects in the game',
+  job: 'Job',
+  model: 'Model',
+  can: 'What it can affect',
+  cannot: 'What it cannot affect',
+  withoutAi: 'Without AI',
+  notFoundTitle: 'Lost on Mars',
+  notFoundBody: 'This page does not exist. The base is this way.',
+  /** Shown under the tables of the sources page in languages other than English. Empty in English. */
+  tablesNote: '',
+  /** Shown under the screenshots in languages other than English. Empty in English. */
+  shotsLanguageNote: '',
 };
 
 export const nav = [
@@ -160,6 +210,9 @@ export const hero = {
   title: ['Run a Mars base.', 'Make the trade-offs real.'],
   body:
     'PHYSIX is a browser game for students aged 7 to 15. You run a base on Mars through the real 2018 dust storm and balance air and water, power, radiation shielding and food. An AI instructor sets the problems. A simulator built on published NASA values decides what really happens.',
+  /** Shorter version of `body`, shown on phones held upright so the base stays in view. */
+  bodyShort:
+    'A browser game for students aged 7 to 15. Run a Mars base through the real 2018 dust storm. An AI instructor sets the problems; a simulator built on published NASA values decides what really happens.',
   watchLabel: 'Watch the 3-minute tour',
   watchPendingLabel: 'See how it works',
   small: ['Browser only', 'No account', 'English and Español'],
@@ -168,81 +221,47 @@ export const hero = {
 };
 
 /**
- * The storm sequence. Numbers are from the game's simulator: seed 1, Trainee rank, a scripted crew
- * that always takes the first option, rules director
- * (`npm run play -- --rank trainee --policy first_option --seed 1 --locale en` in the game repo).
- * `tau` is the sky opacity in the GAME (it peaks at 4.0 in this run). Never put the real 2018
- * value (10.8) on these images.
+ * The storm sequence: the words. The numbers are in `stormRun` (FACTS block) and are filled into
+ * the {placeholders}: {tau} {prevTau} {solar} {battery} {demand} {available}.
+ * One entry per step of stormRun.steps, in the same order.
  */
 export const storm = {
-  hud: { sol: 'Sol', sky: 'Sky opacity', solar: 'Solar today', battery: 'Battery', unit: 'kWh', demand: 'The base uses 88 kWh per sol' },
-  batteryCapacity: 150,
-  solarClear: 111,
+  hud: { sol: 'Sol', sky: 'Sky opacity', solar: 'Solar today', battery: 'Battery', unit: 'kWh', demand: 'The base uses {demand} kWh per sol' },
   steps: [
     {
-      sol: 1,
-      frame: 'sol01',
       tag: 'Clear sky',
-      tau: 0.5,
-      solar: 110,
-      battery: 150,
       title: 'Sol 1. A quiet morning on Mars.',
-      body: 'The solar panels make 110 kWh, more than the 88 the base uses. The battery is full. The crew does science and piles dirt on the habitat.',
+      body: 'The solar panels make {solar} kWh, more than the {demand} the base uses. The battery is full. The crew does science and piles dirt on the habitat.',
       alt: 'The base on a clear day, with a full battery.',
     },
     {
-      sol: 2,
-      frame: 'sol02',
       tag: 'Dust storm',
-      tau: 2.2,
-      solar: 63,
-      battery: 123,
       title: 'Sol 2. The dust arrives.',
-      body: 'The sky opacity jumps from 0.5 to 2.2. The panels make 63 kWh and the base still needs 88. The battery starts paying the difference.',
+      body: 'The sky opacity jumps from {prevTau} to {tau}. The panels make {solar} kWh and the base still needs {demand}. The battery starts paying the difference.',
       alt: 'The same base under a dusty orange sky as the storm arrives.',
     },
     {
-      sol: 3,
-      frame: 'sol03',
       tag: 'Dust storm',
-      tau: 3.1,
-      solar: 45,
-      battery: 78,
       title: 'Sol 3. The storm thickens.',
-      body: 'Only 45 kWh reach the panels. Half the battery is gone and the forecast says it gets worse.',
+      body: 'Only {solar} kWh reach the panels. Half the battery is gone and the forecast says it gets worse.',
       alt: 'The base in thicker dust; the light is dimmer and redder.',
     },
     {
-      sol: 4,
-      frame: 'sol04',
       tag: 'Dust storm + solar event',
-      tau: 4.0,
-      solar: 29,
-      battery: 19,
       title: 'Sol 4. A solar event hits inside the storm.',
-      body: 'Radiation rises while the panels make 29 kWh. Shelter the crew or keep working? The battery is down to 19 kWh.',
+      body: 'Radiation rises while the panels make {solar} kWh. Shelter the crew or keep working? The battery is down to {battery} kWh.',
       alt: 'The base in a dark storm during a solar particle event; the base lights are dimmer.',
     },
     {
-      sol: 5,
-      frame: 'sol05',
       tag: 'Brownout',
-      tau: 4.0,
-      solar: 32,
-      battery: 0,
       title: 'Sol 5. The battery is empty.',
-      body: 'Brownout. The base asks for 88 kWh and only 51.5 are there. Two systems are cut, life support last.',
+      body: 'Brownout. The base asks for {demand} kWh and only {available} are there. Two systems are cut, life support last.',
       alt: 'The base in the dark storm with most of its lights off.',
     },
     {
-      sol: 8,
-      frame: 'sol08',
       tag: 'Clear sky',
-      tau: 0.5,
-      solar: 111,
-      battery: 27,
       title: 'Sol 8. The sky clears.',
-      body: 'The panels are back to 111 kWh and the battery begins to recover. This crew finished its ten sols. Would yours?',
+      body: 'The panels are back to {solar} kWh and the battery begins to recover. This crew finished its ten sols. Would yours?',
       alt: 'The base under a clear sky again, with a regolith mound piled against the habitat.',
     },
   ],
@@ -368,6 +387,8 @@ export const ai = {
     { label: 'The base', sub: 'what really happens' },
   ],
   pipelineReject: { label: '"Give us infinite oxygen"', sub: 'No such action. Refused, with the reason.' },
+  pipelineAria:
+    'Diagram: the player\'s words go to the AI instructor, which can only pick from a closed list of ten actions. The simulator checks the limits and computes the result. An impossible request has no action and is refused.',
   points: [
     { title: 'A closed list of ten actions.', body: 'The AI can only choose from them. None of them sets a resource directly.' },
     { title: 'No AI? The whole game still works.', body: 'With no key, no network or a slow answer, built-in rules do every AI job with the same contract.' },
@@ -447,7 +468,7 @@ export const evidence = {
   ],
   missesTitle: 'Where we missed our own targets',
   misses: [
-    'Variety: the AI director produced {varietyAi} distinct event sequences in 50 games; the rules director, {varietyRules}. The goal is no repeats.',
+    'Variety: the AI director produced {varietyAi} distinct event sequences in {games} games; the rules director, {varietyRules}. The goal is no repeats.',
     'Balance: win rates of novice and expert scripts were {winSpreadPoints} points apart with the AI director; our target was {winSpreadTarget}.',
     'Without the AI, the rule-based plan reader gets {rulesInterpreterPct} % of the labelled texts right; our target is {rulesInterpreterTarget} %.',
   ],
@@ -682,24 +703,24 @@ export const sourcesPage = {
   evalRuns: [
     {
       title: 'Current game, four ranks, rules only',
-      scope: '50 simulated games with every AI job answered by the built-in rules. No AI model.',
+      scope: '{games} simulated games with every AI job answered by the built-in rules. No AI model.',
       rows: [
         ['Engine limits broken', '0 of {states} states'],
         ['Suggested plan options valid', '{optionsValid} of {optionsTotal}'],
-        ['Missions won at Trainee / Cadet / Specialist / Commander', '90 % / 64 % / 57 % / 25 %'],
+        ['Missions won at Trainee / Cadet / Specialist / Commander', '{winRates}'],
       ],
     },
     {
       title: 'Previous version, three ranks, with the AI model',
-      scope: '50 simulated games on November 14, 2026, before the Trainee rank was added. Claude Haiku 5.5 for the director, narrator and plan reader; Claude Sonnet 5.5 for the profiler and tutor in 8 of the games. Not yet repeated for the four-rank game.',
+      scope: '{games} simulated games on November 14, 2026, before the Trainee rank was added. Claude Haiku 5.5 for the director, narrator and plan reader; Claude Sonnet 5.5 for the profiler and tutor in 8 of the games. Not yet repeated for the four-rank game.',
       rows: [
         ['Director decisions valid on the first try', '{directorValidFirstTry} of {directorDecisions} (the other after one retry)'],
-        ['Director decisions accepted by the engine', '500 of 500'],
+        ['Director decisions accepted by the engine', '{directorAccepted} of {directorDecisions}'],
         ['Engine limits broken', '0 of {states} states'],
         ['Narration lines faithful to the engine\'s numbers', '{narrationLines} of {narrationLines}'],
         ['Free-text plans read correctly', '{interpreterPct} % ({interpreterRight} of {interpreterTexts} labelled texts)'],
         ['Interpreter actions outside the closed list', '{actionsOutsideList} of {actionsEmitted}'],
-        ['Distinct event sequences in 50 games', '{varietyAi} with the AI director, {varietyRules} with the rules director (goal: no repeats)'],
+        ['Distinct event sequences in {games} games', '{varietyAi} with the AI director, {varietyRules} with the rules director (goal: no repeats)'],
         ['Win-rate spread between novice and expert scripts', '{winSpreadPoints} points (our target: {winSpreadTarget})'],
         ['Rule-based plan reader, without the AI', '{rulesInterpreterPct} % (our target: {rulesInterpreterTarget} %)'],
         ['Estimated AI cost per full session', '{costPerSessionUsd} USD at list prices'],

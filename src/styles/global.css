@@ -100,7 +100,7 @@ a:hover { text-decoration-color: var(--amber); }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 26px;
   font-family: var(--font-head); font-weight: 600; font-size: 19px; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none;
-  background: transparent; border: 1px solid var(--hair-strong); color: var(--text); cursor: pointer;
+  background: transparent; border: 1px solid var(--hair-strong); color: var(--text); cursor: pointer; white-space: nowrap;
   transition: background 0.18s var(--ease), color 0.18s var(--ease), border-color 0.18s var(--ease), transform 0.1s;
 }
 .btn:hover { border-color: var(--amber); }
@@ -172,10 +172,21 @@ a:hover { text-decoration-color: var(--amber); }
   padding: 8px 0;
 }
 .site-nav a:hover { color: var(--text); }
-.site-head__cta { margin-left: 8px; }
+.site-head__cta { margin-left: 8px; display: flex; align-items: center; gap: 14px; }
+.lang { display: inline-flex; align-items: center; font-family: var(--font-head); font-weight: 600; font-size: 14px; letter-spacing: 0.12em; border: 1px solid var(--hair); }
+.lang > * { padding: 9px 10px; min-width: 38px; text-align: center; text-decoration: none; color: var(--dim); }
+.lang a:hover { color: var(--text); }
+.lang__on { color: var(--ink); background: var(--simsup); }
 @media (max-width: 860px) {
   .site-nav { display: none; }
   .site-head__cta { margin-left: auto; }
+}
+@media (max-width: 420px) {
+  .site-head__in { gap: 10px; }
+  .site-head__cta { gap: 8px; }
+  .wordmark { font-size: 21px; letter-spacing: 0.16em; gap: 8px; }
+  .lang > * { padding: 8px 7px; min-width: 32px; font-size: 13px; }
+  .site-head .btn-sm { padding: 0 10px; font-size: 13.5px; letter-spacing: 0.08em; }
 }
 
 /* ------------------------------------------------------------------ footer */

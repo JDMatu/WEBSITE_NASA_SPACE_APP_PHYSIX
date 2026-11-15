@@ -1,8 +1,11 @@
 ---
-import { closing, hero, pending } from '../content/site';
+import { copy, pending } from '../content';
 import Frame from './Frame.astro';
 import Icon from './Icon.astro';
 import PlayButton from './PlayButton.astro';
+
+const L = Astro.currentLocale;
+const { closing, hero, ui } = copy(L);
 ---
 
 <section class="closing" aria-labelledby="closing-title">

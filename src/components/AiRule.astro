@@ -1,7 +1,10 @@
 ---
-import { ai } from '../content/site';
+import { copy } from '../content';
 import Icon from './Icon.astro';
 import Shot from './Shot.astro';
+
+const L = Astro.currentLocale;
+const { ai, ui } = copy(L);
 ---
 
 <section class="section section--tint airule" id="ai" aria-labelledby="ai-title">
@@ -17,7 +20,7 @@ import Shot from './Shot.astro';
     </div>
 
     <!-- The pipeline, drawn in HTML: an accepted plan flows through; an impossible one stops at the list. -->
-    <div class="pipe panel panel--ticks reveal" role="img" aria-label="Diagram: the player's words go to the AI instructor, which can only pick from a closed list of ten actions. The simulator checks the limits and computes the result. An impossible request has no action and is refused.">
+    <div class="pipe panel panel--ticks reveal" role="img" aria-label={ai.pipelineAria}>
       <ol class="pipe__row" aria-hidden="true">
         {
           ai.pipeline.map((node, i) => (

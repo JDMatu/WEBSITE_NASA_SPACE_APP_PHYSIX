@@ -1,6 +1,9 @@
 ---
-import { pending, play } from '../content/site';
+import { copy, pending } from '../content';
 import Icon from './Icon.astro';
+
+const L = Astro.currentLocale;
+const { play, ui } = copy(L);
 
 interface Props {
   size?: 'sm' | 'lg';
@@ -21,7 +24,7 @@ const noteText = live ? (pending.playMode === 'ai' ? play.noteAi : play.noteRule
       </a>
     ) : (
       <span class:list={['btn', 'btn-pending', size === 'sm' && 'btn-sm']} data-pending="playUrl">
-        {size === 'sm' ? 'Play: soon' : play.pendingLabel}
+        {size === 'sm' ? ui.playSoonShort : play.pendingLabel}
       </span>
     )
   }

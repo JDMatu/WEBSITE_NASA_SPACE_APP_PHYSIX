@@ -2,8 +2,11 @@
 // Shared frame for the text sub-pages.
 import Base from '../layouts/Base.astro';
 import Icon from './Icon.astro';
-import { meta } from '../content/site';
+import { copy } from '../content';
 import { url } from '../lib/util';
+
+const L = Astro.currentLocale;
+const { meta, ui } = copy(L);
 
 interface Props {
   title: string;
@@ -16,11 +19,11 @@ const { title, intro, back } = Astro.props;
 <Base title={`${title} · ${meta.name}`} description={intro}>
   <article class="sub">
     <div class="wrap sub__in">
-      <p class="sub__back"><a class="link-arrow link-arrow--back" href={url('/')}><Icon name="arrow" />{back}</a></p>
+      <p class="sub__back"><a class="link-arrow link-arrow--back" href={url('/', L)}><Icon name="arrow" />{back}</a></p>
       <h1 class="h2 h2--wide">{title}</h1>
       <p class="lede">{intro}</p>
       <slot />
-      <p class="sub__back sub__back--end"><a class="link-arrow link-arrow--back" href={url('/')}><Icon name="arrow" />{back}</a></p>
+      <p class="sub__back sub__back--end"><a class="link-arrow link-arrow--back" href={url('/', L)}><Icon name="arrow" />{back}</a></p>
     </div>
   </article>
 </Base>
