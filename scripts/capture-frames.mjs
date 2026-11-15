@@ -41,7 +41,7 @@ const FRAMES = [
 const VIEWS = [
   // The insets tell the game's camera which part of the screen our text covers.
   { id: 'wide', width: 1920, height: 1080, insets: '0.06,0,0.04,0.3' },
-  { id: 'tall', width: 900, height: 1600, insets: '0.04,0,0.4,0' },
+  { id: 'tall', width: 900, height: 1600, insets: '0.08,0,0.5,0' },
 ];
 
 const browser = await chromium.launch({

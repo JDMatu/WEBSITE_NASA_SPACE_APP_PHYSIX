@@ -18,15 +18,7 @@ import pia from '../assets/PIA22930.jpg';
         <p class="note science__honest"><Icon name="info" /><span>{science.honesty}</span></p>
       </div>
       <div class="science__real reveal" style="--d:120ms">
-        <figure class="science__img">
-          <a href={science.image.href} rel="noopener">
-            <Image src={pia} alt={science.image.alt} width={448} height={192} quality={90} />
-          </a>
-          <figcaption class="figcap">
-            {science.image.caption}<br /><span class="credit">{science.image.credit}</span>
-          </figcaption>
-        </figure>
-        <dl class="real">
+        <dl class="real panel panel--ticks">
           {
             science.real.map((r) => (
               <div>
@@ -37,6 +29,14 @@ import pia from '../assets/PIA22930.jpg';
           }
         </dl>
         <p class="figcap">{science.realNote}</p>
+        <figure class="science__img">
+          <a href={science.image.href} rel="noopener">
+            <Image src={pia} alt={science.image.alt} width={448} height={192} quality={90} />
+          </a>
+          <figcaption class="figcap">
+            {science.image.caption}<br /><span class="credit">{science.image.credit}</span>
+          </figcaption>
+        </figure>
       </div>
     </div>
 
@@ -74,9 +74,11 @@ import pia from '../assets/PIA22930.jpg';
   .science__top { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
   .science__body { margin-top: 22px; font-size: 18px; }
   .science__honest { margin-top: 24px; max-width: 480px; }
-  .science__img :global(img) { width: 100%; image-rendering: pixelated; border: 1px solid var(--hair); background: #000; }
+  .science__img { margin-top: 26px; display: grid; grid-template-columns: 224px 1fr; gap: 16px; align-items: center; }
+  .science__img :global(img) { width: 224px; image-rendering: pixelated; border: 1px solid var(--hair); }
+  .science__img .figcap { margin-top: 0; }
   .credit { color: var(--text); }
-  .real { margin-top: 22px; display: grid; grid-template-columns: repeat(3, auto); gap: 12px 24px; justify-content: start; }
+  .real { padding: 22px 24px; display: grid; grid-template-columns: repeat(3, auto); gap: 14px 28px; justify-content: space-between; }
   .real dd { font-size: clamp(22px, 2.4vw, 30px); line-height: 1.1; color: var(--simsup); white-space: nowrap; }
   .real dt { margin-top: 6px; font-size: 13.5px; line-height: 1.35; color: var(--dim); max-width: 18ch; }
   .science__table { margin-top: clamp(40px, 6vw, 72px); }
@@ -91,6 +93,7 @@ import pia from '../assets/PIA22930.jpg';
   .science__foot p { max-width: 60ch; }
   @media (max-width: 900px) {
     .science__top, .science__foot { grid-template-columns: 1fr; }
-    .real { grid-template-columns: 1fr 1fr; }
+    .real { grid-template-columns: 1fr 1fr; justify-content: start; }
+    .science__img { grid-template-columns: 1fr; }
   }
 </style>
