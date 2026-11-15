@@ -574,7 +574,7 @@ export const footer = {
   privacyTitle: 'Privacy',
   privacy: 'This site has no accounts, no trackers and no cookies. The game stores only settings and a skill profile in your browser.',
   licenseTitle: 'Licence',
-  licensePending: 'Licence to be decided by the team.',
+  licensePending: 'to be decided by the team.',
   contactTitle: 'Contact',
   contactPending: 'Contact e-mail pending.',
   repoLabel: 'Source code',

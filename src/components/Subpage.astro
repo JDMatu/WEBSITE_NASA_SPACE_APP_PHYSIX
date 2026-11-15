@@ -40,13 +40,13 @@ const { title, intro, back } = Astro.props;
   .sub ul.plain li { padding-left: 18px; position: relative; }
   .sub ul.plain li::before { content: ''; position: absolute; left: 0; top: 0.7em; width: 8px; height: 1px; background: var(--amber); }
   .sub .tablewrap { margin-top: 14px; overflow-x: auto; border: 1px solid var(--hair); }
-  .sub table { width: 100%; border-collapse: collapse; font-size: 14.5px; line-height: 1.45; min-width: 720px; }
+  .sub table { width: 100%; border-collapse: collapse; font-size: 14.5px; line-height: 1.45; min-width: 860px; }
   .sub th, .sub td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--hair); vertical-align: top; }
   .sub thead th { font-family: var(--font-head); font-weight: 600; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); background: rgba(255, 255, 255, 0.03); white-space: nowrap; }
   .sub tbody tr:last-child > * { border-bottom: 0; }
   .sub tbody th { font-weight: 500; }
   .sub td.num, .sub code { font-family: var(--font-mono); font-size: 13.5px; }
-  .sub code { color: var(--simsup); overflow-wrap: anywhere; }
+  .sub code { color: var(--simsup); white-space: nowrap; }
   .sub td.dim { color: var(--dim); }
   .sub details { margin-top: 14px; }
   .sub summary { cursor: pointer; padding: 12px 16px; border: 1px solid var(--hair-strong); font-family: var(--font-head); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; font-size: 15px; width: fit-content; }

@@ -91,6 +91,11 @@ import pia from '../assets/PIA22930.jpg';
   td.num { white-space: nowrap; color: var(--simsup); }
   .science__foot { margin-top: 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 48px; font-size: 15.5px; }
   .science__foot p { max-width: 60ch; }
+  @media (max-width: 600px) {
+    table { min-width: 0; font-size: 14.5px; }
+    th, td { padding: 10px 10px; }
+    td.num { white-space: normal; }
+  }
   @media (max-width: 900px) {
     .science__top, .science__foot { grid-template-columns: 1fr; }
     .real { grid-template-columns: 1fr 1fr; justify-content: start; }
