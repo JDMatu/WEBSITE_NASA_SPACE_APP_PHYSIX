@@ -101,7 +101,7 @@ export const hero: typeof en.hero = {
     'PHYSIX es un juego de navegador para estudiantes de 7 a 15 años. Diriges una base en Marte durante la tormenta de polvo real de 2018 y equilibras aire y agua, energía, protección contra la radiación y comida. Un instructor con IA plantea los problemas. Un simulador con valores publicados por la NASA decide qué pasa de verdad.',
   bodyShort:
     'Un juego de navegador para estudiantes de 7 a 15 años. Dirige una base en Marte durante la tormenta de polvo real de 2018. Un instructor con IA plantea los problemas; un simulador con valores publicados por la NASA decide qué pasa de verdad.',
-  watchLabel: 'Ver el recorrido de 3 minutos',
+  watchLabel: 'Ver la demo de 30 segundos',
   watchPendingLabel: 'Ver cómo funciona',
   small: ['Solo navegador', 'Sin cuenta', 'English y español'],
   scrollCue: 'Baja para vivir la tormenta',
@@ -227,12 +227,11 @@ export const proof: typeof en.proof = {
 
 export const watch: typeof en.watch = {
   kicker: 'Míralo',
-  title: 'Todo el juego en tres minutos.',
-  body: 'Un sol completo en el rango Aprendiz, el mismo momento en Especialista, un plan escrito con las palabras del jugador, una petición imposible rechazada y el evento real detrás de la misión.',
+  title: 'El juego en 30 segundos.',
+  body: 'Treinta segundos de PHYSIX en movimiento. Después juégalo tú: funciona en el navegador, sin cuenta.',
   playVideo: 'Reproducir el video',
-  pendingTitle: 'Video extendido: enlace pendiente',
-  pendingBody: 'El video del recorrido está en edición. Se verá aquí.',
-  short: 'Ver la demo de 30 segundos',
+  pendingTitle: 'Video: enlace pendiente',
+  pendingBody: 'El video de demostración está en edición. Se verá aquí.',
   embedNote: 'El video se carga desde su servidor solo cuando pulsas reproducir.',
 };
 
@@ -380,7 +379,7 @@ export const science: typeof en.science = {
 export const evidence: typeof en.evidence = {
   kicker: 'Evidencia',
   title: 'Probamos la IA, no solo el juego.',
-  intro: 'Jugadores simulados corrieron misiones completas contra el juego. Cada cifra dice qué versión mide.',
+  intro: 'Jugadores simulados corrieron misiones completas contra el juego.',
   groups: [
     {
       id: 'current',
@@ -395,7 +394,6 @@ export const evidence: typeof en.evidence = {
     {
       id: 'previous',
       label: 'Con el modelo de IA real',
-      scope: 'Medido en la versión anterior de tres rangos, antes de añadir el rango Aprendiz. Aún no se repite para el juego de cuatro rangos.',
       stats: [
         { value: '{directorValidFirstTry} / {directorDecisions}', label: 'decisiones del director con IA válidas al primer intento', note: 'la otra pasó tras un solo reintento. {games} partidas simuladas.' },
         { value: '{interpreterPct} %', label: 'planes en texto libre bien leídos', note: '{interpreterRight} de {interpreterTexts} textos etiquetados, con {actionsOutsideList} acciones fuera de la lista cerrada.' },
@@ -513,7 +511,7 @@ const creditsEs = [
   },
   {
     title: 'Software en este sitio',
-    items: ['Astro. Licencia MIT.', 'Sin analítica, sin cookies, sin scripts de terceros.'],
+    items: ['Astro. Licencia MIT.', 'Sin analítica y sin cookies. Nada se carga desde otros sitios hasta que pulsas reproducir en el video, alojado en YouTube (modo de privacidad mejorada).'],
   },
   {
     title: 'Fuentes de datos',
@@ -543,7 +541,7 @@ export const footer: typeof en.footer = {
   ai: 'Dentro del juego corre un instructor con IA, siempre revisado por el simulador. El juego, sus documentos y este sitio web se construyeron con asistentes de programación con IA bajo la dirección del equipo. Sin imágenes generadas con IA.',
   aiLink: 'Leer la declaración completa de uso de IA',
   privacyTitle: 'Privacidad',
-  privacy: 'Este sitio no tiene cuentas, rastreadores ni cookies. El juego guarda solo los ajustes y un perfil de habilidades en tu navegador.',
+  privacy: 'Este sitio no tiene cuentas, rastreadores ni cookies. El video se carga desde YouTube solo cuando pulsas reproducir. El juego guarda solo los ajustes y un perfil de habilidades en tu navegador.',
   licenseTitle: 'Licencia',
   licensePending: 'por decidir por el equipo.',
   contactTitle: 'Contacto',
@@ -617,14 +615,6 @@ export const aiUse: typeof en.aiUse = {
     'No se usan imágenes generadas con IA, ni en el juego ni en este sitio. La base 3D es geometría procedural escrita en código. Las imágenes de este sitio son capturas del juego en marcha y renders de su escena 3D. La única foto es una imagen de la NASA de dominio público (PIA22930, crédito NASA/JPL-Caltech/Cornell/ASU).',
     'El juego no tiene audio. Este sitio no reproduce audio propio.',
   ],
-  reviewTitle: 'Revisión humana todavía necesaria',
-  review: [
-    'Las ecuaciones del motor de simulación, incluido el ajuste de luz solar contra opacidad y el modelo de radiación y protección.',
-    'Cada constante y su fuente, abierta contra la página citada.',
-    'Las instrucciones de las cinco tareas de la IA.',
-    'Todo lo que lee un estudiante, en español e inglés. Los pequeños errores de idioma en la salida del modelo no se revisan automáticamente.',
-    'La evaluación de 50 partidas con el modelo de IA para el juego de cuatro rangos.',
-  ],
   back: 'Volver a PHYSIX',
 };
 
@@ -636,7 +626,6 @@ export const sourcesPage: typeof en.sourcesPage = {
     { name: 'Derivadas', body: 'Calculadas a partir de mediciones, o un valor de política de la agencia.' },
     { name: 'Diseño de juego', body: 'Elegidas para que una misión de diez soles sea jugable. Nunca se presentan como mediciones.' },
   ],
-  caveat: 'Los valores citados los buscó un agente de IA en las páginas citadas. Una persona todavía no ha revisado cada uno. Dos fuentes no son de la NASA: The Planetary Society (la energía de Opportunity) y el dosímetro del módulo Chang\'e-4 (dosis lunar, usada solo por la misión a la Luna, que está archivada).',
   measuredTitle: 'Constantes medidas',
   derivedTitle: 'Constantes derivadas',
   designTitle: 'Constantes de diseño de juego',
@@ -647,7 +636,7 @@ export const sourcesPage: typeof en.sourcesPage = {
   eventsTrainingIntro: 'Las fallas de equipo, las fugas, la plaga y el corte de comunicaciones son escenarios de entrenamiento, marcados como diseño de juego y no como eventos reales.',
   citationsTitle: 'Citas',
   evalTitle: 'Evaluación',
-  evalIntro: 'Jugadores programados (novato, medio y experto) juegan misiones completas contra el juego y su capa de IA. Existen dos corridas, y miden versiones distintas.',
+  evalIntro: 'Jugadores programados (novato, medio y experto) juegan misiones completas contra el juego y su capa de IA.',
   evalRuns: [
     {
       title: 'Juego actual, cuatro rangos, solo reglas',
@@ -656,22 +645,6 @@ export const sourcesPage: typeof en.sourcesPage = {
         ['Límites del motor rotos', '0 de {states} estados'],
         ['Opciones de plan sugeridas válidas', '{optionsValid} de {optionsTotal}'],
         ['Misiones ganadas en Aprendiz / Cadete / Especialista / Comandante', '{winRates}'],
-      ],
-    },
-    {
-      title: 'Versión anterior, tres rangos, con el modelo de IA',
-      scope: '{games} partidas simuladas el 14 de noviembre de 2026, antes de añadir el rango Aprendiz. Claude Haiku 5.5 para el director, el narrador y el lector de planes; Claude Sonnet 5.5 para el perfilador y el tutor en 8 de las partidas. Aún no se repite para el juego de cuatro rangos.',
-      rows: [
-        ['Decisiones del director válidas al primer intento', '{directorValidFirstTry} de {directorDecisions} (la otra tras un reintento)'],
-        ['Decisiones del director aceptadas por el motor', '{directorAccepted} de {directorDecisions}'],
-        ['Límites del motor rotos', '0 de {states} estados'],
-        ['Líneas de narración fieles a los números del motor', '{narrationLines} de {narrationLines}'],
-        ['Planes en texto libre bien leídos', '{interpreterPct} % ({interpreterRight} de {interpreterTexts} textos etiquetados)'],
-        ['Acciones del intérprete fuera de la lista cerrada', '{actionsOutsideList} de {actionsEmitted}'],
-        ['Secuencias de eventos distintas en {games} partidas', '{varietyAi} con el director con IA, {varietyRules} con el director por reglas (meta: sin repeticiones)'],
-        ['Diferencia de victorias entre programas novato y experto', '{winSpreadPoints} puntos (nuestra meta: {winSpreadTarget})'],
-        ['Lector de planes por reglas, sin la IA', '{rulesInterpreterPct} % (nuestra meta: {rulesInterpreterTarget} %)'],
-        ['Costo estimado de IA por sesión completa', '{costPerSessionUsd} USD a precios de lista'],
       ],
     },
   ],

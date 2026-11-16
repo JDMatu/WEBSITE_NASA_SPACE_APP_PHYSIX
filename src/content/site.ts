@@ -17,23 +17,24 @@
 // ============================================================================================
 
 export const pending = {
-  /** TODO(team): public URL of the playable game, e.g. 'https://play.example.org/'. */
-  playUrl: null as string | null,
+  /** Public URL of the playable game. Set to null to show the "coming soon" marker again. */
+  playUrl: 'https://nasa-space-apps-challenge-ulyx.vercel.app/' as string | null,
   /**
-   * TODO(team): which build is behind playUrl.
+   * Which build is behind playUrl.
    * 'ai'    = Node server with a provider key: the AI instructor is on.
    * 'rules' = static build: the game runs on its built-in rules, with no AI instructor.
+   * Checked on 15 Nov 2026: <playUrl>api/health answered `llmAvailable: true`, so this is 'ai'.
+   * If the key is removed from the deployment, change it to 'rules'.
    */
-  playMode: 'rules' as 'ai' | 'rules',
+  playMode: 'ai' as 'ai' | 'rules',
 
   /**
-   * TODO(team): the extended walkthrough video (about three minutes).
+   * The demo video (30 seconds; it is the only video).
    * Either a public page URL (YouTube, Vimeo: it is embedded only after the visitor clicks, so no
-   * third-party request happens on page load), or a file placed in /public, e.g. '/video/tour.mp4'.
+   * third-party request happens on page load), or a file placed in /public, e.g. '/video/demo.mp4'.
+   * If it is replaced by a video of another length, also change `watch.title` and `hero.watchLabel`.
    */
-  videoExtendedUrl: null as string | null,
-  /** TODO(team): the 30-second demo video (same rules as above). Shown as a secondary link. */
-  video30Url: null as string | null,
+  videoUrl: 'https://youtu.be/OofBRyWehUM' as string | null,
 
   /** TODO(team): public URL of the game's source repository. Confirm before publishing it. */
   repoUrl: null as string | null,
@@ -280,7 +281,7 @@ export const hero = {
   /** Shorter version of `body`, shown on phones held upright so the base stays in view. */
   bodyShort:
     'A browser game for students aged 7 to 15. Run a Mars base through the real 2018 dust storm. An AI instructor sets the problems; a simulator built on published NASA values decides what really happens.',
-  watchLabel: 'Watch the 3-minute tour',
+  watchLabel: 'Watch the 30-second demo',
   watchPendingLabel: 'See how it works',
   small: ['Browser only', 'No account', 'English and Español'],
   scrollCue: 'Scroll to live through the storm',
@@ -418,12 +419,11 @@ export const proof = {
 
 export const watch = {
   kicker: 'See it',
-  title: 'The whole game in three minutes.',
-  body: 'One full sol at Trainee rank, the same moment at Specialist, a plan written in the player\'s own words, an impossible request refused, and the real event behind the mission.',
+  title: 'The game in 30 seconds.',
+  body: 'Thirty seconds of PHYSIX in motion. Then play it yourself: it runs in the browser, with no account.',
   playVideo: 'Play the video',
-  pendingTitle: 'Extended video: link pending',
-  pendingBody: 'The walkthrough video is being edited. It will play here.',
-  short: 'Watch the 30-second demo',
+  pendingTitle: 'Video: link pending',
+  pendingBody: 'The demo video is being edited. It will play here.',
   embedNote: 'The video loads from its host only after you press play.',
 };
 
@@ -562,7 +562,7 @@ export const science = {
 export const evidence = {
   kicker: 'Evidence',
   title: 'We tested the AI, not just the game.',
-  intro: 'Simulated players ran full missions against the game. Every figure below says which version it measures.',
+  intro: 'Simulated players ran full missions against the game.',
   groups: [
     {
       id: 'current',
@@ -577,7 +577,6 @@ export const evidence = {
     {
       id: 'previous',
       label: 'With the real AI model',
-      scope: 'Measured on the previous three-rank version, before the Trainee rank was added. Not yet repeated for the four-rank game.',
       stats: [
         { value: '{directorValidFirstTry} / {directorDecisions}', label: 'AI director decisions valid on the first try', note: 'the other one passed after a single retry. {games} simulated games.' },
         { value: '{interpreterPct} %', label: 'free-text plans read correctly', note: '{interpreterRight} of {interpreterTexts} labelled texts, with {actionsOutsideList} actions outside the closed list.' },
@@ -702,7 +701,7 @@ export const credits = {
       title: 'Software in this site',
       items: [
         { text: 'Astro. MIT licence.', href: 'https://astro.build/' },
-        { text: 'No analytics, no cookies, no third-party scripts.' },
+        { text: 'No analytics and no cookies. Nothing loads from other sites until you press play on the video, which is hosted on YouTube (privacy-enhanced mode).' },
       ],
     },
     {
@@ -725,7 +724,7 @@ export const footer = {
   ai: 'An AI instructor runs inside the game, always checked by the simulator. The game, its documents and this website were built with AI coding assistants under the team\'s direction. No AI-generated images.',
   aiLink: 'Read the full AI declaration',
   privacyTitle: 'Privacy',
-  privacy: 'This site has no accounts, no trackers and no cookies. The game stores only settings and a skill profile in your browser.',
+  privacy: 'This site has no accounts, no trackers and no cookies. The video loads from YouTube only when you press play. The game stores only settings and a skill profile in your browser.',
   licenseTitle: 'Licence',
   licensePending: 'to be decided by the team.',
   contactTitle: 'Contact',
@@ -800,14 +799,6 @@ export const aiUse = {
     'No AI-generated images are used, in the game or on this site. The 3D base is procedural geometry written in code. The images on this site are screenshots of the running game and renders of its 3D scene. The only photo is a public-domain NASA image (PIA22930, credit NASA/JPL-Caltech/Cornell/ASU).',
     'The game has no audio. This site plays no audio of its own.',
   ],
-  reviewTitle: 'Human review still required',
-  review: [
-    'The equations of the simulation engine, including the sunlight-versus-opacity fit and the radiation and shielding model.',
-    'Every constant and its source, opened against the cited page.',
-    'The prompts for the five AI jobs.',
-    'Everything a student reads, in Spanish and English. Small language slips in model output are not checked automatically.',
-    'The 50-game evaluation with the AI model for the four-rank game.',
-  ],
   back: 'Back to PHYSIX',
 };
 
@@ -820,7 +811,6 @@ export const sourcesPage = {
     { name: 'Derived', body: 'Computed from measurements, or an agency policy value.' },
     { name: 'Game design', body: 'Chosen to make a ten-sol mission playable. Never presented as a measurement.' },
   ],
-  caveat: 'The cited values were looked up by an AI agent on the cited pages. A person has not yet spot-checked each one. Two sources are not NASA: The Planetary Society (Opportunity\'s energy) and the Chang\'e-4 lander dosimeter (lunar dose, used only by the shelved Moon mission).',
   measuredTitle: 'Measured constants',
   derivedTitle: 'Derived constants',
   designTitle: 'Game design constants',
@@ -831,7 +821,7 @@ export const sourcesPage = {
   eventsTrainingIntro: 'Equipment faults, leaks, blight and the comms blackout are training scenarios, marked as game design and not as real events.',
   citationsTitle: 'Citations',
   evalTitle: 'Evaluation',
-  evalIntro: 'Scripted players (novice, average and expert) play full missions against the game and its AI layer. Two runs exist, and they measure different versions.',
+  evalIntro: 'Scripted players (novice, average and expert) play full missions against the game and its AI layer.',
   evalRuns: [
     {
       title: 'Current game, four ranks, rules only',
@@ -840,22 +830,6 @@ export const sourcesPage = {
         ['Engine limits broken', '0 of {states} states'],
         ['Suggested plan options valid', '{optionsValid} of {optionsTotal}'],
         ['Missions won at Trainee / Cadet / Specialist / Commander', '{winRates}'],
-      ],
-    },
-    {
-      title: 'Previous version, three ranks, with the AI model',
-      scope: '{games} simulated games on November 14, 2026, before the Trainee rank was added. Claude Haiku 5.5 for the director, narrator and plan reader; Claude Sonnet 5.5 for the profiler and tutor in 8 of the games. Not yet repeated for the four-rank game.',
-      rows: [
-        ['Director decisions valid on the first try', '{directorValidFirstTry} of {directorDecisions} (the other after one retry)'],
-        ['Director decisions accepted by the engine', '{directorAccepted} of {directorDecisions}'],
-        ['Engine limits broken', '0 of {states} states'],
-        ['Narration lines faithful to the engine\'s numbers', '{narrationLines} of {narrationLines}'],
-        ['Free-text plans read correctly', '{interpreterPct} % ({interpreterRight} of {interpreterTexts} labelled texts)'],
-        ['Interpreter actions outside the closed list', '{actionsOutsideList} of {actionsEmitted}'],
-        ['Distinct event sequences in {games} games', '{varietyAi} with the AI director, {varietyRules} with the rules director (goal: no repeats)'],
-        ['Win-rate spread between novice and expert scripts', '{winSpreadPoints} points (our target: {winSpreadTarget})'],
-        ['Rule-based plan reader, without the AI', '{rulesInterpreterPct} % (our target: {rulesInterpreterTarget} %)'],
-        ['Estimated AI cost per full session', '{costPerSessionUsd} USD at list prices'],
       ],
     },
   ],

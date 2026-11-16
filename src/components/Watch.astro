@@ -1,5 +1,5 @@
 ---
-// The extended video and the play button, side by side. Third-party players are only loaded
+// The demo video and the play button, side by side. Third-party players are only loaded
 // after the visitor presses play, so opening the page sends nothing to a video host.
 import { getImage } from 'astro:assets';
 import { copy, pending } from '../content';
@@ -11,7 +11,7 @@ import poster from '../assets/frames/sol04-wide.webp';
 const L = Astro.currentLocale;
 const { ui, watch } = copy(L);
 
-const link = pending.videoExtendedUrl;
+const link = pending.videoUrl;
 const isFile = link ? /\.(mp4|webm)(\?.*)?$/i.test(link) : false;
 let embed: string | null = null;
 if (link && !isFile) {
@@ -31,13 +31,12 @@ const img = await getImage({ src: poster, width: 1280, format: 'webp', quality: 
       <p class="lede">{watch.body}</p>
       <div class="watch__cta">
         <PlayButton note />
-        {pending.video30Url && <a class="link-arrow" href={href(pending.video30Url)}>{watch.short}<Icon name="arrow" /></a>}
       </div>
     </div>
     <div class="watch__media reveal" style="--d:120ms">
       {
         !link ? (
-          <div class="video video--pending" data-pending="videoExtendedUrl" style={`background-image:url(${img.src})`}>
+          <div class="video video--pending" data-pending="videoUrl" style={`background-image:url(${img.src})`}>
             <div class="video__msg">
               <span class="pending-mark">{watch.pendingTitle}</span>
               <p>{watch.pendingBody}</p>

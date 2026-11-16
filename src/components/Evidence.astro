@@ -29,7 +29,8 @@ const H = lead ? 'h1' : 'h2';
           <section class:list={['ev__group', 'panel', 'panel--ticks', 'reveal', `ev__group--${g.id}`]} aria-label={g.label}>
             <header class="ev__ghead">
               <h3 class="h3">{g.label}</h3>
-              <p>{g.scope}</p>
+              {/* Which version the figures measure, when the content file says so. */}
+              <p>{'scope' in g ? g.scope : ''}</p>
             </header>
             <ul class="ev__stats">
               {

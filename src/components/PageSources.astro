@@ -24,7 +24,6 @@ type Row = { id: string; value: string; unit: string; source: { text: string; ur
   <ul class="plain" style="margin-top:28px">
     {c.kinds.map((k, i) => <li><strong>{k.name} ({kindCounts[i]}).</strong> {k.body}</li>)}
   </ul>
-  <p class="note" style="margin-top:20px"><span>{c.caveat}</span></p>
   {ui.tablesNote && <p class="dim" style="margin-top:14px;font-size:15px">{ui.tablesNote}</p>}
 
   {

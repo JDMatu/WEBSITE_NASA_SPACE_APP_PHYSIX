@@ -16,7 +16,7 @@ const { closing, hero, ui } = copy(L);
     <p class="lede">{closing.body}</p>
     <div class="closing__cta">
       <PlayButton note />
-      {pending.videoExtendedUrl && <a class="btn btn-ghost" href={url('/', L) + '#watch'}><Icon name="play" />{hero.watchLabel}</a>}
+      {pending.videoUrl && <a class="btn btn-ghost" href={url('/', L) + '#watch'}><Icon name="play" />{hero.watchLabel}</a>}
     </div>
   </div>
 </section>

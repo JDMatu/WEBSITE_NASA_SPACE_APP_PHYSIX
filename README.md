@@ -24,7 +24,7 @@ npm run preview    # serves dist/ at http://localhost:4321
 
 Every figure, link and English text is in **one file**: [`src/content/site.ts`](src/content/site.ts). It has three blocks, in this order:
 
-1. **`pending`**: what the team still has to provide (play link, videos, repository link, team, contact, licence). A `null` value shows a visible "pending" marker on the site instead of a broken promise. Fill the value and the marker turns into the real thing.
+1. **`pending`**: the values the team provides: the play link and the video (both set), and what is still missing (repository link, team details, contact, licence). A `null` value shows a visible "pending" marker on the site instead of a broken promise. Fill the value and the marker turns into the real thing.
 2. **`facts`**: numbers taken from the game repository (constants, tests, evaluations, whether DONKI is integrated). Change a number here and it changes everywhere it is used.
 3. The copy: the menu and page titles (`pages`), then the words of each section.
 
@@ -40,9 +40,8 @@ Common updates:
 
 | I want to | Do this in `src/content/site.ts` |
 | --- | --- |
-| Turn on the Play button | Set `pending.playUrl`. Set `pending.playMode` to `'ai'` if the hosted game has the AI instructor, or `'rules'` if it is the static build. |
-| Add the extended video | Set `pending.videoExtendedUrl` to a YouTube or Vimeo link, or put the file in `public/video/` and use `'/video/name.mp4'`. Players from other sites load only after the visitor presses play. |
-| Add the 30-second video | Set `pending.video30Url`. |
+| Change the Play link | Set `pending.playUrl`. Set `pending.playMode` to `'ai'` if the hosted game has the AI instructor, or `'rules'` if it is the static build (open `<playUrl>api/health`: `llmAvailable` says which). |
+| Change the video | Set `pending.videoUrl` to a YouTube or Vimeo link, or put the file in `public/video/` and use `'/video/name.mp4'`. Players from other sites load only after the visitor presses play. If the new video is not 30 seconds long, also change `watch.title` and `hero.watchLabel` (both language files). |
 | Add the team photos | Drop one file per person in `src/assets/team/`, named after them in lower case with hyphens: `juan-diego-matute.jpg`, `marypaz-lopez.jpg`, `sebastian-vargas.jpg`, `tamara-rodriguez.jpg`, `tannia-rodriguez.jpg`, `fabian-campos.jpg` (jpg, png or webp, at least 600 px on the short side, adults only, with permission). Rebuild: the photo replaces the initials. No content edit is needed. |
 | Complete the team | In `pending.team`, add each person's `role` and `built` line; also `teamName` and `localEvent`. They appear on the About us page as soon as they are filled. |
 | Rename a menu entry or a page title | Edit `pages` (and its twin in `site.es.ts`). The menu order is `menu` in `src/content/index.ts`. |
