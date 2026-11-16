@@ -23,6 +23,11 @@ export const ui: typeof en.ui = {
   skip: 'Saltar al contenido',
   sections: 'Secciones',
   home: 'inicio',
+  homeLabel: 'Inicio',
+  menu: 'Menú',
+  site: 'Sitio',
+  reference: 'Referencia',
+  next: 'Siguiente',
   language: 'Idioma',
   playSoonShort: 'Jugar: pronto',
   videoTitle: 'Video de PHYSIX',
@@ -47,13 +52,64 @@ export const ui: typeof en.ui = {
   shotsLanguageNote: 'Las capturas muestran la interfaz en inglés. El juego está completo también en español.',
 };
 
-export const nav: typeof en.nav = [
-  { label: 'Cómo funciona', href: '#how' },
-  { label: 'IA + simulador', href: '#ai' },
-  { label: 'Ciencia', href: '#science' },
-  { label: 'Evidencia', href: '#evidence' },
-  { label: 'Equipo', href: '#team' },
-];
+export const pages: typeof en.pages = {
+  game: {
+    nav: 'El juego',
+    title: 'El juego: un sol, cinco pasos, cuatro rangos',
+    description: 'Cómo se juega PHYSIX: cada sol es un informe, un plan, una predicción, una ejecución y una revisión. Cuatro rangos, desde tres tarjetas ya hechas hasta el panel completo de control de misión.',
+    teaser: 'Cada sol es un informe, un plan, una predicción y sus consecuencias. Cuatro rangos, desde tres tarjetas ya hechas hasta el control de misión completo.',
+    stat: en.pages.game.stat,
+    statLabel: 'rangos, una misión',
+  },
+  ai: {
+    nav: 'IA + simulador',
+    title: 'La IA propone, el simulador decide',
+    description: 'Cómo usa PHYSIX la IA: el instructor elige los problemas y lee los planes, pero un simulador determinista calcula cada resultado. Las peticiones imposibles se rechazan.',
+    teaser: 'El instructor con IA elige los problemas y lee tu plan. Nunca escribe un número: un simulador determinista calcula cada resultado.',
+    stat: en.pages.ai.stat,
+    statLabel: 'acciones entre las que la IA puede elegir, nada más',
+  },
+  science: {
+    nav: 'Ciencia',
+    title: 'La ciencia: la tormenta de polvo real de 2018',
+    description: 'El evento real detrás de la misión y los valores publicados por la NASA dentro del simulador, cada uno con su fuente.',
+    teaser: 'La misión recrea la tormenta global de polvo de 2018 en Marte, con valores publicados de aire, agua, radiación y luz solar.',
+    stat: en.pages.science.stat,
+    statLabel: 'constantes con cita y URL',
+  },
+  evidence: {
+    nav: 'Evidencia',
+    title: 'Evidencia: qué probamos y en qué fallamos',
+    description: 'Pruebas automáticas, partidas simuladas con y sin el modelo de IA, las metas que no alcanzamos y lo que funciona hoy.',
+    teaser: 'Jugadores simulados jugaron misiones completas. Publicamos lo que pasó, dónde no alcanzamos nuestras propias metas y lo que aún no existe.',
+    stat: en.pages.evidence.stat,
+    statLabel: 'pruebas automáticas pasan',
+  },
+  classroom: {
+    nav: 'En clase',
+    title: 'Para docentes: un dispositivo para toda la clase',
+    description: 'PHYSIX en el aula: una pantalla compartida, sin cuentas, sin datos personales, en inglés y español, cuatro rangos para edades de 7 a 15 años.',
+    teaser: 'Pensado para una sola pantalla compartida: proyéctalo y deja que la clase discuta hasta llegar a un plan. Sin cuentas ni datos personales.',
+    stat: en.pages.classroom.stat,
+    statLabel: 'pantalla compartida basta',
+  },
+  team: {
+    nav: 'Nosotros',
+    title: 'El equipo',
+    description: 'Las seis personas que construyeron PHYSIX para el NASA Space Apps Challenge 2026, y cómo se usó la IA para construirlo.',
+    teaser: 'Quiénes somos, dónde lo construimos y cómo usamos asistentes de programación con IA para hacerlo.',
+    stat: en.pages.team.stat,
+    statLabel: 'personas, un fin de semana',
+  },
+  credits: {
+    nav: 'Créditos',
+    title: 'Créditos y referencias',
+    description: 'Cada imagen, fuente tipográfica, biblioteca y fuente de datos usada en PHYSIX y en este sitio.',
+    teaser: '',
+    stat: '',
+    statLabel: '',
+  },
+};
 
 export const play: typeof en.play = {
   label: 'Jugar ahora',
@@ -78,7 +134,18 @@ export const hero: typeof en.hero = {
 };
 
 export const storm: typeof en.storm = {
+  kicker: 'La misión',
+  title: 'Vive la tormenta, sol por sol.',
+  run: 'Corrida del simulador: semilla 1, rango Aprendiz',
   hud: { sol: 'Sol', sky: 'Opacidad del cielo', solar: 'Solar hoy', battery: 'Batería', unit: 'kWh', demand: 'La base usa {demand} kWh por sol' },
+  chart: {
+    title: 'Energía, sol por sol',
+    solar: 'Los paneles dieron',
+    used: 'La base usó',
+    battery: 'Carga de la batería',
+    timeline: 'Opacidad del cielo, soles 1 a 10',
+  },
+  states: { clear: 'Despejado', storm: 'Tormenta', brownout: 'Apagón parcial', solar: 'Evento solar' },
   steps: [
     {
       tag: 'Cielo despejado',
@@ -117,8 +184,6 @@ export const storm: typeof en.storm = {
       alt: 'La base otra vez bajo un cielo despejado, con un montículo de regolito apilado contra el hábitat.',
     },
   ],
-  footnote:
-    'Números del simulador del juego: semilla 1, rango Aprendiz, una tripulación programada que siempre toma la primera opción, director por reglas. Imágenes: la propia base 3D del juego, dibujada con código, renderizada con el cielo, la luz y la batería de cada sol.',
 };
 
 export const move: typeof en.move = {
@@ -147,8 +212,14 @@ export const move: typeof en.move = {
       body: 'El invernadero da comida fresca con luz, agua y cuidados. Baja sus lámparas para ahorrar energía y el cultivo lo paga.',
     },
   ],
-  shotAlt: 'La pantalla de plan del rango Aprendiz: tres tarjetas de opción; cada una muestra qué ayuda y qué cuesta.',
-  shotCaption: 'En el rango Aprendiz cada sol es una elección entre tres tarjetas. Cada tarjeta muestra qué ayuda y qué cuesta.',
+  more: 'Mira cómo transcurre un sol',
+};
+
+export const explore: typeof en.explore = {
+  kicker: 'Explora el proyecto',
+  title: 'Mira el proyecto por dentro.',
+  body: 'Cómo se juega, cómo se mantiene a raya a la IA, de dónde salen los números, qué probamos, cómo usarlo en clase y quién lo construyó.',
+  open: 'Abrir',
 };
 
 export const watch: typeof en.watch = {
@@ -251,7 +322,9 @@ export const ai: typeof en.ai = {
     refused: { shot: 'text-refused', alt: 'La petición "Give us infinite oxygen" rechazada con una explicación.', caption: '"Danos oxígeno infinito": no es posible, y el juego dice por qué.' },
   },
   shotsNote: 'Estas dos pantallas se capturaron con la IA apagada: las reglas incorporadas leyeron el texto. Con el instructor con IA encendido se aplican las mismas comprobaciones.',
-  notice: 'El juego usa un instructor con IA. Ver "Uso de IA" más abajo.',
+  notice: 'El juego usa un instructor con IA. Cada uso se declara en la página de uso de IA.',
+  declarationLink: 'Leer la declaración completa de IA',
+  evidenceLink: 'Mira cómo se probó la IA',
 };
 
 const tableWhat = [
@@ -355,6 +428,10 @@ export const teachers: typeof en.teachers = {
   notice: 'Pensado para edades de 7 a 15 años. Aún no se ha probado en un aula: nos encantaría saber cómo les va.',
   contactLabel: 'Cuéntanos cómo les fue',
   contactPending: 'Correo de contacto pendiente',
+  ranksTitle: 'Elige la profundidad para tu grupo',
+  ranksIntro: 'La misión es la misma en todos los rangos. Empieza abajo y sube cuando la clase esté lista.',
+  ranksLink: 'Mira los cuatro rangos en pantalla',
+  practice: 'Quien juega por primera vez empieza con el Sol 0, un sol de práctica guiada. Está guionizado y no usa IA.',
 };
 
 export const team: typeof en.team = {
@@ -363,7 +440,9 @@ export const team: typeof en.team = {
   builtAt: 'Hecho en {event}, NASA Space Apps Challenge 2026.',
   builtAtPending: 'Hecho para el NASA Space Apps Challenge 2026. Evento local: pendiente.',
   memberPending: { name: 'Nombre pendiente', role: 'Rol pendiente', built: 'Qué construyó: pendiente' },
-  closing: 'Construimos con asistentes de programación con IA; cada uso se declara más abajo.',
+  closing: 'Construimos con asistentes de programación con IA; cada uso se declara en la página de uso de IA.',
+  aiLink: 'Leer la declaración completa de IA',
+  creditsLink: 'Créditos y referencias',
 };
 
 export const roadmap: typeof en.roadmap = {
@@ -463,6 +542,7 @@ export const footer: typeof en.footer = {
   repoLabel: 'Código fuente',
   repoPending: 'Enlace al código fuente pendiente.',
   made: 'Hecho para el NASA Space Apps Challenge 2026.',
+  tagline: 'Un entrenador de misión para astronautas júnior. Dirige una base en Marte durante la tormenta de polvo real de 2018.',
 };
 
 export const aiUse: typeof en.aiUse = {

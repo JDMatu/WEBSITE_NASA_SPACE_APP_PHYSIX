@@ -4,11 +4,17 @@ import SectionHead from './SectionHead.astro';
 
 const L = Astro.currentLocale;
 const { credits, ui } = copy(L);
+interface Props {
+  /** First section of its page: the title becomes the page's h1. */
+  lead?: boolean;
+}
+const { lead = false } = Astro.props;
+const H = lead ? 'h1' : 'h2';
 ---
 
-<section class="section credits" id="credits" aria-labelledby="credits-title">
+<section class:list={['section', 'credits', lead && 'section--lead']} id="credits" aria-labelledby="credits-title">
   <div class="wrap">
-    <SectionHead kicker={credits.kicker} title={credits.title} id="credits-title" />
+    <SectionHead kicker={credits.kicker} title={credits.title} id="credits-title" lead={lead} />
     <div class="credits__grid">
       {
         credits.groups.map((g) => (

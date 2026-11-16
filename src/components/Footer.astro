@@ -1,24 +1,35 @@
 ---
-import { copy, pending } from '../content';
+// Site footer: the map of the site, the reference pages, contact, and the AI and privacy notes.
+import { copy, menu, pending } from '../content';
 import { url } from '../lib/util';
 
 const L = Astro.currentLocale;
-const { footer, meta, ui } = copy(L);
+const { aiUse, footer, meta, pages, sourcesPage, ui } = copy(L);
 ---
 
 <footer class="site-foot">
   <div class="wrap">
-    <div class="foot-grid">
-      <div>
-        <h3>{footer.aiTitle}</h3>
-        <p>{footer.ai}</p>
-        <p><a href={url('/ai-use/', L)}>{footer.aiLink}</a></p>
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a class="wordmark" href={url('/', L)} aria-label={`${meta.name} ${ui.home}`}><i></i>{meta.name}</a>
+        <p>{footer.tagline}</p>
       </div>
-      <div>
-        <h3>{footer.privacyTitle}</h3>
-        <p>{footer.privacy}</p>
-      </div>
-      <div>
+      <nav class="foot-nav" aria-label={ui.site}>
+        <h3>{ui.site}</h3>
+        <ul>
+          <li><a href={url('/', L)}>{ui.homeLabel}</a></li>
+          {menu.map((id) => <li><a href={url(`/${id}/`, L)}>{pages[id].nav}</a></li>)}
+        </ul>
+      </nav>
+      <nav class="foot-nav" aria-label={ui.reference}>
+        <h3>{ui.reference}</h3>
+        <ul>
+          <li><a href={url('/sources/', L)}>{sourcesPage.title}</a></li>
+          <li><a href={url('/ai-use/', L)}>{aiUse.title}</a></li>
+          <li><a href={url('/credits/', L)}>{pages.credits.title}</a></li>
+        </ul>
+      </nav>
+      <div class="foot-nav">
         <h3>{footer.contactTitle}</h3>
         {
           pending.contactEmail ? (
@@ -37,6 +48,17 @@ const { footer, meta, ui } = copy(L);
         <p>
           {footer.licenseTitle}: {pending.license ?? <span data-pending="license">{footer.licensePending}</span>}
         </p>
+      </div>
+    </div>
+    <div class="foot-grid">
+      <div>
+        <h3>{footer.aiTitle}</h3>
+        <p>{footer.ai}</p>
+        <p><a href={url('/ai-use/', L)}>{footer.aiLink}</a></p>
+      </div>
+      <div>
+        <h3>{footer.privacyTitle}</h3>
+        <p>{footer.privacy}</p>
       </div>
     </div>
     <div class="foot-legal">

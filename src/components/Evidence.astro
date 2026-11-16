@@ -12,11 +12,17 @@ const values: Record<string, Record<string, unknown>> = {
   previous: { ...facts.evalPreviousAi },
 };
 const missValues = facts.evalPreviousAi;
+interface Props {
+  /** First section of its page: the title becomes the page's h1. */
+  lead?: boolean;
+}
+const { lead = false } = Astro.props;
+const H = lead ? 'h1' : 'h2';
 ---
 
-<section class="section section--tint evidence" id="evidence" aria-labelledby="evidence-title">
+<section class:list={['section', 'evidence', lead ? 'section--lead' : 'section--tint']} id="evidence" aria-labelledby="evidence-title">
   <div class="wrap">
-    <SectionHead kicker={evidence.kicker} title={evidence.title} lede={evidence.intro} id="evidence-title" />
+    <SectionHead kicker={evidence.kicker} title={evidence.title} lede={evidence.intro} id="evidence-title" lead={lead} />
     <div class="ev__groups">
       {
         evidence.groups.map((g) => (

@@ -1,5 +1,6 @@
 ---
 import { copy, pending } from '../content';
+import { url } from '../lib/util';
 import Frame from './Frame.astro';
 import Icon from './Icon.astro';
 import PlayButton from './PlayButton.astro';
@@ -15,7 +16,7 @@ const { closing, hero, ui } = copy(L);
     <p class="lede">{closing.body}</p>
     <div class="closing__cta">
       <PlayButton note />
-      {pending.videoExtendedUrl && <a class="btn btn-ghost" href="#watch"><Icon name="play" />{hero.watchLabel}</a>}
+      {pending.videoExtendedUrl && <a class="btn btn-ghost" href={url('/', L) + '#watch'}><Icon name="play" />{hero.watchLabel}</a>}
     </div>
   </div>
 </section>

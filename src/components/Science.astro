@@ -7,14 +7,20 @@ import pia from '../assets/PIA22930.jpg';
 
 const L = Astro.currentLocale;
 const { science, ui } = copy(L);
+interface Props {
+  /** First section of its page: the title becomes the page's h1. */
+  lead?: boolean;
+}
+const { lead = false } = Astro.props;
+const H = lead ? 'h1' : 'h2';
 ---
 
-<section class="section science" id="science" aria-labelledby="science-title">
+<section class:list={['section', 'science', lead && 'section--lead']} id="science" aria-labelledby="science-title">
   <div class="wrap">
     <div class="science__top">
       <div class="reveal">
         <p class="kicker">{science.kicker}</p>
-        <h2 class="h2" id="science-title">{science.title}</h2>
+        <H class="h2" id="science-title">{science.title}</H>
         <div class="prose science__body">
           {science.body.map((p) => <p>{p}</p>)}
         </div>

@@ -1,18 +1,25 @@
 ---
 import { copy } from '../content';
+import { url } from '../lib/util';
 import Icon from './Icon.astro';
 import Shot from './Shot.astro';
 
 const L = Astro.currentLocale;
 const { ai, ui } = copy(L);
+interface Props {
+  /** First section of its page: the title becomes the page's h1. */
+  lead?: boolean;
+}
+const { lead = false } = Astro.props;
+const H = lead ? 'h1' : 'h2';
 ---
 
-<section class="section section--tint airule" id="ai" aria-labelledby="ai-title">
+<section class:list={['section', 'airule', lead ? 'section--lead' : 'section--tint']} id="ai" aria-labelledby="ai-title">
   <div class="wrap">
     <div class="airule__top">
       <header class="reveal">
         <p class="kicker">{ai.kicker}</p>
-        <h2 class="h2" id="ai-title">{ai.title}</h2>
+        <H class="h2" id="ai-title">{ai.title}</H>
       </header>
       <div class="prose airule__body reveal" style="--d:100ms">
         {ai.body.map((p) => <p>{p}</p>)}
@@ -62,6 +69,10 @@ const { ai, ui } = copy(L);
       }
     </ul>
     <p class="note airule__notice"><Icon name="info" /><span>{ai.notice}</span></p>
+    <p class="more-links">
+      <a class="link-arrow" href={url('/ai-use/', L)}>{ai.declarationLink}<Icon name="arrow" /></a>
+      <a class="link-arrow" href={url('/evidence/', L)}>{ai.evidenceLink}<Icon name="arrow" /></a>
+    </p>
   </div>
 </section>
 

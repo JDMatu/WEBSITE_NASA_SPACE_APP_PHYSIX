@@ -1,147 +1,203 @@
 ---
-// The opening of the page: the hero, then the 2018 storm told sol by sol.
+// The 2018 storm told sol by sol, on the home page.
 //
-// Plain version (no JavaScript, or reduced motion): the hero over a still image, then each sol as
-// a figure with its caption. Nothing moves.
-// Enhanced version (class `is-enhanced`, set by the script below): the frames are moved into one
-// sticky stage and cross-fade as the captions scroll past, with a telemetry readout and dust.
-import { copy, facts, pending } from '../content';
+// Plain version (no JavaScript, or reduced motion): each sol is a picture beside its caption and
+// its numbers. Nothing moves.
+// Enhanced version (class `is-enhanced`, set by the script below): the pictures move into one
+// sticky stage and cross-fade as the page scrolls.
+//   - Wide screens get a mission console: the scene, the caption, a power chart that draws itself
+//     sol by sol, and a ten-sol strip that can be clicked.
+//   - Phones and small windows get the scene full screen with a compact readout, and the captions
+//     scroll over it.
+import { copy, facts } from '../content';
 import { fill, num } from '../lib/util';
 import Frame from './Frame.astro';
-import Icon from './Icon.astro';
-import PlayButton from './PlayButton.astro';
+import SectionHead from './SectionHead.astro';
 
 const L = Astro.currentLocale;
-const { hero, storm, ui } = copy(L);
+const { storm } = copy(L);
 
 // Numbers come from facts.stormRun; words from the copy of the page language.
 const run = facts.stormRun;
-const steps = run.steps.map((n, i) => {
-  const words = storm.steps[i]!;
-  const values = {
-    tau: num(n.tau, L, 1),
-    prevTau: num(run.steps[i - 1]?.tau ?? n.tau, L, 1),
-    solar: n.solar,
-    battery: n.battery,
-    demand: run.demand,
-    available: n.available ?? 0,
-  };
-  return { ...n, ...words, body: fill(words.body, values, L) };
+const series = run.series;
+const at = (sol: number) => {
+  const row = series.find((s) => s.sol === sol);
+  if (!row) throw new Error(`facts.stormRun.steps names sol ${sol}, which is not in facts.stormRun.series`);
+  return row;
+};
+const steps = run.steps.map((st, i) => {
+  const n = at(st.sol);
+  const prev = at(run.steps[i - 1]?.sol ?? st.sol);
+  const words = storm.steps[i];
+  if (!words) throw new Error(`storm.steps needs one entry per facts.stormRun.steps (missing #${i + 1})`);
+  const values = { tau: num(n.tau, L, 1), prevTau: num(prev.tau, L, 1), solar: n.solar, battery: n.battery, demand: run.demand, available: st.available ?? 0 };
+  return { ...n, frame: st.frame, ...words, body: fill(words.body, values, L) };
 });
 const first = steps[0]!;
-const maxSolar = Math.max(...run.steps.map((n) => n.solar));
-const hasVideo = Boolean(pending.videoExtendedUrl);
-// Storm strength for the dust layer, 0..1, from the game's sky opacity.
-const dust = (tau: number) => Math.min(1, Math.max(0, (tau - 0.5) / 3.5));
+const last = series[series.length - 1]!;
+const pad = (n: number) => String(n).padStart(2, '0');
+const tagClass = (state: string) => (state === 'clear' ? 'tag-good' : state === 'brownout' ? 'tag-alert' : 'tag-amber');
+
+// Chart scale: one axis in kWh for the three measures.
+const TOP = Math.ceil(Math.max(...series.flatMap((s) => [s.solar, s.used, s.battery])) / 50) * 50 + 10;
+const ticks = [0, 50, 100, 150].filter((v) => v < TOP);
+const pct = (v: number) => `${((v / TOP) * 100).toFixed(2)}%`;
+const x = (sol: number) => ((sol - 0.5) / series.length) * 100;
+const line = series.map((s) => `${x(s.sol).toFixed(2)},${(100 - (s.battery / TOP) * 100).toFixed(2)}`).join(' ');
+const maxTau = Math.max(...series.map((s) => s.tau));
+
+// What the script needs: the ten sols, and the label to show for sols that have no caption.
+const payload = JSON.stringify({
+  series: series.map((s) => ({ sol: s.sol, tau: s.tau, solar: s.solar, used: s.used, battery: s.battery, label: s.event ? storm.states[s.event] : storm.states[s.state] })),
+  steps: steps.map((s) => ({ sol: s.sol, tag: s.tag })),
+  labels: { sol: storm.hud.sol, solar: storm.chart.solar, used: storm.chart.used, battery: storm.chart.battery, unit: storm.hud.unit },
+});
 ---
 
-<section class="storm" id="top" data-storm>
+<section class="storm" id="storm" data-storm data-run={payload} aria-labelledby="storm-title">
   <div class="storm__stage" aria-hidden="true">
-    <div class="storm__frames" data-frames></div>
-    <canvas class="storm__dust" data-dust></canvas>
-    <div class="storm__shade"></div>
-    <div class="hud" data-hud style={`--need:${(run.demand / maxSolar).toFixed(4)}`}>
-      <div class="hud__top">
-        <span class="hud__sol"><span class="hud__k">{storm.hud.sol}</span> <b class="num" data-v="sol">{first.sol}</b></span>
-        <span class="hud__tag" data-v="tag">{first.tag}</span>
+    <div class="console">
+      <div class="console__head">
+        <p class="kicker">{storm.kicker}</p>
+        <p class="console__title">{storm.title}</p>
+        <p class="console__run num">{storm.run}</p>
       </div>
-      <div class="hud__row hud__row--sky">
-        <span class="hud__k">{storm.hud.sky}</span>
-        <b class="num" data-v="tau">{num(first.tau, L, 1)}</b>
-        <i class="hud__bar"><i data-bar="tau"></i></i>
+
+      <div class="console__view">
+        <div class="storm__frames" data-frames></div>
+        <canvas class="storm__dust" data-dust></canvas>
+        <div class="storm__shade"></div>
+        <p class="view__sol">
+          <span class="hud__k">{storm.hud.sol}</span>
+          <b class="num" data-v="sol2">{pad(first.sol)}</b>
+          <span class="view__of num">/ {last.sol}</span>
+          <span class="view__tag" data-v="tag">{first.tag}</span>
+        </p>
+        <div class="hud" data-hud style={`--need:${(run.demand / Math.max(...series.map((s) => s.solar))).toFixed(4)}`}>
+          <div class="hud__top">
+            <span class="hud__sol"><span class="hud__k">{storm.hud.sol}</span> <b class="num" data-v="sol">{first.sol}</b></span>
+            <span class="hud__tag" data-v="tag">{first.tag}</span>
+          </div>
+          <div class="hud__row hud__row--sky">
+            <span class="hud__k">{storm.hud.sky}</span>
+            <b class="num" data-v="tau">{num(first.tau, L, 1)}</b>
+            <i class="hud__bar"><i data-bar="tau"></i></i>
+          </div>
+          <div class="hud__row hud__row--solar">
+            <span class="hud__k">{storm.hud.solar}</span>
+            <b class="num"><span data-v="solar">{first.solar}</span> <small>{storm.hud.unit}</small></b>
+            <i class="hud__bar hud__bar--need"><i data-bar="solar"></i></i>
+          </div>
+          <div class="hud__row hud__row--batt">
+            <span class="hud__k">{storm.hud.battery}</span>
+            <b class="num"><span data-v="battery">{first.battery}</span> <small>{storm.hud.unit}</small></b>
+            <i class="hud__bar"><i data-bar="battery"></i></i>
+          </div>
+          <p class="hud__note">{fill(storm.hud.demand, { demand: run.demand }, L)}</p>
+        </div>
       </div>
-      <div class="hud__row hud__row--solar">
-        <span class="hud__k">{storm.hud.solar}</span>
-        <b class="num"><span data-v="solar">{first.solar}</span> <small>{storm.hud.unit}</small></b>
-        <i class="hud__bar hud__bar--need"><i data-bar="solar"></i></i>
+
+      <div class="console__side">
+        <div class="caps">
+          {
+            steps.map((s, i) => (
+              <div class:list={['cap', i === 0 && 'is-on']} data-cap>
+                <p class="step__meta">
+                  <span class="num">
+                    {storm.hud.sol} {pad(s.sol)}
+                  </span>
+                  <span class:list={['tag', tagClass(s.state)]}>{s.tag}</span>
+                </p>
+                <p class="step__title">{s.title}</p>
+                <p class="step__body">{s.body}</p>
+              </div>
+            ))
+          }
+        </div>
+
+        <div class="pchart panel panel--ticks">
+          <div class="pchart__head">
+            <p class="pchart__title">{storm.chart.title} <small>({storm.hud.unit})</small></p>
+            <ul class="pchart__legend">
+              <li><i class="key key--solar"></i>{storm.chart.solar}</li>
+              <li><i class="key key--used"></i>{storm.chart.used}</li>
+              <li><i class="key key--batt"></i>{storm.chart.battery}</li>
+            </ul>
+          </div>
+          <div class="pchart__body">
+            <div class="pchart__y num">
+              {ticks.map((v) => <span style={`bottom:${pct(v)}`}>{v}</span>)}
+            </div>
+            <div class="pchart__plot" data-plot>
+              {ticks.map((v) => <i class="pchart__grid" style={`bottom:${pct(v)}`} />)}
+              <div class="pchart__reveal" data-reveal>
+                <div class="pchart__cols">
+                  {
+                    series.map((s) => (
+                      <div class="pcol">
+                        <i class="pbar" style={`height:${pct(s.solar)}`} />
+                        <i class="pused" style={`bottom:${pct(s.used)}`} />
+                      </div>
+                    ))
+                  }
+                </div>
+                <div class="pchart__batt">
+                  <svg class="pchart__line" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <polyline points={line} fill="none" vector-effect="non-scaling-stroke"></polyline>
+                  </svg>
+                  {series.map((s) => <i class:list={['pdot', s.battery === 0 && 'pdot--empty']} style={`left:${x(s.sol).toFixed(2)}%;bottom:${pct(s.battery)}`} />)}
+                </div>
+              </div>
+              <i class="pchart__cursor" data-cursor></i>
+              <div class="pchart__tip num" data-tip hidden></div>
+            </div>
+            <div class="pchart__x num">
+              {series.map((s) => <span>{s.sol}</span>)}
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="hud__row hud__row--batt">
-        <span class="hud__k">{storm.hud.battery}</span>
-        <b class="num"><span data-v="battery">{first.battery}</span> <small>{storm.hud.unit}</small></b>
-        <i class="hud__bar"><i data-bar="battery"></i></i>
+
+      <div class="tline">
+        <p class="tline__label">{storm.chart.timeline}</p>
+        <ol class="tline__cells">
+          {
+            series.map((s, i) => (
+              <li class:list={['tcell', `tcell--${s.state}`, s.event && 'tcell--event', i === 0 && 'is-now']} data-sol={s.sol} style={`--v:${(s.tau / maxTau).toFixed(3)}`}>
+                <span class="tcell__top">
+                  <b class="num">{pad(s.sol)}</b>
+                  <span class="tcell__tau num">{num(s.tau, L, 1)}</span>
+                </span>
+                <i class="tcell__bar"><i></i></i>
+                <span class="tcell__state">{s.event ? storm.states[s.event] : storm.states[s.state]}</span>
+              </li>
+            ))
+          }
+        </ol>
       </div>
-      <p class="hud__note">{fill(storm.hud.demand, { demand: run.demand }, L)}</p>
     </div>
   </div>
 
   <div class="storm__track">
-    <div
-      class="hero"
-      data-step
-      data-sol={first.sol}
-      data-tag={first.tag}
-      data-tau={first.tau}
-      data-solar={first.solar}
-      data-battery={first.battery}
-      data-dust={dust(first.tau)}
-      data-hero
-    >
-      <div class="hero__bg"><Frame id={first.frame} alt={hero.imageAlt} eager /></div>
-      <div class="wrap hero__in">
-        <div class="hero__copy">
-          <p class="hero__eyebrow">{hero.eyebrow}</p>
-          <h1 class="hero__title">
-            {
-              hero.title.map((line) => (
-                <span>
-                  {line.split(' ').map((word, k) => (
-                    <>
-                      {k > 0 && ' '}
-                      {word.includes('-') ? <span class="nw">{word}</span> : word}
-                    </>
-                  ))}
-                </span>
-              ))
-            }
-          </h1>
-          <p class="hero__body hero__body--long">{hero.body}</p>
-          <p class="hero__body hero__body--short">{hero.bodyShort}</p>
-          <div class="hero__cta">
-            <PlayButton />
-            <a class="btn btn-ghost" href={hasVideo ? '#watch' : '#how'}>
-              {hasVideo && <Icon name="play" />}
-              {hasVideo ? hero.watchLabel : hero.watchPendingLabel}
-            </a>
-          </div>
-          <ul class="hero__small">
-            {hero.small.map((item) => <li>{item}</li>)}
-          </ul>
-        </div>
-      </div>
-      <a class="hero__cue" href="#storm-1">
-        <span>{hero.scrollCue}</span>
-        <Icon name="down" />
-      </a>
+    <div class="wrap storm__intro">
+      <SectionHead kicker={storm.kicker} title={storm.title} id="storm-title" />
     </div>
-
     <ol class="storm__steps">
       {
-        steps.map((s, i) => (
-          <li
-            class="step"
-            id={`storm-${s.sol}`}
-            data-step
-            data-sol={s.sol}
-            data-tag={s.tag}
-            data-tau={s.tau}
-            data-solar={s.solar}
-            data-battery={s.battery}
-            data-dust={dust(s.tau)}
-          >
+        steps.map((s) => (
+          <li class="step" id={`storm-${s.sol}`} data-step data-sol={s.sol}>
             <div class="wrap step__in">
-              {i > 0 && (
-                <figure class="step__fig">
-                  <Frame id={s.frame} alt={s.alt} />
-                </figure>
-              )}
+              <figure class="step__fig">
+                <Frame id={s.frame} alt={s.alt} sizes="(min-width: 1024px) 64vw, 100vw" />
+              </figure>
               <div class="step__card panel panel--ticks">
                 <p class="step__meta">
                   <span class="num">
-                    {storm.hud.sol} {String(s.sol).padStart(2, '0')}
+                    {storm.hud.sol} {pad(s.sol)}
                   </span>
-                  <span class:list={['tag', s.state === 'clear' ? 'tag-good' : s.state === 'brownout' ? 'tag-alert' : 'tag-amber']}>{s.tag}</span>
+                  <span class:list={['tag', tagClass(s.state)]}>{s.tag}</span>
                 </p>
-                <h2 class="step__title">{s.title}</h2>
+                <h3 class="step__title">{s.title}</h3>
                 <p class="step__body">{s.body}</p>
                 <dl class="step__nums">
                   <div>
@@ -167,9 +223,7 @@ const dust = (tau: number) => Math.min(1, Math.max(0, (tau - 0.5) / 3.5));
         ))
       }
     </ol>
-    <div class="wrap">
-      <p class="storm__foot">{storm.footnote}</p>
-    </div>
+    <div class="storm__tail"></div>
   </div>
 </section>
 
@@ -177,49 +231,12 @@ const dust = (tau: number) => Math.min(1, Math.max(0, (tau - 0.5) / 3.5));
   /* ---------------------------------------------------------------- plain */
   .storm { position: relative; background: var(--ink); }
   .storm__stage { display: none; }
-  .frame img { width: 100%; height: 100%; object-fit: cover; }
-
-  .hero { position: relative; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; isolation: isolate; padding-block: calc(var(--head-h) + 24px) 88px; }
-  .hero__bg { position: absolute; inset: 0; z-index: -2; }
-  .hero__bg .frame { position: absolute; inset: 0; }
-  .hero::before {
-    content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-    background:
-      linear-gradient(90deg, rgba(11, 15, 26, 0.9) 0, rgba(11, 15, 26, 0.72) 28%, rgba(11, 15, 26, 0.18) 52%, rgba(11, 15, 26, 0) 70%),
-      linear-gradient(180deg, rgba(11, 15, 26, 0.55) 0, rgba(11, 15, 26, 0) 22%, rgba(11, 15, 26, 0) 78%, rgba(11, 15, 26, 0.75) 100%);
-  }
-  .hero__copy { max-width: 590px; }
-  .hero__title, .hero__body { max-width: 540px; }
-  .hero__eyebrow {
-    display: inline-flex; align-items: center; gap: 12px; margin-bottom: 18px;
-    font-family: var(--font-head); font-weight: 600; font-size: 15px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber);
-  }
-  .hero__eyebrow::before { content: ''; width: 28px; height: 1px; background: currentColor; }
-  .hero__title {
-    font-family: var(--font-head); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
-    font-size: clamp(40px, 4.7vw, 68px); line-height: 0.98; text-shadow: 0 2px 18px rgba(11, 15, 26, 0.55);
-  }
-  .hero__title > span { display: block; text-wrap: balance; }
-  .hero__title .nw { white-space: nowrap; }
-  .hero__title > span + span { color: var(--simsup); }
-  .hero__body { margin-top: 22px; font-size: clamp(16.5px, 1.35vw, 19px); line-height: 1.55; max-width: 52ch; text-shadow: 0 1px 12px rgba(11, 15, 26, 0.6); }
-  .hero__body--short { display: none; }
-  .hero__cta { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
-  .hero__small { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 6px 0; font-family: var(--font-mono); font-size: 13px; color: var(--dim); letter-spacing: 0.02em; }
-  .hero__small li + li::before { content: '·'; margin: 0 10px; color: var(--hair-strong); }
-  .hero__cue {
-    position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 10px;
-    font-family: var(--font-head); font-weight: 600; font-size: 14px; letter-spacing: 0.16em; text-transform: uppercase; text-decoration: none; color: var(--text);
-    padding: 8px 14px; white-space: nowrap;
-  }
-  .hero__cue svg { width: 16px; height: 16px; color: var(--amber); }
-  html.motion .hero__cue svg { animation: cue 1.8s var(--ease) infinite; }
-  @keyframes cue { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(4px); } }
-
-  .storm__steps { padding-block: clamp(40px, 6vw, 72px) 0; display: grid; gap: clamp(48px, 7vw, 88px); }
+  .storm__intro { padding-top: clamp(56px, 8vw, 104px); }
+  .storm__intro .head { margin-bottom: 0; }
+  .storm__steps { padding-block: clamp(32px, 5vw, 56px) clamp(56px, 8vw, 96px); display: grid; gap: clamp(40px, 6vw, 72px); }
   .step__in { display: grid; gap: 16px; }
   @media (min-width: 900px) {
-    .step__in:has(.step__fig) { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 28px; align-items: center; }
+    .step__in { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 28px; align-items: center; }
   }
   .step__fig { border: 1px solid var(--hair); aspect-ratio: 16 / 9; overflow: hidden; background: #070a12; }
   .step__fig .frame { display: block; width: 100%; height: 100%; }
@@ -231,74 +248,41 @@ const dust = (tau: number) => Math.min(1, Math.max(0, (tau - 0.5) / 3.5));
   .step__nums dt { font-family: var(--font-head); font-weight: 600; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
   .step__nums dd { font-size: 20px; line-height: 1.3; }
   .step__nums small { font-size: 12px; color: var(--dim); }
-  .storm__foot { margin-top: clamp(40px, 6vw, 64px); padding-bottom: clamp(40px, 6vw, 64px); font-size: 13.5px; line-height: 1.5; color: var(--dim); max-width: 78ch; }
-
   @media (max-aspect-ratio: 4/5) {
-    .hero { align-items: flex-end; padding-bottom: 64px; }
-    .hero::before {
-      background: linear-gradient(180deg, rgba(11, 15, 26, 0.6) 0, rgba(11, 15, 26, 0) 14%, rgba(11, 15, 26, 0) 36%, rgba(11, 15, 26, 0.8) 52%, rgba(11, 15, 26, 0.96) 72%);
-    }
-    .hero__body--long { display: none; }
-    .hero__body--short { display: block; }
-    .hero__eyebrow { margin-bottom: 10px; font-size: 13px; letter-spacing: 0.14em; }
-    .hero__eyebrow::before { width: 18px; }
-    .hero__title { font-size: clamp(34px, 10.4vw, 52px); }
-    .hero__body { margin-top: 12px; font-size: 15px; line-height: 1.45; }
-    .hero__cta { margin-top: 16px; gap: 8px; }
-    .hero__cta .btn { min-height: 46px; padding-inline: 16px; font-size: 16px; }
-    .hero__small { margin-top: 12px; font-size: 11.5px; }
-    .hero__small li + li::before { margin: 0 7px; }
-    .hero__cue { bottom: 12px; font-size: 13px; }
     .step__fig { aspect-ratio: 4 / 5; }
     .step__fig .frame img { object-position: 50% 15%; }
   }
-  @media (max-aspect-ratio: 4/5) and (max-height: 780px) {
-    .hero__eyebrow { display: none; }
-    .hero__title { font-size: clamp(30px, 9.4vw, 40px); }
-    .hero__body { font-size: 14.5px; }
-  }
 
-  /* ------------------------------------------------------------- enhanced */
+  /* ------------------------------------------- enhanced: shared by both views */
   /* The stage uses the largest viewport height so it still fills the screen when a phone's address bar hides. */
   .storm.is-enhanced .storm__stage { display: block; position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; }
   .storm.is-enhanced .storm__track { position: relative; z-index: 2; margin-top: -100vh; margin-top: -100lvh; }
-  .storm.is-enhanced .storm__frames, .storm.is-enhanced .storm__dust, .storm.is-enhanced .storm__shade { position: absolute; inset: 0; }
-  .storm.is-enhanced .storm__frames { z-index: 0; isolation: isolate; }
-  .storm.is-enhanced .storm__dust { z-index: 1; }
-  .storm.is-enhanced .storm__shade { z-index: 2; }
-  .hud { z-index: 3; }
-  .storm.is-enhanced .storm__frames .frame { position: absolute; inset: 0; opacity: 0; visibility: hidden; }
-  .storm.is-enhanced .storm__frames .frame:first-child { opacity: 1; visibility: visible; }
-  .storm.is-enhanced .storm__dust { width: 100%; height: 100%; pointer-events: none; }
-  .storm.is-enhanced .storm__shade {
-    pointer-events: none;
-    background:
-      linear-gradient(90deg, rgba(11, 15, 26, 0.9) 0, rgba(11, 15, 26, 0.7) 26%, rgba(11, 15, 26, 0.16) 50%, rgba(11, 15, 26, 0) 68%),
-      linear-gradient(180deg, rgba(11, 15, 26, 0.6) 0, rgba(11, 15, 26, 0) 20%, rgba(11, 15, 26, 0) 80%, rgba(11, 15, 26, 0.7) 100%);
-  }
-  .storm.is-enhanced .hero::before { display: none; }
+  .storm.is-enhanced .storm__intro { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); padding: 0; }
   .storm.is-enhanced .storm__steps { padding: 0; gap: 0; }
+  .storm.is-enhanced .step__in { display: block; }
   .storm.is-enhanced .step { min-height: 90vh; min-height: 90svh; display: flex; align-items: center; }
   .storm.is-enhanced .step:last-child { min-height: 110vh; min-height: 110svh; }
   .storm.is-enhanced .step__nums { display: none; }
   /* No backdrop blur here: it would be recomputed on every frame of the dust layer behind it. */
   .storm.is-enhanced .step__card { background: rgba(11, 15, 26, 0.9); box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45); }
-  .storm.is-enhanced .storm__foot { margin-top: 0; padding-block: 0 28px; position: relative; top: -64px; margin-bottom: -40px; text-shadow: 0 1px 8px rgba(11, 15, 26, 0.9); }
 
-  @media (max-height: 520px) {
-    .hero { padding-top: calc(var(--head-h) + 8px); }
-    .hero__eyebrow { margin-bottom: 8px; }
-    .hero__title { font-size: 34px; }
-    .hero__body { margin-top: 10px; font-size: 14.5px; line-height: 1.4; max-width: 62ch; }
-    .hero__title, .hero__body { max-width: none; }
-    .hero__cta { margin-top: 14px; }
-    .hero__cta .btn { min-height: 44px; }
+  .console, .console__view { position: absolute; inset: 0; }
+  .console__head, .console__side, .tline, .view__sol { display: none; }
+  .storm__frames, .storm__dust, .storm__shade { position: absolute; inset: 0; }
+  .storm__frames { z-index: 0; isolation: isolate; }
+  .storm__dust { z-index: 1; width: 100%; height: 100%; pointer-events: none; }
+  .storm__shade {
+    z-index: 2; pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(11, 15, 26, 0.9) 0, rgba(11, 15, 26, 0.7) 26%, rgba(11, 15, 26, 0.16) 50%, rgba(11, 15, 26, 0) 68%),
+      linear-gradient(180deg, rgba(11, 15, 26, 0.6) 0, rgba(11, 15, 26, 0) 20%, rgba(11, 15, 26, 0) 80%, rgba(11, 15, 26, 0.7) 100%);
   }
+  .storm__frames .frame { position: absolute; inset: 0; opacity: 0; visibility: hidden; }
+  .storm__frames .frame:first-child { opacity: 1; visibility: visible; }
 
   .hud {
-    position: absolute; top: calc(var(--head-h) + 20px); right: var(--pad); width: 276px; padding: 14px 16px 12px;
-    background: rgba(11, 15, 26, 0.92); border: 1px solid var(--hair);
-    opacity: var(--hud, 0); transform: translateY(calc((1 - var(--hud, 0)) * -10px)); font-size: 14px;
+    position: absolute; z-index: 3; top: calc(var(--head-h) + 20px); right: var(--pad); width: 276px; padding: 14px 16px 12px;
+    background: rgba(11, 15, 26, 0.92); border: 1px solid var(--hair); font-size: 14px;
   }
   .hud__top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid var(--hair); }
   .hud__k { font-family: var(--font-head); font-weight: 600; font-size: 12.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
@@ -311,15 +295,16 @@ const dust = (tau: number) => Math.min(1, Math.max(0, (tau - 0.5) / 3.5));
   .hud__bar i { position: absolute; inset: 0; transform-origin: left; transform: scaleX(var(--v, 1)); background: var(--c, var(--simsup)); display: block; }
   .hud__row--sky { --c: var(--dust); }
   .hud__row--solar { --c: var(--c-power); }
-  .hud__row--batt { --c: var(--c-power); }
+  .hud__row--batt { --c: #6fb1ff; }
   .hud__row--batt.is-low { --c: var(--alert); }
   .hud__row--batt.is-low b { color: var(--alert); }
   /* The tick on the solar bar marks what the base needs: below it, the battery pays the difference. */
   .hud__bar--need::after { content: ''; position: absolute; left: calc(var(--need, 0.8) * 100%); top: -3px; bottom: -3px; width: 2px; background: var(--text); }
   .hud__note { margin-top: 9px; font-size: 12px; color: var(--dim); line-height: 1.35; }
 
+  /* -------------------------------- enhanced, phones and small windows: full-screen scene */
   @media (max-aspect-ratio: 4/5), (max-width: 760px) {
-    .storm.is-enhanced .storm__shade {
+    .storm__shade {
       background: linear-gradient(180deg, rgba(11, 15, 26, 0.6) 0, rgba(11, 15, 26, 0) 14%, rgba(11, 15, 26, 0) 36%, rgba(11, 15, 26, 0.8) 52%, rgba(11, 15, 26, 0.96) 72%);
     }
     .storm.is-enhanced .step { align-items: flex-end; padding-bottom: 9vh; }
@@ -335,119 +320,276 @@ const dust = (tau: number) => Math.min(1, Math.max(0, (tau - 0.5) / 3.5));
     .hud__row b { font-size: 15px; }
     .hud__bar { height: 4px; margin-top: 3px; }
   }
+
+  /* --------------------------------------- enhanced, wide screens: the mission console */
+  /* Keep this query in step with CONSOLE in the script below. */
+  @media (min-width: 1024px) and (min-height: 600px) {
+    .storm.is-enhanced .storm__stage {
+      background: radial-gradient(1100px 520px at 30% 46%, rgba(224, 147, 90, 0.1), transparent 70%), var(--ink);
+    }
+    /* The captions live in the console; the scrolling ones stay in the page for screen readers and set the pace. */
+    .storm.is-enhanced .storm__track { pointer-events: none; }
+    .storm.is-enhanced .step { min-height: 78vh; }
+    .storm.is-enhanced .step:last-child { min-height: 100vh; }
+    .storm.is-enhanced .step__card { opacity: 0 !important; }
+    .storm.is-enhanced .storm__tail { height: 55vh; }
+
+    .console {
+      inset: auto; left: 50%; top: calc(var(--head-h) + (100% - var(--head-h)) / 2); transform: translate(-50%, -50%);
+      width: min(100%, 1680px); height: min(100% - var(--head-h), 58vw); padding: 14px var(--pad) 18px;
+      display: grid; grid-template-columns: minmax(0, 1.72fr) minmax(340px, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; gap: 14px 20px;
+    }
+    .console__head { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 18px; }
+    .console__head .kicker { margin: 0; }
+    .console__title { font-family: var(--font-head); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: clamp(24px, 2.2vw, 34px); line-height: 1; }
+    .console__run { margin-left: auto; font-size: 12.5px; color: var(--dim); letter-spacing: 0.02em; white-space: nowrap; }
+
+    .console__view { position: relative; inset: auto; overflow: hidden; border: 1px solid var(--hair-strong); background: #070a12; }
+    .console__view .frame img { object-position: 100% 50%; }
+    .storm__shade { background: linear-gradient(180deg, rgba(11, 15, 26, 0.72) 0, rgba(11, 15, 26, 0) 22%, rgba(11, 15, 26, 0) 62%, rgba(11, 15, 26, 0.94) 100%); }
+    .view__sol { display: flex; align-items: baseline; gap: 10px; position: absolute; z-index: 3; left: 20px; top: 14px; text-shadow: 0 1px 10px rgba(11, 15, 26, 0.8); }
+    .view__sol b { font-size: clamp(40px, 3.6vw, 60px); font-weight: 500; line-height: 1; letter-spacing: -0.02em; }
+    .view__of { font-size: 16px; color: var(--dim); }
+    .view__tag { margin-left: 10px; align-self: center; padding: 3px 10px; border: 1px solid rgba(246, 196, 69, 0.5); background: rgba(11, 15, 26, 0.6); font-family: var(--font-head); font-weight: 600; font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber); white-space: nowrap; }
+    .hud { top: auto; left: 0; right: 0; bottom: 0; width: auto; padding: 14px 20px 16px; border: 0; background: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 28px; }
+    .hud__top, .hud__note { display: none; }
+    .hud__row { padding-top: 0; }
+    .hud__row .hud__k { font-size: 13px; color: var(--text); }
+    .hud__row b { font-size: clamp(20px, 1.9vw, 28px); }
+    .hud__row small { font-size: 13px; }
+    .hud__bar { height: 6px; margin-top: 4px; background: rgba(255, 255, 255, 0.16); }
+
+    .console__side { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 14px; min-height: 0; }
+    .caps { display: grid; }
+    .cap { grid-area: 1 / 1; padding: 4px 2px 0; opacity: 0; transform: translateY(8px); transition: opacity 0.35s var(--ease), transform 0.35s var(--ease); }
+    .cap.is-on { opacity: 1; transform: none; }
+    .cap .step__meta { display: none; }
+    .cap .step__title { font-size: clamp(24px, 2.15vw, 34px); }
+    .cap .step__body { font-size: clamp(15px, 1.15vw, 17.5px); }
+
+    .pchart { display: flex; flex-direction: column; min-height: 0; padding: 14px 16px 10px; background: rgba(17, 23, 39, 0.82); }
+    .pchart__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; }
+    .pchart__title { font-family: var(--font-head); font-weight: 600; font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; }
+    .pchart__title small { font-size: 12px; color: var(--dim); letter-spacing: 0.06em; text-transform: none; }
+    .pchart__legend { display: flex; flex-wrap: wrap; gap: 2px 14px; font-size: 12.5px; color: var(--dim); }
+    .pchart__legend li { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .key { display: block; flex: none; }
+    .key--solar { width: 9px; height: 11px; background: var(--c-power); border-radius: 2px 2px 0 0; }
+    .key--used { width: 14px; height: 2px; background: var(--text); }
+    .key--batt { width: 16px; height: 9px; background: radial-gradient(circle at 50% 50%, #6fb1ff 0 4px, transparent 4.5px), linear-gradient(#6fb1ff, #6fb1ff) center / 100% 2px no-repeat; }
+    .pchart__body { flex: 1; min-height: 96px; margin-top: 12px; display: grid; grid-template-columns: 30px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; gap: 6px 6px; }
+    .pchart__y { position: relative; font-size: 11px; color: var(--dim); }
+    .pchart__y span { position: absolute; right: 0; transform: translateY(50%); line-height: 1; }
+    .pchart__plot { position: relative; }
+    .pchart__grid { position: absolute; left: 0; right: 0; height: 1px; background: rgba(255, 255, 255, 0.08); }
+    .pchart__grid:first-of-type { background: rgba(255, 255, 255, 0.28); }
+    /* Bars appear a whole sol at a time; the battery line is drawn exactly up to the cursor. */
+    .pchart__reveal { position: absolute; inset: 0; --rev: 10%; --cur: 5%; }
+    .pchart__cols { position: absolute; inset: 0; display: flex; clip-path: inset(-12px calc(100% - var(--rev)) -12px -12px); }
+    .pchart__batt { position: absolute; inset: 0; clip-path: inset(-12px calc(100% - var(--cur) - 5px) -12px -12px); }
+    .pcol { flex: 1; position: relative; }
+    .pbar { position: absolute; left: 50%; bottom: 0; width: min(22px, 52%); transform: translateX(-50%); background: var(--c-power); border-radius: 3px 3px 0 0; display: block; }
+    .pused { position: absolute; left: 10%; right: 10%; height: 2px; background: var(--text); transform: translateY(50%); display: block; }
+    .pchart__line { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    .pchart__line polyline { stroke: #6fb1ff; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+    .pdot { position: absolute; width: 9px; height: 9px; border-radius: 50%; background: #6fb1ff; box-shadow: 0 0 0 2px #0f1422; transform: translate(-50%, 50%); display: block; }
+    .pdot--empty { background: var(--alert); }
+    .pchart__cursor { position: absolute; top: -6px; bottom: 0; left: var(--cur, 5%); width: 1px; background: rgba(243, 234, 214, 0.55); display: block; pointer-events: none; }
+    .pchart__x { grid-column: 2; display: flex; font-size: 11px; color: var(--dim); }
+    .pchart__x span { flex: 1; text-align: center; }
+    .pchart__tip {
+      position: absolute; z-index: 2; bottom: calc(100% + 4px); left: var(--tx, 50%); transform: translateX(-50%); padding: 7px 10px; white-space: nowrap; pointer-events: none;
+      background: #060911; border: 1px solid var(--hair-strong); font-size: 12px; line-height: 1.5; color: var(--text);
+    }
+    .pchart__tip b { display: block; font-weight: 500; color: var(--dim); }
+    .pchart__tip[hidden] { display: none; }
+
+    .tline { grid-column: 1 / -1; display: grid; gap: 6px; }
+    .tline__label { font-family: var(--font-head); font-weight: 600; font-size: 12.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
+    .tline__cells { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px; }
+    .tcell { padding: 7px 9px 6px; border: 1px solid var(--hair); background: rgba(17, 23, 39, 0.6); cursor: pointer; display: grid; gap: 4px; min-width: 0; transition: border-color 0.2s var(--ease), background 0.2s var(--ease); }
+    .tcell:hover { border-color: var(--hair-strong); }
+    .tcell__top { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
+    .tcell__top b { font-weight: 500; font-size: 14px; color: var(--dim); }
+    .tcell__tau { font-size: 12px; color: var(--text); }
+    .tcell__bar { display: block; height: 4px; background: rgba(255, 255, 255, 0.08); position: relative; }
+    .tcell__bar i { position: absolute; inset: 0; background: var(--dim); transform-origin: left; transform: scaleX(var(--v)); display: block; }
+    .tcell--storm .tcell__bar i, .tcell--brownout .tcell__bar i { background: var(--dust); }
+    .tcell__state { font-family: var(--font-head); font-weight: 600; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tcell--brownout .tcell__state { color: var(--alert); }
+    .tcell--event .tcell__state { color: var(--c-rad); }
+    /* Sols not reached yet show only their number. */
+    .tcell__tau, .tcell__bar i, .tcell__state { opacity: 0; transition: opacity 0.3s var(--ease); }
+    .tcell.is-past :is(.tcell__tau, .tcell__bar i, .tcell__state), .tcell.is-now :is(.tcell__tau, .tcell__bar i, .tcell__state) { opacity: 1; }
+    .tcell.is-past .tcell__top b { color: var(--text); }
+    .tcell.is-now { border-color: var(--amber); background: rgba(246, 196, 69, 0.07); }
+    .tcell.is-now .tcell__top b { color: var(--amber); }
+  }
+  @media (min-width: 1024px) and (min-height: 600px) and (max-height: 720px) {
+    .console { gap: 10px 18px; padding-block: 10px 12px; }
+    .cap .step__title { font-size: 23px; }
+    .cap .step__body { font-size: 14.5px; margin-top: 6px; }
+    .pchart { padding: 10px 14px 8px; }
+    .tline__label { display: none; }
+  }
 </style>
 
 <script>
-  // Enhances the storm section when motion is allowed. All values come from data attributes
-  // written from the content file, so this script holds no copy and no numbers of its own.
+  // Enhances the storm section when motion is allowed. Every number and label comes from the
+  // content file through data attributes, so this script holds no copy and no figures of its own.
+  type Sol = { sol: number; tau: number; solar: number; used: number; battery: number; label: string };
   const root = document.querySelector<HTMLElement>('[data-storm]');
   const motionOk = document.documentElement.classList.contains('motion');
+  // Keep in step with the console media query in the styles above.
+  const CONSOLE = window.matchMedia('(min-width: 1024px) and (min-height: 600px)');
 
   if (root && motionOk) {
+    const run = JSON.parse(root.dataset.run ?? '{}') as { series: Sol[]; steps: { sol: number; tag: string }[]; labels: Record<string, string> };
+    const series = run.series;
     const stageFrames = root.querySelector<HTMLElement>('[data-frames]')!;
-    const hud = root.querySelector<HTMLElement>('[data-hud]')!;
     const steps = [...root.querySelectorAll<HTMLElement>('[data-step]')];
-    const num = (el: HTMLElement, key: string) => Number(el.dataset[key] ?? 0);
+    const cards = steps.map((s) => s.querySelector<HTMLElement>('.step__card') ?? s);
+    const caps = [...root.querySelectorAll<HTMLElement>('[data-cap]')];
+    const cells = [...root.querySelectorAll<HTMLElement>('.tcell')];
+    const reveal = root.querySelector<HTMLElement>('[data-reveal]')!;
+    const cursor = root.querySelector<HTMLElement>('[data-cursor]')!;
+    const stepSols = run.steps.map((s) => s.sol);
+    const lastSol = series[series.length - 1]!.sol;
 
     // Move every picture into the sticky stage (one download each; the plain layout is untouched
-    // for visitors who never run this). Steps without a picture reuse the previous frame.
+    // for visitors who never run this).
     const frames: HTMLElement[] = [];
-    const frameOf: number[] = [];
     for (const step of steps) {
       const pic = step.querySelector<HTMLElement>('[data-frame]');
-      if (pic) {
-        stageFrames.appendChild(pic);
-        pic.querySelector('img')?.setAttribute('loading', 'eager');
-        frames.push(pic);
-      }
-      frameOf.push(Math.max(0, frames.length - 1));
+      if (!pic) continue;
+      stageFrames.appendChild(pic);
+      pic.querySelector('img')?.setAttribute('loading', 'eager');
+      frames.push(pic);
     }
     root.querySelectorAll('.step__fig').forEach((f) => f.remove());
     root.classList.add('is-enhanced');
 
-    const data = steps.map((s) => ({
-      sol: s.dataset.sol ?? '',
-      tag: s.dataset.tag ?? '',
-      tau: num(s, 'tau'),
-      solar: num(s, 'solar'),
-      battery: num(s, 'battery'),
-      dust: num(s, 'dust'),
-    }));
-    const oneDecimal = new Intl.NumberFormat(document.documentElement.lang || 'en', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-    const out = (key: string) => hud.querySelector<HTMLElement>(`[data-v="${key}"]`)!;
-    const bar = (key: string) => hud.querySelector<HTMLElement>(`[data-bar="${key}"]`)!;
-    const el = { sol: out('sol'), tag: out('tag'), tau: out('tau'), solar: out('solar'), battery: out('battery') };
+    const all = (key: string) => [...root.querySelectorAll<HTMLElement>(`[data-v="${key}"]`)];
+    const bar = (key: string) => root.querySelector<HTMLElement>(`[data-bar="${key}"]`)!;
+    const el = { sol: all('sol'), sol2: all('sol2'), tag: all('tag'), tau: all('tau'), solar: all('solar'), battery: all('battery') };
     const bars = { tau: bar('tau'), solar: bar('solar'), battery: bar('battery') };
-    const battRow = hud.querySelector<HTMLElement>('.hud__row--batt')!;
-    const maxSolar = Math.max(...data.map((d) => d.solar));
-    const maxBatt = Math.max(...data.map((d) => d.battery));
+    const battRow = root.querySelector<HTMLElement>('.hud__row--batt')!;
+    const oneDecimal = new Intl.NumberFormat(document.documentElement.lang || 'en', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const maxSolar = Math.max(...series.map((d) => d.solar));
+    const maxBatt = Math.max(...series.map((d) => d.battery));
+    const set = (list: HTMLElement[], text: string) => list.forEach((n) => (n.textContent = text));
 
-    // Anchor of each step: the middle of its text block, in document coordinates.
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+    const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+    const smooth = (a: number, b: number, t: number) => {
+      const v = clamp01((t - a) / (b - a));
+      return v * v * (3 - 2 * v);
+    };
+    /** The scroll fraction at which smooth(a, b, t) reaches `target`. */
+    const unsmooth = (a: number, b: number, target: number) => {
+      if (target <= 0) return 0;
+      if (target >= 1) return 1;
+      let lo = a;
+      let hi = b;
+      for (let k = 0; k < 24; k++) {
+        const mid = (lo + hi) / 2;
+        if (smooth(a, b, mid) < target) lo = mid;
+        else hi = mid;
+      }
+      return (lo + hi) / 2;
+    };
+    /** The run at a fractional sol: values between two sols are interpolated. */
+    const sample = (p: number) => {
+      const i = Math.min(series.length - 2, Math.max(0, Math.floor(p) - 1));
+      const a = series[i]!;
+      const b = series[i + 1]!;
+      const t = clamp01(p - a.sol);
+      return { tau: lerp(a.tau, b.tau, t), solar: lerp(a.solar, b.solar, t), battery: lerp(a.battery, b.battery, t) };
+    };
+
+    // Anchor of each step: the middle of its caption, in document coordinates. After the last
+    // caption a tail (wide screens only) plays the remaining sols of the run.
+    const HOLD: [number, number] = [0.28, 0.72];
+    const TAIL: [number, number] = [0.25, 0.9];
     let anchors: number[] = [];
     let tops: number[] = [];
-    const texts = steps.map((s) => s.querySelector<HTMLElement>('.step__card, .hero__copy') ?? s);
+    let tailEnd = 0;
     const measure = () => {
-      tops = texts.map((t) => t.getBoundingClientRect().top + window.scrollY);
-      anchors = texts.map((t, k) => tops[k]! + t.offsetHeight / 2);
+      tops = cards.map((t) => t.getBoundingClientRect().top + window.scrollY);
+      anchors = cards.map((t, k) => tops[k]! + t.offsetHeight / 2);
+      const bottom = root.getBoundingClientRect().bottom + window.scrollY;
+      tailEnd = bottom - window.innerHeight * 0.5;
     };
-    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-    const smooth = (a: number, b: number, t: number) => {
-      const x = Math.min(1, Math.max(0, (t - a) / (b - a)));
-      return x * x * (3 - 2 * x);
-    };
+    const hasTail = () => tailEnd - anchors[anchors.length - 1]! > window.innerHeight * 0.25;
 
     let dustLevel = 0;
     let lastKey = '';
+    let lastCap = -1;
+    let revealed = 1;
     const update = () => {
       const c = window.scrollY + window.innerHeight * 0.55;
+      const n = anchors.length;
       let i = 0;
-      while (i < anchors.length - 2 && c > anchors[i + 1]!) i++;
+      while (i < n - 2 && c > anchors[i + 1]!) i++;
       const a = anchors[i]!;
       const b = anchors[i + 1] ?? a + 1;
-      const t = Math.min(1, Math.max(0, (c - a) / (b - a)));
-      // Hold each frame while its caption is being read; change in the gap between captions.
-      const e = smooth(0.28, 0.72, t);
-      const from = data[i]!;
-      const to = data[i + 1] ?? from;
+      const t = clamp01((c - a) / (b - a));
+      // Hold each picture while its caption is being read; change in the gap between captions.
+      const e = smooth(HOLD[0], HOLD[1], t);
+      let p = lerp(stepSols[i]!, stepSols[i + 1] ?? stepSols[i]!, e);
+      if (c > anchors[n - 1]! && hasTail()) {
+        const tt = clamp01((c - anchors[n - 1]!) / (tailEnd - anchors[n - 1]!));
+        p = lerp(stepSols[n - 1]!, lastSol, smooth(TAIL[0], TAIL[1], tt));
+      }
 
-      const fa = frameOf[i]!;
-      const fb = frameOf[i + 1] ?? fa;
       frames.forEach((f, k) => {
-        const o = k === fa ? 1 : k === fb ? e : 0;
+        const o = k === i ? 1 : k === i + 1 ? e : 0;
         f.style.opacity = String(o);
         f.style.visibility = o > 0 ? 'visible' : 'hidden';
-        f.style.zIndex = k === fb && fb !== fa ? '2' : k === fa ? '1' : '0';
+        f.style.zIndex = k === i + 1 ? '2' : k === i ? '1' : '0';
       });
 
-      const tau = lerp(from.tau, to.tau, e);
-      const solar = lerp(from.solar, to.solar, e);
-      const battery = lerp(from.battery, to.battery, e);
-      const shown = e < 0.5 ? from : to;
-      const key = `${shown.sol}|${tau.toFixed(1)}|${Math.round(solar)}|${Math.round(battery)}`;
+      const now = sample(p);
+      const sol = Math.round(p);
+      const key = `${sol}|${now.tau.toFixed(1)}|${Math.round(now.solar)}|${Math.round(now.battery)}`;
       if (key !== lastKey) {
         lastKey = key;
-        el.sol.textContent = shown.sol;
-        el.tag.textContent = shown.tag;
-        el.tau.textContent = oneDecimal.format(tau);
-        el.solar.textContent = String(Math.round(solar));
-        el.battery.textContent = String(Math.round(battery));
-        bars.tau.style.setProperty('--v', String(Math.min(1, tau / 5)));
-        bars.solar.style.setProperty('--v', String(solar / maxSolar));
-        bars.battery.style.setProperty('--v', String(battery / maxBatt));
-        battRow.classList.toggle('is-low', battery / maxBatt < 0.2);
+        const stepAt = run.steps.find((s) => s.sol === sol);
+        set(el.sol, String(sol));
+        set(el.sol2, String(sol).padStart(2, '0'));
+        set(el.tag, stepAt?.tag ?? series[sol - 1]?.label ?? '');
+        set(el.tau, oneDecimal.format(now.tau));
+        set(el.solar, String(Math.round(now.solar)));
+        set(el.battery, String(Math.round(now.battery)));
+        bars.tau.style.setProperty('--v', String(Math.min(1, now.tau / 5)));
+        bars.solar.style.setProperty('--v', String(now.solar / maxSolar));
+        bars.battery.style.setProperty('--v', String(now.battery / maxBatt));
+        battRow.classList.toggle('is-low', now.battery / maxBatt < 0.2);
+        cells.forEach((cell, k) => {
+          cell.classList.toggle('is-past', k + 1 < sol);
+          cell.classList.toggle('is-now', k + 1 === sol);
+        });
       }
-      // Captions fade out before they reach the readout at the top, so the two never overlap.
-      const vh = window.innerHeight;
-      texts.forEach((text, k) => {
-        // The hero (title, buttons and scroll cue) fades as a whole; the other captions fade near the top.
-        const target = k === 0 ? steps[0]! : text;
-        const o = k === 0 ? 1 - smooth(0.06, 0.4, i === 0 ? t : 1) : smooth(0.17, 0.3, (tops[k]! - window.scrollY) / vh);
-        target.style.opacity = o > 0.995 ? '' : o.toFixed(3);
-        if (k === 0) target.style.visibility = o < 0.01 ? 'hidden' : '';
-      });
-      // The readout fades in as the hero leaves and stays for the rest of the sequence.
-      hud.style.setProperty('--hud', i === 0 ? String(smooth(0.45, 0.85, t)) : '1');
-      dustLevel = lerp(from.dust, to.dust, e);
+      revealed = p;
+      const cur = `${(((p - 0.5) / series.length) * 100).toFixed(2)}%`;
+      reveal.style.setProperty('--rev', `${((Math.floor(p + 0.5) / series.length) * 100).toFixed(2)}%`);
+      reveal.style.setProperty('--cur', cur);
+      cursor.style.setProperty('--cur', cur);
+
+      const cap = e < 0.5 ? i : Math.min(n - 1, i + 1);
+      if (cap !== lastCap) {
+        lastCap = cap;
+        caps.forEach((node, k) => node.classList.toggle('is-on', k === cap));
+      }
+      // Full-screen view: captions fade out before they reach the readout at the top.
+      if (!CONSOLE.matches) {
+        const vh = window.innerHeight;
+        cards.forEach((card, k) => {
+          const o = smooth(0.17, 0.3, (tops[k]! - window.scrollY) / vh);
+          card.style.opacity = o > 0.995 ? '' : o.toFixed(3);
+        });
+      }
+      dustLevel = clamp01((now.tau - 0.5) / 3.5);
     };
 
     let ticking = false;
@@ -459,19 +601,56 @@ const dust = (tau: number) => Math.min(1, Math.max(0, (tau - 0.5) / 3.5));
         update();
       });
     };
-    measure();
-    update();
+    const refresh = () => {
+      cards.forEach((card) => (card.style.opacity = ''));
+      measure();
+      update();
+    };
+    refresh();
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', () => {
-      measure();
-      update();
-    });
-    window.addEventListener('load', () => {
-      measure();
-      update();
-    });
+    window.addEventListener('resize', refresh);
+    window.addEventListener('load', refresh);
+    CONSOLE.addEventListener('change', refresh);
 
-    // Dust: a light 2D canvas over the frames. Density and wind follow the storm strength, so
+    // The ten-sol strip: a click scrolls the page to that sol.
+    const scrollToSol = (sol: number) => {
+      const n = anchors.length;
+      let c = anchors[0]!;
+      if (sol > stepSols[n - 1]!) {
+        if (!hasTail()) return;
+        const f = (sol - stepSols[n - 1]!) / (lastSol - stepSols[n - 1]!);
+        c = lerp(anchors[n - 1]!, tailEnd, unsmooth(TAIL[0], TAIL[1], f));
+      } else {
+        let i = 0;
+        while (i < n - 2 && sol >= stepSols[i + 1]!) i++;
+        const f = (sol - stepSols[i]!) / ((stepSols[i + 1] ?? sol + 1) - stepSols[i]!);
+        c = lerp(anchors[i]!, anchors[i + 1] ?? anchors[i]!, unsmooth(HOLD[0], HOLD[1], f));
+      }
+      window.scrollTo({ top: Math.round(c - window.innerHeight * 0.55) + 1 });
+    };
+    cells.forEach((cell) => cell.addEventListener('click', () => scrollToSol(Number(cell.dataset.sol))));
+
+    // Chart hover: the three values of a sol already reached.
+    const plot = root.querySelector<HTMLElement>('[data-plot]')!;
+    const tip = root.querySelector<HTMLElement>('[data-tip]')!;
+    plot.addEventListener('mousemove', (ev) => {
+      const box = plot.getBoundingClientRect();
+      const k = Math.min(series.length - 1, Math.max(0, Math.floor(((ev.clientX - box.left) / box.width) * series.length)));
+      const d = series[k]!;
+      if (d.sol > Math.floor(revealed + 0.5)) {
+        tip.hidden = true;
+        return;
+      }
+      const words = run.labels;
+      const head = document.createElement('b');
+      head.textContent = `${words.sol} ${d.sol} · ${d.label}`;
+      tip.replaceChildren(head, `${words.solar}: ${d.solar} ${words.unit}`, document.createElement('br'), `${words.used}: ${d.used} ${words.unit}`, document.createElement('br'), `${words.battery}: ${d.battery} ${words.unit}`);
+      tip.style.setProperty('--tx', `${Math.min(74, Math.max(26, ((k + 0.5) / series.length) * 100))}%`);
+      tip.hidden = false;
+    });
+    plot.addEventListener('mouseleave', () => (tip.hidden = true));
+
+    // Dust: a light 2D canvas over the scene. Density and wind follow the storm strength, so
     // the air is still on a clear sol and thick at the peak. It stops when the section is off screen.
     const canvas = root.querySelector<HTMLCanvasElement>('[data-dust]')!;
     const ctx = canvas.getContext('2d');
@@ -490,6 +669,7 @@ const dust = (tau: number) => Math.min(1, Math.max(0, (tau - 0.5) / 3.5));
       };
       size();
       window.addEventListener('resize', size);
+      CONSOLE.addEventListener('change', size);
       const rnd = (a: number, b: number) => a + Math.random() * (b - a);
       const motes = Array.from({ length: COUNT }, () => ({ x: Math.random(), y: Math.random(), z: rnd(0.25, 1), r: rnd(0.6, 2.4), wob: Math.random() * 6.28 }));
       let visible = true;

@@ -12,8 +12,11 @@ const missing = [];
 block.split('\n').forEach((line, i) => {
   const single = line.match(/^\s*(\w+): null\b/);
   if (single) missing.push(`  src/content/site.ts:${before + i}  ${single[1]}`);
-  const member = line.match(/\{ name: null/);
-  if (member) missing.push(`  src/content/site.ts:${before + i}  team member (name, role, built, photo)`);
+  const member = line.match(/\{ name: (null|'([^']*)'), role: (null|'[^']*'), built: (null|'[^']*'), photo: (null|'[^']*') \}/);
+  if (member) {
+    const gaps = ['name', 'role', 'built', 'photo'].filter((_, k) => [member[1], member[3], member[4], member[5]][k] === 'null');
+    if (gaps.length) missing.push(`  src/content/site.ts:${before + i}  team member ${member[2] ?? ''}: ${gaps.join(', ')}`);
+  }
 });
 if (missing.length === 0) {
   console.log('Nothing pending: every placeholder in src/content/site.ts is filled.');

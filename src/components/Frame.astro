@@ -8,8 +8,10 @@ interface Props {
   id: string;
   alt: string;
   eager?: boolean;
+  /** CSS sizes hint for landscape screens (portrait phones always get the full width). */
+  sizes?: string;
 }
-const { id, alt, eager = false } = Astro.props;
+const { id, alt, eager = false, sizes = '100vw' } = Astro.props;
 
 const files = import.meta.glob<{ default: ImageMetadata }>('../assets/frames/*.{webp,png,jpg}', { eager: true });
 const find = (name: string) => Object.entries(files).find(([p]) => p.includes(`/${name}.`))?.[1].default;
@@ -30,8 +32,8 @@ const fallback = await getImage({ src: wide, width: 1280, format: 'webp', qualit
 <picture class="frame" data-frame={id}>
   <source media={portrait} type="image/avif" srcset={await set(tall, TALL, 'avif')} sizes="100vw" />
   <source media={portrait} type="image/webp" srcset={await set(tall, TALL, 'webp')} sizes="100vw" />
-  <source type="image/avif" srcset={await set(wide, WIDE, 'avif')} sizes="100vw" />
-  <source type="image/webp" srcset={await set(wide, WIDE, 'webp')} sizes="100vw" />
+  <source type="image/avif" srcset={await set(wide, WIDE, 'avif')} sizes={sizes} />
+  <source type="image/webp" srcset={await set(wide, WIDE, 'webp')} sizes={sizes} />
   <img
     src={fallback.src}
     width={wide.width}

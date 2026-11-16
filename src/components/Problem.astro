@@ -4,13 +4,19 @@ import Shot from './Shot.astro';
 
 const L = Astro.currentLocale;
 const { problem, ui } = copy(L);
+interface Props {
+  /** First section of its page: the title becomes the page's h1. */
+  lead?: boolean;
+}
+const { lead = false } = Astro.props;
+const H = lead ? 'h1' : 'h2';
 ---
 
-<section class="section problem" id="problem" aria-labelledby="problem-title">
+<section class:list={['section', 'problem', lead && 'section--lead']} id="problem" aria-labelledby="problem-title">
   <div class="wrap problem__grid">
     <div class="reveal">
       <p class="kicker">{problem.kicker}</p>
-      <h2 class="h2" id="problem-title">{problem.title}</h2>
+      <H class="h2" id="problem-title">{problem.title}</H>
       <div class="prose problem__body">
         {problem.body.map((p) => <p>{p}</p>)}
       </div>

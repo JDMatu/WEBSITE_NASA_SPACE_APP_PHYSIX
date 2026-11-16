@@ -1,18 +1,25 @@
 ---
 import { copy, pending } from '../content';
+import { url } from '../lib/util';
 import Icon from './Icon.astro';
 
 const L = Astro.currentLocale;
-const { teachers, ui } = copy(L);
+const { ranks, teachers, ui } = copy(L);
 
 const icons = ['screen', 'lock', 'wifi', 'lang'] as const;
+interface Props {
+  /** First section of its page: the title becomes the page's h1. */
+  lead?: boolean;
+}
+const { lead = false } = Astro.props;
+const H = lead ? 'h1' : 'h2';
 ---
 
-<section class="section teachers" id="teachers" aria-labelledby="teachers-title">
+<section class:list={['section', 'teachers', lead && 'section--lead']} id="teachers" aria-labelledby="teachers-title">
   <div class="wrap teachers__grid">
     <div class="reveal">
       <p class="kicker">{teachers.kicker}</p>
-      <h2 class="h2" id="teachers-title">{teachers.title}</h2>
+      <H class="h2" id="teachers-title">{teachers.title}</H>
       <p class="lede teachers__lede">{teachers.body}</p>
       <p class="note teachers__note"><Icon name="info" /><span>{teachers.notice}</span></p>
       <p class="teachers__contact">
@@ -39,6 +46,27 @@ const icons = ['screen', 'lock', 'wifi', 'lang'] as const;
       }
     </ul>
   </div>
+  <div class="wrap classranks">
+    <header class="reveal">
+      <h2 class="h3 classranks__title">{teachers.ranksTitle}</h2>
+      <p>{teachers.ranksIntro}</p>
+    </header>
+    <ol class="classranks__list">
+      {
+        ranks.items.map((r, i) => (
+          <li class="reveal" style={`--d:${i * 70}ms`}>
+            <span class="segbar classranks__lvl" aria-hidden="true">
+              {[0, 1, 2, 3].map((k) => <i class={k <= i ? 'on' : ''} />)}
+            </span>
+            <h3 class="h3">{r.name}</h3>
+            <p>{r.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="classranks__foot">{teachers.practice}</p>
+    <p class="more-links"><a class="link-arrow" href={url('/game/', L) + '#ranks'}>{teachers.ranksLink}<Icon name="arrow" /></a></p>
+  </div>
 </section>
 
 <style>
@@ -52,5 +80,16 @@ const icons = ['screen', 'lock', 'wifi', 'lang'] as const;
   .teachers__icon :global(svg) { width: 22px; height: 22px; }
   .teachers__points h3 { font-size: 18px; font-weight: 600; line-height: 1.3; }
   .teachers__points p { margin-top: 4px; font-size: 15.5px; color: var(--dim); line-height: 1.5; }
+  .classranks { margin-top: clamp(56px, 8vw, 96px); padding-top: clamp(32px, 5vw, 48px); border-top: 1px solid var(--hair); }
+  .classranks__title { font-size: clamp(26px, 3vw, 34px); letter-spacing: 0.06em; }
+  .classranks header p { margin-top: 10px; max-width: 60ch; color: var(--dim); }
+  .classranks__list { margin-top: 28px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .classranks__list li { padding: 20px; background: rgba(17, 23, 39, 0.72); border: 1px solid var(--hair); }
+  .classranks__lvl { width: 84px; --accent: var(--amber); margin-bottom: 14px; }
+  .classranks__list .h3 { font-size: 24px; letter-spacing: 0.08em; }
+  .classranks__list p { margin-top: 8px; font-size: 15px; line-height: 1.5; color: var(--dim); }
+  .classranks__foot { margin-top: 22px; padding-left: 16px; border-left: 2px solid var(--hair-strong); max-width: 64ch; font-size: 16px; }
+  @media (max-width: 1000px) { .classranks__list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .classranks__list { grid-template-columns: 1fr; } }
   @media (max-width: 900px) { .teachers__grid { grid-template-columns: 1fr; } }
 </style>

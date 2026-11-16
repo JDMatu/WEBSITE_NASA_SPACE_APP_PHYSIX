@@ -3,8 +3,10 @@ import '../styles/global.css';
 import { copy } from '../content';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { getImage } from 'astro:assets';
 import { asset, inLocale } from '../lib/util';
 import { locales } from '../content';
+import shareSrc from '../assets/frames/sol03-wide.webp';
 
 const L = Astro.currentLocale;
 const { meta, ui } = copy(L);
@@ -12,12 +14,10 @@ const { meta, ui } = copy(L);
 interface Props {
   title?: string;
   description?: string;
-  /** Absolute-path image for link previews (already built by astro:assets). */
-  shareImage?: string;
-  /** Sub-pages use a plain header that links back to the landing sections. */
-  home?: boolean;
 }
-const { title = meta.title, description = meta.description, shareImage, home = false } = Astro.props;
+const { title = meta.title, description = meta.description } = Astro.props;
+// Image for link previews: the base in the storm, the same on every page.
+const shareImage = (await getImage({ src: shareSrc, width: 1200, height: 630, format: 'jpg', quality: 80 })).src;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 const share = shareImage && Astro.site ? new URL(shareImage, Astro.site).href : undefined;
 const alternates = Astro.site ? locales.map((l) => ({ l, href: new URL(inLocale(Astro.url.pathname, l), Astro.site).href })) : [];
@@ -54,7 +54,7 @@ const alternates = Astro.site ? locales.map((l) => ({ l, href: new URL(inLocale(
   </head>
   <body>
     <a class="skip" href="#main">{ui.skip}</a>
-    <Header home={home} />
+    <Header />
     <main id="main">
       <slot />
     </main>

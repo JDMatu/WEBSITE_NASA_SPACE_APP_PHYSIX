@@ -10,7 +10,8 @@ export function url(path: string, locale: string | undefined = 'en'): string {
 export function inLocale(pathname: string, locale: string): string {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   const rel = pathname.slice(base.length).replace(/^\/es(?=\/|$)/, '') || '/';
-  return url(rel, locale);
+  // The not-found page exists once; its language switch leads to the home page.
+  return url(/^\/404/.test(rel) ? '/' : rel, locale);
 }
 
 /** A file in /public: base path only, never a language prefix. */

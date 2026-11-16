@@ -5,12 +5,15 @@ interface Props {
   lede?: string;
   wide?: boolean;
   id?: string;
+  /** The first section of a page: its title is the page's h1. */
+  lead?: boolean;
 }
-const { kicker, title, lede, wide = false, id } = Astro.props;
+const { kicker, title, lede, wide = false, id, lead = false } = Astro.props;
+const H = lead ? 'h1' : 'h2';
 ---
 
 <header class="head reveal">
   <p class="kicker">{kicker}</p>
-  <h2 class:list={['h2', wide && 'h2--wide']} id={id}>{title}</h2>
+  <H class:list={['h2', wide && 'h2--wide']} id={id}>{title}</H>
   {lede && <p class="lede">{lede}</p>}
 </header>

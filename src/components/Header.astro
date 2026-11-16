@@ -1,28 +1,29 @@
 ---
-import { copy } from '../content';
+// Site header: wordmark, the menu (one link per page), the language switch and the play button.
+// On narrow screens the menu folds into a <details> panel, which opens without JavaScript.
+import { copy, locales, menu } from '../content';
 import PlayButton from './PlayButton.astro';
 import { inLocale, url } from '../lib/util';
-import { locales } from '../content';
 
 const L = Astro.currentLocale;
-const { meta, nav, ui } = copy(L);
+const { meta, pages, ui } = copy(L);
 
-interface Props {
-  home?: boolean;
-}
-const { home = false } = Astro.props;
-const link = (hash: string) => (home ? hash : `${url('/', L)}${hash}`);
 const current = L === 'es' ? 'es' : 'en';
+const here = inLocale(Astro.url.pathname, 'en').replace(/\/$/, '');
+const links = menu.map((id) => {
+  const href = url(`/${id}/`, L);
+  return { id, label: pages[id].nav, href, on: here === url(`/${id}/`, 'en').replace(/\/$/, '') };
+});
 ---
 
 <header class="site-head">
   <div class="wrap site-head__in">
-    <a class="wordmark" href={home ? '#top' : url('/', L)} aria-label={`${meta.name} ${ui.home}`}><i></i>{meta.name}</a>
+    <a class="wordmark" href={url('/', L)} aria-label={`${meta.name} ${ui.home}`}><i></i>{meta.name}</a>
     <nav class="site-nav" aria-label={ui.sections}>
-      {nav.map((item) => <a href={link(item.href)}>{item.label}</a>)}
+      {links.map((l) => <a href={l.href} aria-current={l.on ? 'page' : undefined}>{l.label}</a>)}
     </nav>
     <div class="site-head__cta">
-      <span class="lang" role="group" aria-label={ui.language}>
+      <span class="lang lang--bar" role="group" aria-label={ui.language}>
         {
           locales.map((l) =>
             l === current ? (
@@ -34,6 +35,40 @@ const current = L === 'es' ? 'es' : 'en';
         }
       </span>
       <PlayButton size="sm" />
+      <details class="menu" data-menu>
+        <summary aria-label={ui.menu}><span class="menu__icon" aria-hidden="true"><i></i><i></i><i></i></span><span class="menu__word">{ui.menu}</span></summary>
+        <nav class="menu__panel" aria-label={ui.sections}>
+          <a href={url('/', L)} aria-current={here === url('/', 'en').replace(/\/$/, '') ? 'page' : undefined}>{ui.homeLabel}</a>
+          {links.map((l) => <a href={l.href} aria-current={l.on ? 'page' : undefined}>{l.label}</a>)}
+          <span class="lang" role="group" aria-label={ui.language}>
+            {
+              locales.map((l) =>
+                l === current ? (
+                  <span class="lang__on" aria-current="true">{l.toUpperCase()}</span>
+                ) : (
+                  <a href={inLocale(Astro.url.pathname, l)} hreflang={l} lang={l}>{l.toUpperCase()}</a>
+                ),
+              )
+            }
+          </span>
+        </nav>
+      </details>
     </div>
   </div>
 </header>
+
+<script>
+  // The menu panel works without this; the script only closes it on Escape or a click outside.
+  const menu = document.querySelector<HTMLDetailsElement>('[data-menu]');
+  if (menu) {
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.open) {
+        menu.open = false;
+        menu.querySelector('summary')?.focus();
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (menu.open && !menu.contains(e.target as Node)) menu.open = false;
+    });
+  }
+</script>
