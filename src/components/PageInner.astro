@@ -1,20 +1,11 @@
 ---
-// The inner pages of the site, shared by every language. Each page is a few sections; the first
-// one carries the page title. To move a section to another page, move its line here.
+// The inner pages of the site, shared by every language.
 import Base from '../layouts/Base.astro';
 import { copy, type PageId } from '../content';
-import AiRule from './AiRule.astro';
+import About from './About.astro';
 import Closing from './Closing.astro';
 import Credits from './Credits.astro';
-import Evidence from './Evidence.astro';
-import How from './How.astro';
-import NextPage from './NextPage.astro';
-import Problem from './Problem.astro';
-import Ranks from './Ranks.astro';
-import Roadmap from './Roadmap.astro';
-import Science from './Science.astro';
-import Teachers from './Teachers.astro';
-import Team from './Team.astro';
+import SciencePage from './SciencePage.astro';
 
 interface Props {
   page: PageId;
@@ -24,28 +15,8 @@ const { meta, pages } = copy(Astro.currentLocale);
 ---
 
 <Base title={`${pages[page].title} · ${meta.name}`} description={pages[page].description}>
-  {
-    page === 'game' && (
-      <>
-        <Problem lead />
-        <How />
-        <Ranks />
-      </>
-    )
-  }
-  {page === 'ai' && <AiRule lead />}
-  {page === 'science' && <Science lead />}
-  {
-    page === 'evidence' && (
-      <>
-        <Evidence lead />
-        <Roadmap />
-      </>
-    )
-  }
-  {page === 'classroom' && <Teachers lead />}
-  {page === 'team' && <Team lead />}
+  {page === 'science' && <SciencePage />}
+  {page === 'about' && <About />}
   {page === 'credits' && <Credits lead />}
-  <NextPage page={page} />
   <Closing />
 </Base>

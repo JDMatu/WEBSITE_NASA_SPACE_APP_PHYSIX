@@ -1,0 +1,41 @@
+---
+// Home page: three figures from the facts and one link to the Science & AI page.
+import { copy, facts } from '../content';
+import { fill, url } from '../lib/util';
+import Icon from './Icon.astro';
+
+const L = Astro.currentLocale;
+const { proof } = copy(L);
+const values = { actionCount: facts.actionCount, sourced: facts.constants.sourced, tests: facts.tests.passing };
+---
+
+<section class="section proof" id="proof" aria-labelledby="proof-title">
+  <div class="wrap proof__in">
+    <header class="reveal">
+      <p class="kicker">{proof.kicker}</p>
+      <h2 class="h2" id="proof-title">{proof.title}</h2>
+      <p class="proof__go"><a class="btn" href={url('/science/', L)}>{proof.link}<Icon name="arrow" /></a></p>
+    </header>
+    <ul class="proof__stats">
+      {
+        proof.stats.map((s, i) => (
+          <li class="reveal" style={`--d:${i * 80}ms`}>
+            <b class="num">{fill(s.value, values, L)}</b>
+            <span>{s.label}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .proof__in { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(28px, 5vw, 72px); align-items: center; }
+  .proof__go { margin-top: 28px; }
+  .proof__go .btn { white-space: normal; text-align: left; min-height: 52px; padding-block: 12px; font-size: 17px; }
+  .proof__stats { display: grid; border-top: 1px solid var(--hair); }
+  .proof__stats li { display: grid; grid-template-columns: minmax(96px, auto) 1fr; gap: 20px; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--hair); }
+  .proof__stats b { font-size: clamp(40px, 4.6vw, 60px); font-weight: 500; line-height: 1; color: var(--simsup); letter-spacing: -0.02em; }
+  .proof__stats span { font-size: 17px; line-height: 1.4; max-width: 30ch; }
+  @media (max-width: 900px) { .proof__in { grid-template-columns: 1fr; } }
+</style>

@@ -5,8 +5,8 @@
 // its numbers. Nothing moves.
 // Enhanced version (class `is-enhanced`, set by the script below): the pictures move into one
 // sticky stage and cross-fade as the page scrolls.
-//   - Wide screens get a mission console: the scene, the caption, a power chart that draws itself
-//     sol by sol, and a ten-sol strip that can be clicked.
+//   - Wide screens get a mission console: the scene, the caption of the sol, a power chart that
+//     draws itself sol by sol, and a ten-sol strip that can be clicked.
 //   - Phones and small windows get the scene full screen with a compact readout, and the captions
 //     scroll over it.
 import { copy, facts } from '../content';
@@ -30,8 +30,11 @@ const steps = run.steps.map((st, i) => {
   const prev = at(run.steps[i - 1]?.sol ?? st.sol);
   const words = storm.steps[i];
   if (!words) throw new Error(`storm.steps needs one entry per facts.stormRun.steps (missing #${i + 1})`);
-  const values = { tau: num(n.tau, L, 1), prevTau: num(prev.tau, L, 1), solar: n.solar, battery: n.battery, demand: run.demand, available: st.available ?? 0 };
-  return { ...n, frame: st.frame, ...words, body: fill(words.body, values, L) };
+  // Every figure a caption may quote: the sol's own row, the usual demand, and the step's extras.
+  const values = { ...st, tau: num(n.tau, L, 1), prevTau: num(prev.tau, L, 1), solar: n.solar, need: n.need, battery: n.battery, demand: run.demand };
+  const body = fill(words.body, values, L);
+  if (/\{\w+\}/.test(body)) throw new Error(`storm.steps #${i + 1} quotes a figure that facts.stormRun.steps does not provide: ${body}`);
+  return { ...n, frame: st.frame, ...words, body };
 });
 const first = steps[0]!;
 const last = series[series.length - 1]!;
@@ -39,7 +42,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 const tagClass = (state: string) => (state === 'clear' ? 'tag-good' : state === 'brownout' ? 'tag-alert' : 'tag-amber');
 
 // Chart scale: one axis in kWh for the three measures.
-const TOP = Math.ceil(Math.max(...series.flatMap((s) => [s.solar, s.used, s.battery])) / 50) * 50 + 10;
+const TOP = Math.ceil(Math.max(...series.flatMap((s) => [s.solar, s.need, s.battery])) / 50) * 50 + 10;
 const ticks = [0, 50, 100, 150].filter((v) => v < TOP);
 const pct = (v: number) => `${((v / TOP) * 100).toFixed(2)}%`;
 const x = (sol: number) => ((sol - 0.5) / series.length) * 100;
@@ -48,9 +51,9 @@ const maxTau = Math.max(...series.map((s) => s.tau));
 
 // What the script needs: the ten sols, and the label to show for sols that have no caption.
 const payload = JSON.stringify({
-  series: series.map((s) => ({ sol: s.sol, tau: s.tau, solar: s.solar, used: s.used, battery: s.battery, label: s.event ? storm.states[s.event] : storm.states[s.state] })),
+  series: series.map((s) => ({ sol: s.sol, tau: s.tau, solar: s.solar, need: s.need, battery: s.battery, label: s.event ? storm.states[s.event] : storm.states[s.state] })),
   steps: steps.map((s) => ({ sol: s.sol, tag: s.tag })),
-  labels: { sol: storm.hud.sol, solar: storm.chart.solar, used: storm.chart.used, battery: storm.chart.battery, unit: storm.hud.unit },
+  labels: { sol: storm.hud.sol, solar: storm.chart.solar, need: storm.chart.need, battery: storm.chart.battery, unit: storm.hud.unit },
 });
 ---
 
@@ -120,7 +123,7 @@ const payload = JSON.stringify({
             <p class="pchart__title">{storm.chart.title} <small>({storm.hud.unit})</small></p>
             <ul class="pchart__legend">
               <li><i class="key key--solar"></i>{storm.chart.solar}</li>
-              <li><i class="key key--used"></i>{storm.chart.used}</li>
+              <li><i class="key key--used"></i>{storm.chart.need}</li>
               <li><i class="key key--batt"></i>{storm.chart.battery}</li>
             </ul>
           </div>
@@ -136,7 +139,7 @@ const payload = JSON.stringify({
                     series.map((s) => (
                       <div class="pcol">
                         <i class="pbar" style={`height:${pct(s.solar)}`} />
-                        <i class="pused" style={`bottom:${pct(s.used)}`} />
+                        <i class="pused" style={`bottom:${pct(s.need)}`} />
                       </div>
                     ))
                   }
@@ -223,7 +226,6 @@ const payload = JSON.stringify({
         ))
       }
     </ol>
-    <div class="storm__tail"></div>
   </div>
 </section>
 
@@ -260,7 +262,7 @@ const payload = JSON.stringify({
   .storm.is-enhanced .storm__intro { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); padding: 0; }
   .storm.is-enhanced .storm__steps { padding: 0; gap: 0; }
   .storm.is-enhanced .step__in { display: block; }
-  .storm.is-enhanced .step { min-height: 90vh; min-height: 90svh; display: flex; align-items: center; }
+  .storm.is-enhanced .step { min-height: 82vh; min-height: 82svh; display: flex; align-items: center; }
   .storm.is-enhanced .step:last-child { min-height: 110vh; min-height: 110svh; }
   .storm.is-enhanced .step__nums { display: none; }
   /* No backdrop blur here: it would be recomputed on every frame of the dust layer behind it. */
@@ -329,10 +331,9 @@ const payload = JSON.stringify({
     }
     /* The captions live in the console; the scrolling ones stay in the page for screen readers and set the pace. */
     .storm.is-enhanced .storm__track { pointer-events: none; }
-    .storm.is-enhanced .step { min-height: 78vh; }
+    .storm.is-enhanced .step { min-height: 64vh; }
     .storm.is-enhanced .step:last-child { min-height: 100vh; }
     .storm.is-enhanced .step__card { opacity: 0 !important; }
-    .storm.is-enhanced .storm__tail { height: 55vh; }
 
     .console {
       inset: auto; left: 50%; top: calc(var(--head-h) + (100% - var(--head-h)) / 2); transform: translate(-50%, -50%);
@@ -437,7 +438,7 @@ const payload = JSON.stringify({
 <script>
   // Enhances the storm section when motion is allowed. Every number and label comes from the
   // content file through data attributes, so this script holds no copy and no figures of its own.
-  type Sol = { sol: number; tau: number; solar: number; used: number; battery: number; label: string };
+  type Sol = { sol: number; tau: number; solar: number; need: number; battery: number; label: string };
   const root = document.querySelector<HTMLElement>('[data-storm]');
   const motionOk = document.documentElement.classList.contains('motion');
   // Keep in step with the console media query in the styles above.
@@ -454,7 +455,6 @@ const payload = JSON.stringify({
     const reveal = root.querySelector<HTMLElement>('[data-reveal]')!;
     const cursor = root.querySelector<HTMLElement>('[data-cursor]')!;
     const stepSols = run.steps.map((s) => s.sol);
-    const lastSol = series[series.length - 1]!.sol;
 
     // Move every picture into the sticky stage (one download each; the plain layout is untouched
     // for visitors who never run this).
@@ -507,20 +507,14 @@ const payload = JSON.stringify({
       return { tau: lerp(a.tau, b.tau, t), solar: lerp(a.solar, b.solar, t), battery: lerp(a.battery, b.battery, t) };
     };
 
-    // Anchor of each step: the middle of its caption, in document coordinates. After the last
-    // caption a tail (wide screens only) plays the remaining sols of the run.
+    // Anchor of each step: the middle of its caption, in document coordinates.
     const HOLD: [number, number] = [0.28, 0.72];
-    const TAIL: [number, number] = [0.25, 0.9];
     let anchors: number[] = [];
     let tops: number[] = [];
-    let tailEnd = 0;
     const measure = () => {
       tops = cards.map((t) => t.getBoundingClientRect().top + window.scrollY);
       anchors = cards.map((t, k) => tops[k]! + t.offsetHeight / 2);
-      const bottom = root.getBoundingClientRect().bottom + window.scrollY;
-      tailEnd = bottom - window.innerHeight * 0.5;
     };
-    const hasTail = () => tailEnd - anchors[anchors.length - 1]! > window.innerHeight * 0.25;
 
     let dustLevel = 0;
     let lastKey = '';
@@ -536,11 +530,8 @@ const payload = JSON.stringify({
       const t = clamp01((c - a) / (b - a));
       // Hold each picture while its caption is being read; change in the gap between captions.
       const e = smooth(HOLD[0], HOLD[1], t);
-      let p = lerp(stepSols[i]!, stepSols[i + 1] ?? stepSols[i]!, e);
-      if (c > anchors[n - 1]! && hasTail()) {
-        const tt = clamp01((c - anchors[n - 1]!) / (tailEnd - anchors[n - 1]!));
-        p = lerp(stepSols[n - 1]!, lastSol, smooth(TAIL[0], TAIL[1], tt));
-      }
+      // The sol being shown, as a fraction while one sol gives way to the next.
+      const p = lerp(stepSols[i]!, stepSols[i + 1] ?? stepSols[i]!, e);
 
       frames.forEach((f, k) => {
         const o = k === i ? 1 : k === i + 1 ? e : 0;
@@ -615,17 +606,10 @@ const payload = JSON.stringify({
     // The ten-sol strip: a click scrolls the page to that sol.
     const scrollToSol = (sol: number) => {
       const n = anchors.length;
-      let c = anchors[0]!;
-      if (sol > stepSols[n - 1]!) {
-        if (!hasTail()) return;
-        const f = (sol - stepSols[n - 1]!) / (lastSol - stepSols[n - 1]!);
-        c = lerp(anchors[n - 1]!, tailEnd, unsmooth(TAIL[0], TAIL[1], f));
-      } else {
-        let i = 0;
-        while (i < n - 2 && sol >= stepSols[i + 1]!) i++;
-        const f = (sol - stepSols[i]!) / ((stepSols[i + 1] ?? sol + 1) - stepSols[i]!);
-        c = lerp(anchors[i]!, anchors[i + 1] ?? anchors[i]!, unsmooth(HOLD[0], HOLD[1], f));
-      }
+      let i = 0;
+      while (i < n - 2 && sol >= stepSols[i + 1]!) i++;
+      const f = clamp01((sol - stepSols[i]!) / ((stepSols[i + 1] ?? sol + 1) - stepSols[i]!));
+      const c = lerp(anchors[i]!, anchors[i + 1] ?? anchors[i]!, unsmooth(HOLD[0], HOLD[1], f));
       window.scrollTo({ top: Math.round(c - window.innerHeight * 0.55) + 1 });
     };
     cells.forEach((cell) => cell.addEventListener('click', () => scrollToSol(Number(cell.dataset.sol))));
@@ -644,7 +628,7 @@ const payload = JSON.stringify({
       const words = run.labels;
       const head = document.createElement('b');
       head.textContent = `${words.sol} ${d.sol} · ${d.label}`;
-      tip.replaceChildren(head, `${words.solar}: ${d.solar} ${words.unit}`, document.createElement('br'), `${words.used}: ${d.used} ${words.unit}`, document.createElement('br'), `${words.battery}: ${d.battery} ${words.unit}`);
+      tip.replaceChildren(head, `${words.solar}: ${d.solar} ${words.unit}`, document.createElement('br'), `${words.need}: ${d.need} ${words.unit}`, document.createElement('br'), `${words.battery}: ${d.battery} ${words.unit}`);
       tip.style.setProperty('--tx', `${Math.min(74, Math.max(26, ((k + 0.5) / series.length) * 100))}%`);
       tip.hidden = false;
     });

@@ -1,0 +1,171 @@
+---
+// The "About us" page: where the project comes from, the decisions behind it, and the six of us.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { copy, pending } from '../content';
+import { fill, url } from '../lib/util';
+import Icon from './Icon.astro';
+
+const L = Astro.currentLocale;
+const { about } = copy(L);
+
+// Photos are picked up by file name: src/assets/team/juan-diego-matute.jpg, and so on.
+const photos = import.meta.glob<{ default: ImageMetadata }>('../assets/team/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG}', { eager: true });
+const slug = (name: string) =>
+  name
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+const photoOf = (m: { name: string | null; photo: string | null }) => {
+  const wanted = m.photo ?? (m.name ? slug(m.name) : null);
+  if (!wanted) return undefined;
+  const hit = Object.entries(photos).find(([p]) => {
+    const file = p.split('/').pop()!;
+    return file === wanted || file.replace(/\.\w+$/, '').toLowerCase() === wanted.replace(/\.\w+$/, '').toLowerCase();
+  });
+  return hit?.[1].default;
+};
+const initials = (name: string | null, i: number) =>
+  name ? name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]!.toUpperCase()).join('') : String(i + 1).padStart(2, '0');
+---
+
+<section class="section section--lead about" id="about" aria-labelledby="about-title">
+  <div class="wrap">
+    <header class="head reveal">
+      <p class="kicker">{about.kicker}{pending.teamName ? ` · ${pending.teamName}` : ''}</p>
+      <h1 class="h2 h2--wide" id="about-title">{about.title}</h1>
+      <p class="lede" data-pending={pending.localEvent ? undefined : 'localEvent'}>
+        {pending.localEvent ? fill(about.builtAt, { event: pending.localEvent }, L) : about.builtAtPending}
+      </p>
+    </header>
+  </div>
+</section>
+
+<section class="section story" id="story" aria-labelledby="story-title">
+  <div class="wrap story__in">
+    <header class="reveal">
+      <p class="kicker">{about.storyKicker}</p>
+      <h2 class="h2" id="story-title">{about.storyTitle}</h2>
+    </header>
+    <ol class="story__list">
+      {
+        about.story.map((s, i) => (
+          <li class="reveal" style={`--d:${i * 70}ms`}>
+            <span class="story__n num">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <h3>{s.title}</h3>
+              <p>{s.body}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<section class="section section--tint crewsec" id="team" aria-labelledby="team-title">
+  <div class="wrap">
+    <header class="head reveal">
+      <p class="kicker">{about.teamKicker}</p>
+      <h2 class="h2" id="team-title">{about.teamTitle}</h2>
+    </header>
+    <ul class="crew">
+      {
+        pending.team.map((m, i) => {
+          const photo = photoOf(m);
+          return (
+            <li class="member reveal" style={`--d:${(i % 3) * 70}ms`} data-pending={!m.name ? `team[${i}]` : !photo ? `team[${i}].photo` : undefined}>
+              <div class:list={['member__photo', !photo && 'member__photo--empty']}>
+                {photo ? (
+                  <Image src={photo} alt={m.name ?? ''} width={640} height={640} fit="cover" quality={78} />
+                ) : (
+                  <>
+                    <span class="member__initials num" aria-hidden="true">{initials(m.name, i)}</span>
+                    <span class="member__tag">{about.photoPending}</span>
+                  </>
+                )}
+              </div>
+              <div class="member__text">
+                <span class="member__n num">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{m.name ?? about.memberPending.name}</h3>
+                {/* Role and "what they built" appear once they are filled in the content file. */}
+                {(m.role || !m.name) && <p class="member__role">{m.role ?? about.memberPending.role}</p>}
+                {(m.built || !m.name) && <p class="member__built">{m.built ?? about.memberPending.built}</p>}
+              </div>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</section>
+
+<section class="section worksec" aria-label={about.workKicker}>
+  <div class="wrap">
+    <div class="work panel panel--ticks reveal">
+      <div>
+        <p class="kicker">{about.workKicker}</p>
+        <p class="work__text">{about.work}</p>
+      </div>
+      <p class="work__links">
+        <a class="link-arrow" href={url('/ai-use/', L)}>{about.aiLink}<Icon name="arrow" /></a>
+        <a class="link-arrow" href={url('/sources/', L)}>{about.sourcesLink}<Icon name="arrow" /></a>
+        <a class="link-arrow" href={url('/credits/', L)}>{about.creditsLink}<Icon name="arrow" /></a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about { padding-bottom: clamp(24px, 4vw, 48px); }
+  .story { padding-top: clamp(32px, 5vw, 64px); }
+  .about .head { margin-bottom: 0; }
+  .about .lede { max-width: 66ch; }
+
+  .crew { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .member { background: rgba(11, 15, 26, 0.6); border: 1px solid var(--hair); display: flex; flex-direction: column; }
+  .member__photo { position: relative; aspect-ratio: 1; overflow: hidden; background: #0a0e18; border-bottom: 1px solid var(--hair); }
+  .member__photo :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  /* No photo yet: initials over a drawn horizon, with a small marker. */
+  .member__photo--empty {
+    display: flex; align-items: center; justify-content: center;
+    background:
+      radial-gradient(120% 70% at 50% 118%, rgba(224, 147, 90, 0.34), transparent 62%),
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 44px),
+      linear-gradient(180deg, #121a2c, #0a0e18);
+  }
+  .member__initials { font-size: clamp(56px, 7vw, 96px); font-weight: 500; letter-spacing: -0.03em; color: var(--simsup); line-height: 1; }
+  .member__tag {
+    position: absolute; left: 12px; bottom: 12px; padding: 2px 9px; border: 1px dashed rgba(246, 196, 69, 0.6); color: var(--amber); background: rgba(11, 15, 26, 0.6);
+    font-family: var(--font-head); font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .member__text { padding: 18px 20px 20px; }
+  .member__n { font-size: 12.5px; color: var(--amber); letter-spacing: 0.08em; }
+  .member h3 { margin-top: 2px; font-family: var(--font-head); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: clamp(22px, 2.1vw, 28px); line-height: 1.1; }
+  .member__role { margin-top: 6px; font-family: var(--font-head); font-weight: 600; font-size: 15px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); }
+  .member__built { margin-top: 6px; font-size: 15px; line-height: 1.45; color: var(--dim); }
+
+  .story__in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+  .story__list { display: grid; border-top: 1px solid var(--hair); }
+  .story__list li { display: grid; grid-template-columns: 44px 1fr; gap: 16px; padding: 22px 0; border-bottom: 1px solid var(--hair); }
+  .story__n { font-size: 14px; color: var(--amber); padding-top: 4px; }
+  .story__list h3 { font-family: var(--font-head); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; font-size: 22px; line-height: 1.2; }
+  .story__list p { margin-top: 6px; font-size: 16.5px; line-height: 1.55; color: var(--dim); max-width: 60ch; }
+  .worksec { padding-block: clamp(48px, 7vw, 88px); }
+  .work { padding: clamp(20px, 3vw, 32px); display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px 48px; align-items: center; }
+  .work .kicker { margin-bottom: 10px; }
+  .work__text { font-size: 17px; line-height: 1.55; max-width: 60ch; }
+  .work__links { display: grid; gap: 12px; font-size: 16px; }
+
+  @media (max-width: 900px) {
+    .crew { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .story__in, .work { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 460px) {
+    .member__text { padding: 12px 12px 14px; }
+    .member h3 { font-size: 19px; }
+    .member__tag { left: 8px; bottom: 8px; font-size: 10.5px; padding: 1px 6px; }
+  }
+</style>

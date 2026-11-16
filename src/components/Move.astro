@@ -1,6 +1,5 @@
 ---
 import { copy } from '../content';
-import { url } from '../lib/util';
 import Icon from './Icon.astro';
 import SectionHead from './SectionHead.astro';
 
@@ -22,7 +21,7 @@ const { move, ui } = copy(L);
         ))
       }
     </ul>
-    <p class="more-links"><a class="link-arrow" href={url('/game/', L) + '#how'}>{move.more}<Icon name="arrow" /></a></p>
+    <p class="more-links"><a class="link-arrow" href="#how">{move.more}<Icon name="arrow" /></a></p>
   </div>
 </section>
 

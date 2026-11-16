@@ -35,7 +35,11 @@ const FRAMES = [
   { id: 'sol03', tau: 3.1, battery: 0.52, lights: 1, panelDust: 0.35, shielding: 0.3, growth: 0.78 },
   { id: 'sol04', tau: 4.0, battery: 0.13, lights: 0.72, panelDust: 0.5, shielding: 0.41, growth: 0.9, solarEvent: 0.8 },
   { id: 'sol05', tau: 4.0, battery: 0.0, lights: 0.3, panelDust: 0.55, shielding: 0.41, growth: 0.92, labOff: true },
+  { id: 'sol06', tau: 3.0, battery: 0.0, lights: 0.3, panelDust: 0.15, shielding: 0.41, growth: 0.93, labOff: true },
+  { id: 'sol07', tau: 2.1, battery: 0.02, lights: 0.35, panelDust: 0.2, shielding: 0.41, growth: 0.0, labOff: true },
   { id: 'sol08', tau: 0.5, battery: 0.18, lights: 0.82, panelDust: 0.05, shielding: 0.41, growth: 0.13 },
+  { id: 'sol09', tau: 0.5, battery: 0.33, lights: 0.92, panelDust: 0.05, shielding: 0.41, growth: 0.25 },
+  { id: 'sol10', tau: 0.5, battery: 0.48, lights: 1, panelDust: 0.05, shielding: 0.41, growth: 0.37 },
 ];
 
 const VIEWS = [
@@ -52,7 +56,8 @@ const browser = await chromium.launch({
 
 for (const view of VIEWS) {
   for (const f of FRAMES) {
-    if (opt.only && !`${f.id}-${view.id}`.includes(opt.only)) continue;
+    // --only takes one or more names, comma separated: `--only sol06,sol07` or `--only sol06-wide`.
+    if (opt.only && !opt.only.split(',').some((name) => `${f.id}-${view.id}`.includes(name))) continue;
     const context = await browser.newContext({ viewport: { width: view.width, height: view.height }, deviceScaleFactor: 1, reducedMotion: 'reduce' });
     const page = await context.newPage();
     await page.goto(`${opt.url}/?harness=scene&preset=clear-day&low=0&insets=${view.insets}`, { waitUntil: 'load' });

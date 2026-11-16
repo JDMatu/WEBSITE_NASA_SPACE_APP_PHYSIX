@@ -1,10 +1,10 @@
 ---
 // Spanish version of the inner pages: same pages, the language comes from the /es/ path.
 import PageInner from '../../components/PageInner.astro';
-import { pageIds, type PageId } from '../../content';
+import { innerPages, type PageId } from '../../content';
 
 export function getStaticPaths() {
-  return pageIds.map((page) => ({ params: { page } }));
+  return innerPages.map((page) => ({ params: { page } }));
 }
 const page = Astro.params.page as PageId;
 ---

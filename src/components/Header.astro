@@ -1,7 +1,8 @@
 ---
-// Site header: wordmark, the menu (one link per page), the language switch and the play button.
-// On narrow screens the menu folds into a <details> panel, which opens without JavaScript.
-import { copy, locales, menu } from '../content';
+// Site header: wordmark on the left, the menu in the middle, and the language switch and the
+// play button at the far right edge. On narrow screens the menu folds into a <details> panel,
+// which opens without JavaScript.
+import { copy, locales, menu, pagePath } from '../content';
 import PlayButton from './PlayButton.astro';
 import { inLocale, url } from '../lib/util';
 
@@ -9,20 +10,18 @@ const L = Astro.currentLocale;
 const { meta, pages, ui } = copy(L);
 
 const current = L === 'es' ? 'es' : 'en';
-const here = inLocale(Astro.url.pathname, 'en').replace(/\/$/, '');
-const links = menu.map((id) => {
-  const href = url(`/${id}/`, L);
-  return { id, label: pages[id].nav, href, on: here === url(`/${id}/`, 'en').replace(/\/$/, '') };
-});
+const clean = (path: string) => path.replace(/\/$/, '');
+const here = clean(inLocale(Astro.url.pathname, 'en'));
+const links = menu.map((id) => ({ id, label: pages[id].nav, href: url(pagePath(id), L), on: here === clean(url(pagePath(id), 'en')) }));
 ---
 
 <header class="site-head">
-  <div class="wrap site-head__in">
+  <div class="site-head__in">
     <a class="wordmark" href={url('/', L)} aria-label={`${meta.name} ${ui.home}`}><i></i>{meta.name}</a>
     <nav class="site-nav" aria-label={ui.sections}>
       {links.map((l) => <a href={l.href} aria-current={l.on ? 'page' : undefined}>{l.label}</a>)}
     </nav>
-    <div class="site-head__cta">
+    <div class="site-head__side">
       <span class="lang lang--bar" role="group" aria-label={ui.language}>
         {
           locales.map((l) =>
@@ -38,7 +37,6 @@ const links = menu.map((id) => {
       <details class="menu" data-menu>
         <summary aria-label={ui.menu}><span class="menu__icon" aria-hidden="true"><i></i><i></i><i></i></span><span class="menu__word">{ui.menu}</span></summary>
         <nav class="menu__panel" aria-label={ui.sections}>
-          <a href={url('/', L)} aria-current={here === url('/', 'en').replace(/\/$/, '') ? 'page' : undefined}>{ui.homeLabel}</a>
           {links.map((l) => <a href={l.href} aria-current={l.on ? 'page' : undefined}>{l.label}</a>)}
           <span class="lang" role="group" aria-label={ui.language}>
             {

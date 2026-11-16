@@ -1,7 +1,6 @@
 ---
 // The first screen of the home page: what PHYSIX is, the play button, and the base on a clear sol.
 import { copy, pending } from '../content';
-import { url } from '../lib/util';
 import Frame from './Frame.astro';
 import Icon from './Icon.astro';
 import PlayButton from './PlayButton.astro';
@@ -34,7 +33,7 @@ const hasVideo = Boolean(pending.videoExtendedUrl);
       <p class="hero__body hero__body--short">{hero.bodyShort}</p>
       <div class="hero__cta">
         <PlayButton />
-        <a class="btn btn-ghost" href={hasVideo ? '#watch' : url('/game/', L)}>
+        <a class="btn btn-ghost" href={hasVideo ? '#watch' : '#how'}>
           {hasVideo && <Icon name="play" />}
           {hasVideo ? hero.watchLabel : hero.watchPendingLabel}
         </a>

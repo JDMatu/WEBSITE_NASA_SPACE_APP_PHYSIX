@@ -1,10 +1,10 @@
 ---
-// One file for every inner page: /game/, /ai/, /science/, /evidence/, /classroom/, /team/, /credits/.
+// One file for every inner page: /science/, /about/, /credits/.
 import PageInner from '../components/PageInner.astro';
-import { pageIds, type PageId } from '../content';
+import { innerPages, type PageId } from '../content';
 
 export function getStaticPaths() {
-  return pageIds.map((page) => ({ params: { page } }));
+  return innerPages.map((page) => ({ params: { page } }));
 }
 const page = Astro.params.page as PageId;
 ---

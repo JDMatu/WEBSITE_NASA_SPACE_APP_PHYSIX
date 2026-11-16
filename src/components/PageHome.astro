@@ -1,12 +1,17 @@
 ---
-// The home page, shared by every language (the language comes from the URL):
-// what PHYSIX is, the storm, what the player does about it, the doors to the other pages, the video.
+// The home page, shared by every language (the language comes from the URL): what PHYSIX is,
+// the storm, what the player does about it, why it exists, how a sol plays, the four ranks,
+// the video, and the figures that lead to the Science & AI page.
+// To reorder the home page, reorder these lines.
 import Base from '../layouts/Base.astro';
 import Hero from './Hero.astro';
 import Storm from './Storm.astro';
 import Move from './Move.astro';
-import Explore from './Explore.astro';
+import Problem from './Problem.astro';
+import How from './How.astro';
+import Ranks from './Ranks.astro';
 import Watch from './Watch.astro';
+import Proof from './Proof.astro';
 import Closing from './Closing.astro';
 ---
 
@@ -14,7 +19,10 @@ import Closing from './Closing.astro';
   <Hero />
   <Storm />
   <Move />
-  <Explore />
+  <Problem />
+  <How />
+  <Ranks />
   <Watch />
+  <Proof />
   <Closing />
 </Base>

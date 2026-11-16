@@ -49,9 +49,11 @@ export const pending = {
 
   /**
    * The six members. Names are final. Still TODO(team) for each one: `role` (a few words),
-   * `built` (one line on what they built) and `photo`, a file name inside src/assets/team/
-   * (square, at least 400 px, adults only, with the person's permission). While `role`, `built`
-   * or `photo` are null the card shows the name and initials only.
+   * `built` (one line on what they built) and the photo.
+   * PHOTOS: drop a file in src/assets/team/ named after the person, lower case with hyphens:
+   * juan-diego-matute.jpg, marypaz-lopez.jpg, ... (jpg, png or webp; at least 600 px on the short
+   * side; adults only, with the person's permission). It is picked up by name, so `photo` can
+   * stay null; set `photo` only to use a different file name. Until then the card shows initials.
    * Suggested roles, to confirm: simulation engine, AI, 3D scene, interface and texts,
    * science and data, video and presentation.
    */
@@ -126,25 +128,27 @@ export const facts = {
     demand: 88,
     /**
      * All ten sols of the run, straight from the simulator's table: sky opacity, kWh the panels
-     * made, kWh the base asked for, kWh left in the battery at the end of the sol.
+     * made, kWh the base asked for (`need`), kWh left in the battery at the end of the sol.
      * `event: 'solar'` marks the solar particle event.
      */
     series: [
-      { sol: 1, tau: 0.5, solar: 110, used: 88, battery: 150, state: 'clear' },
-      { sol: 2, tau: 2.2, solar: 63, used: 88, battery: 123, state: 'storm' },
-      { sol: 3, tau: 3.1, solar: 45, used: 88, battery: 78, state: 'storm' },
-      { sol: 4, tau: 4.0, solar: 29, used: 88, battery: 19, state: 'storm', event: 'solar' },
-      { sol: 5, tau: 4.0, solar: 32, used: 88, battery: 0, state: 'brownout' },
-      { sol: 6, tau: 3.0, solar: 51, used: 88, battery: 0, state: 'brownout' },
-      { sol: 7, tau: 2.1, solar: 68, used: 88, battery: 3, state: 'storm' },
-      { sol: 8, tau: 0.5, solar: 111, used: 65, battery: 27, state: 'clear' },
-      { sol: 9, tau: 0.5, solar: 111, used: 88, battery: 49, state: 'clear' },
-      { sol: 10, tau: 0.5, solar: 111, used: 88, battery: 72, state: 'clear' },
-    ] as { sol: number; tau: number; solar: number; used: number; battery: number; state: 'clear' | 'storm' | 'brownout'; event?: 'solar' }[],
+      { sol: 1, tau: 0.5, solar: 110, need: 88, battery: 150, state: 'clear' },
+      { sol: 2, tau: 2.2, solar: 63, need: 88, battery: 123, state: 'storm' },
+      { sol: 3, tau: 3.1, solar: 45, need: 88, battery: 78, state: 'storm' },
+      { sol: 4, tau: 4.0, solar: 29, need: 88, battery: 19, state: 'storm', event: 'solar' },
+      { sol: 5, tau: 4.0, solar: 32, need: 88, battery: 0, state: 'brownout' },
+      { sol: 6, tau: 3.0, solar: 51, need: 88, battery: 0, state: 'brownout' },
+      { sol: 7, tau: 2.1, solar: 68, need: 88, battery: 3, state: 'storm' },
+      { sol: 8, tau: 0.5, solar: 111, need: 65, battery: 27, state: 'clear' },
+      { sol: 9, tau: 0.5, solar: 111, need: 88, battery: 49, state: 'clear' },
+      { sol: 10, tau: 0.5, solar: 111, need: 88, battery: 72, state: 'clear' },
+    ] as { sol: number; tau: number; solar: number; need: number; battery: number; state: 'clear' | 'storm' | 'brownout'; event?: 'solar' }[],
     /**
-     * The sols that get a picture and a caption (words in `storm.steps`, same order).
-     * `frame` is the image pair in src/assets/frames/. `available`: kWh the base actually had
-     * on the brownout sol.
+     * One entry per sol, in order: the picture (`frame`, an image pair in src/assets/frames/) and
+     * any extra figure its caption quotes (words in `storm.steps`, same order). From the same run:
+     * `available` = kWh the base really had in a brownout, `scienceLost` = science points lost,
+     * `harvest` = kg of food, `science` / `scienceTarget` = science points and the mission goal,
+     * `dose` / `doseBudget` = radiation dose in mSv and the mission budget.
      */
     steps: [
       { sol: 1, frame: 'sol01' },
@@ -152,8 +156,12 @@ export const facts = {
       { sol: 3, frame: 'sol03' },
       { sol: 4, frame: 'sol04' },
       { sol: 5, frame: 'sol05', available: 51.5 },
+      { sol: 6, frame: 'sol06', available: 50.9, scienceLost: 6 },
+      { sol: 7, frame: 'sol07', harvest: 20.3 },
       { sol: 8, frame: 'sol08' },
-    ] as { sol: number; frame: string; available?: number }[],
+      { sol: 9, frame: 'sol09', science: 47.3, scienceTarget: 40 },
+      { sol: 10, frame: 'sol10', science: 56.9, scienceTarget: 40, dose: 4.26, doseBudget: 5.5 },
+    ] as ({ sol: number; frame: string } & Record<string, number | string>)[],
   },
 
   /** Is NASA DONKI space-weather data integrated in the game? Flip to true only when it ships. */
@@ -184,11 +192,9 @@ export const ui = {
   skip: 'Skip to content',
   sections: 'Sections',
   home: 'home',
-  homeLabel: 'Home',
   menu: 'Menu',
   site: 'Site',
   reference: 'Reference',
-  next: 'Next',
   language: 'Language',
   playSoonShort: 'Play: soon',
   videoTitle: 'PHYSIX video',
@@ -217,66 +223,43 @@ export const ui = {
 
 /**
  * The pages of the site. `nav` is the menu label; `title` and `description` go in the browser tab
- * and link previews; `teaser`, `stat` and `statLabel` are the card on the home page.
- * {placeholders} in `stat` are filled from the FACTS block. The menu order is `menu` below.
+ * and link previews. The menu order is `menu` in src/content/index.ts.
  */
 export const pages = {
-  game: {
-    nav: 'The game',
-    title: 'The game: one sol, five steps, four ranks',
-    description: 'How PHYSIX plays: each sol is a briefing, a plan, a prediction, a run and a review. Four ranks, from three ready-made cards to the full mission-control panel.',
-    teaser: 'Each sol is a briefing, a plan, a prediction and its consequences. Four ranks, from three ready-made cards to full mission control.',
-    stat: '4',
-    statLabel: 'ranks, one mission',
-  },
-  ai: {
-    nav: 'AI + simulator',
-    title: 'The AI proposes, the simulator decides',
-    description: 'How PHYSIX uses AI: the instructor chooses problems and reads plans, but a deterministic simulator computes every result. Impossible requests are refused.',
-    teaser: 'The AI instructor chooses the problems and reads your plan. It never writes a number: a deterministic simulator computes every result.',
-    stat: '{actionCount}',
-    statLabel: 'actions the AI can pick from, nothing else',
+  home: {
+    nav: 'Home',
+    title: meta.title,
+    description: meta.description,
   },
   science: {
-    nav: 'Science',
-    title: 'The science: the real 2018 dust storm',
-    description: 'The real event behind the mission and the published NASA values inside the simulator, each with its source.',
-    teaser: 'The mission recreates the 2018 global dust storm on Mars, with published values for air, water, radiation and sunlight.',
-    stat: '{sourced}',
-    statLabel: 'constants with a citation and a URL',
+    nav: 'Science & AI',
+    title: 'Science, AI and evidence',
+    description: 'The real 2018 dust storm and the published NASA values in the simulator, how the AI is kept in check, and what we tested: figures, sources and limits.',
   },
-  evidence: {
-    nav: 'Evidence',
-    title: 'Evidence: what we tested and what we missed',
-    description: 'Automated tests, simulated games with and without the AI model, the targets we missed, and what works today.',
-    teaser: 'Simulated players ran full missions against the game. We publish what passed, where we missed our own targets, and what is not built yet.',
-    stat: '{tests}',
-    statLabel: 'automated tests pass',
-  },
-  classroom: {
-    nav: 'Classroom',
-    title: 'For teachers: one device for a whole class',
-    description: 'PHYSIX in a classroom: one shared screen, no accounts, no personal data, English and Spanish, four ranks for ages 7 to 15.',
-    teaser: 'Designed for one shared screen: project it and let the class argue its way to one plan. No accounts, no personal data.',
-    stat: '1',
-    statLabel: 'shared screen is enough',
-  },
-  team: {
-    nav: 'Team',
-    title: 'The team',
-    description: 'The six people who built PHYSIX for the NASA Space Apps Challenge 2026, and how AI was used to build it.',
-    teaser: 'Who we are, where we built it, and how we used AI coding assistants to do it.',
-    stat: '6',
-    statLabel: 'people, one weekend',
+  about: {
+    nav: 'About us',
+    title: 'About us',
+    description: 'The six people who built PHYSIX for the NASA Space Apps Challenge 2026, the decisions behind the project and how AI was used to build it.',
   },
   credits: {
     nav: 'Credits',
     title: 'Credits and references',
     description: 'Every image, font, library and data source used in PHYSIX and on this site.',
-    teaser: '',
-    stat: '',
-    statLabel: '',
   },
+};
+
+/** The "Science & AI" page: its heading and the in-page menu (one entry per section, in order). */
+export const sciencePage = {
+  kicker: 'Science & AI',
+  title: 'What is real, what the AI decides, and what we tested.',
+  lede: 'Three questions worth asking of any learning game with AI in it. Here are our answers, with the numbers, their sources and their limits.',
+  tocLabel: 'On this page',
+  toc: [
+    { href: '#ai', label: 'The AI rule', text: 'The AI proposes, the simulator decides.' },
+    { href: '#science', label: 'The science', text: 'A real storm and published values.' },
+    { href: '#evidence', label: 'The evidence', text: 'What we tested and where we missed.' },
+    { href: '#status', label: 'Status', text: 'What works today and what is next.' },
+  ],
 };
 
 /** Play button, used in the header, the hero, the watch band and the closing band. */
@@ -319,11 +302,15 @@ export const storm = {
   chart: {
     title: 'Power, sol by sol',
     solar: 'Solar panels made',
-    used: 'Base used',
+    need: 'Base needed',
     battery: 'Battery charge',
     timeline: 'Sky opacity, sols 1 to 10',
   },
   states: { clear: 'Clear sky', storm: 'Dust storm', brownout: 'Brownout', solar: 'Solar event' },
+  /**
+   * One caption per sol, in the order of facts.stormRun.steps. Placeholders: {tau} {prevTau}
+   * {solar} {need} {battery} {demand}, plus any extra figure of that step ({available}, {harvest}...).
+   */
   steps: [
     {
       tag: 'Clear sky',
@@ -356,10 +343,34 @@ export const storm = {
       alt: 'The base in the dark storm with most of its lights off.',
     },
     {
+      tag: 'Brownout',
+      title: 'Sol 6. A second sol in the dark.',
+      body: 'The sky eases to {tau}, but the panels make {solar} kWh and the battery has nothing to add. The lab gets no power and {scienceLost} science points are lost.',
+      alt: 'The base with its lights low while the storm begins to thin.',
+    },
+    {
+      tag: 'Dust storm',
+      title: 'Sol 7. The dust thins.',
+      body: 'The panels reach {solar} kWh, still short of the {demand} the base needs, and the lab stays off. The greenhouse comes through: a harvest of {harvest} kg of fresh food.',
+      alt: 'The base under a lighter haze; the greenhouse has just been harvested.',
+    },
+    {
       tag: 'Clear sky',
       title: 'Sol 8. The sky clears.',
-      body: 'The panels are back to {solar} kWh and the battery begins to recover. This crew finished its ten sols. Would yours?',
+      body: 'The panels are back to {solar} kWh, more than the base needs, and the battery begins to recover: {battery} kWh by the end of the sol.',
       alt: 'The base under a clear sky again, with a regolith mound piled against the habitat.',
+    },
+    {
+      tag: 'Clear sky',
+      title: 'Sol 9. Catching up.',
+      body: 'With full power the lab runs long hours and the science total reaches {science} points; the mission needs {scienceTarget}. The crew works without rest and morale drops.',
+      alt: 'The base on a clear day with its lights back on.',
+    },
+    {
+      tag: 'Mission complete',
+      title: 'Sol 10. Mission complete.',
+      body: 'The crew is healthy and the science is done. The radiation dose stayed at {dose} of a {doseBudget} mSv budget, and {battery} kWh are left for the next crew. This crew made it. Would yours?',
+      alt: 'The base on the last sol of the mission, under a clear sky.',
     },
   ],
 };
@@ -393,11 +404,16 @@ export const move = {
   more: 'See how a sol plays out',
 };
 
-export const explore = {
-  kicker: 'Explore the project',
-  title: 'Look inside the project.',
-  body: 'How it plays, how the AI is kept in check, where the numbers come from, what we tested, how to use it in class, and who built it.',
-  open: 'Open',
+/** Home page: three figures and a link to the Science & AI page. {placeholders} come from FACTS. */
+export const proof = {
+  kicker: 'Can you trust it?',
+  title: 'Real numbers, a checked AI, tests you can read.',
+  stats: [
+    { value: '{sourced}', label: 'constants in the simulator with a citation and a URL' },
+    { value: '{actionCount}', label: 'actions the AI can pick from, and nothing else' },
+    { value: '{tests}', label: 'automated tests pass' },
+  ],
+  link: 'See the science, the AI rule and the evidence',
 };
 
 export const watch = {
@@ -584,35 +600,41 @@ export const evidence = {
   evalsLink: 'Full evaluation report',
 };
 
-export const teachers = {
-  kicker: 'For teachers',
-  title: 'One device is enough for a whole class.',
-  body: 'PHYSIX was designed for one shared screen. Project it and let the class argue its way to one plan.',
-  points: [
-    { title: 'One shared screen', body: 'A projector or a single computer. The class debates one plan per sol.' },
-    { title: 'No accounts, no personal data', body: 'Nothing to sign up for. Settings and the skill profile stay in the browser.' },
-    { title: 'Works on a poor connection', body: 'After the first load the game keeps running without a connection, on its built-in rules.' },
-    { title: 'English and Spanish', body: 'Every text in both languages, switchable on the start screen.' },
-  ],
-  notice: 'Designed for ages 7 to 15. Not yet classroom-tested: we would love to hear how it goes.',
-  contactLabel: 'Tell us how it went',
-  contactPending: 'Contact e-mail pending',
-  ranksTitle: 'Pick the depth for your group',
-  ranksIntro: 'The mission is the same at every rank. Start low and move up when the class is ready.',
-  ranksLink: 'See the four ranks on screen',
-  practice: 'New players start with Sol 0, a guided practice sol. It is scripted and uses no AI.',
-};
-
-export const team = {
-  kicker: 'Us',
-  title: 'Six people, one weekend.',
+export const about = {
+  kicker: 'About us',
+  title: 'Six people, one weekend, one storm.',
   // {event} is pending.localEvent.
-  builtAt: 'Built at {event}, NASA Space Apps Challenge 2026.',
-  builtAtPending: 'Built for the NASA Space Apps Challenge 2026. Local event: pending.',
+  builtAt: 'PHYSIX is our entry to the NASA Space Apps Challenge 2026, built at {event} for the challenge "Build a Junior Astronaut Mission Trainer".',
+  builtAtPending: 'PHYSIX is our entry to the NASA Space Apps Challenge 2026, for the challenge "Build a Junior Astronaut Mission Trainer". Local event: pending.',
+  storyKicker: 'The project',
+  storyTitle: 'Four decisions that shaped the game.',
+  story: [
+    {
+      title: 'Teach the trade-offs',
+      body: 'The challenge asked for a mission trainer for young students. We wanted them to feel the part that lessons usually skip: on a mission, every choice helps one system and costs another.',
+    },
+    {
+      title: 'Use a storm that happened',
+      body: 'We built the mission on the 2018 global dust storm on Mars, so the crisis is a real one. Every value we could source carries its citation and a link.',
+    },
+    {
+      title: 'Let the AI propose, never decide',
+      body: 'An AI instructor chooses the problems of each mission and reads plans written in plain words. It never writes a number of the game: a simulator checks every proposal and computes every result.',
+    },
+    {
+      title: 'Start simple, and say what is missing',
+      body: 'After one of us play-tested the game, we added an easier first rank and a guided practice sol. The game has not been tested with students yet, and we say so wherever it matters.',
+    },
+  ],
+  teamKicker: 'The team',
+  teamTitle: 'Who we are.',
   memberPending: { name: 'Name pending', role: 'Role pending', built: 'What they built: pending' },
-  closing: 'We built with AI coding assistants; every use is declared on the AI use page.',
+  photoPending: 'Photo pending',
+  workKicker: 'How we worked',
+  work: 'We built the game and this site with AI coding assistants under our direction. Every use of AI, inside the game and in building it, is declared.',
   aiLink: 'Read the full AI declaration',
   creditsLink: 'Credits and references',
+  sourcesLink: 'Sources and evaluation',
 };
 
 export const roadmap = {

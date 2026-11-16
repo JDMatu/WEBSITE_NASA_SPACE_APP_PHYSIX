@@ -1,6 +1,6 @@
 ---
 // Site footer: the map of the site, the reference pages, contact, and the AI and privacy notes.
-import { copy, menu, pending } from '../content';
+import { copy, menu, pagePath, pending } from '../content';
 import { url } from '../lib/util';
 
 const L = Astro.currentLocale;
@@ -17,8 +17,7 @@ const { aiUse, footer, meta, pages, sourcesPage, ui } = copy(L);
       <nav class="foot-nav" aria-label={ui.site}>
         <h3>{ui.site}</h3>
         <ul>
-          <li><a href={url('/', L)}>{ui.homeLabel}</a></li>
-          {menu.map((id) => <li><a href={url(`/${id}/`, L)}>{pages[id].nav}</a></li>)}
+          {menu.map((id) => <li><a href={url(pagePath(id), L)}>{pages[id].nav}</a></li>)}
         </ul>
       </nav>
       <nav class="foot-nav" aria-label={ui.reference}>

@@ -23,11 +23,9 @@ export const ui: typeof en.ui = {
   skip: 'Saltar al contenido',
   sections: 'Secciones',
   home: 'inicio',
-  homeLabel: 'Inicio',
   menu: 'Menú',
   site: 'Sitio',
   reference: 'Referencia',
-  next: 'Siguiente',
   language: 'Idioma',
   playSoonShort: 'Jugar: pronto',
   videoTitle: 'Video de PHYSIX',
@@ -53,62 +51,39 @@ export const ui: typeof en.ui = {
 };
 
 export const pages: typeof en.pages = {
-  game: {
-    nav: 'El juego',
-    title: 'El juego: un sol, cinco pasos, cuatro rangos',
-    description: 'Cómo se juega PHYSIX: cada sol es un informe, un plan, una predicción, una ejecución y una revisión. Cuatro rangos, desde tres tarjetas ya hechas hasta el panel completo de control de misión.',
-    teaser: 'Cada sol es un informe, un plan, una predicción y sus consecuencias. Cuatro rangos, desde tres tarjetas ya hechas hasta el control de misión completo.',
-    stat: en.pages.game.stat,
-    statLabel: 'rangos, una misión',
-  },
-  ai: {
-    nav: 'IA + simulador',
-    title: 'La IA propone, el simulador decide',
-    description: 'Cómo usa PHYSIX la IA: el instructor elige los problemas y lee los planes, pero un simulador determinista calcula cada resultado. Las peticiones imposibles se rechazan.',
-    teaser: 'El instructor con IA elige los problemas y lee tu plan. Nunca escribe un número: un simulador determinista calcula cada resultado.',
-    stat: en.pages.ai.stat,
-    statLabel: 'acciones entre las que la IA puede elegir, nada más',
+  home: {
+    nav: 'Inicio',
+    title: meta.title,
+    description: meta.description,
   },
   science: {
-    nav: 'Ciencia',
-    title: 'La ciencia: la tormenta de polvo real de 2018',
-    description: 'El evento real detrás de la misión y los valores publicados por la NASA dentro del simulador, cada uno con su fuente.',
-    teaser: 'La misión recrea la tormenta global de polvo de 2018 en Marte, con valores publicados de aire, agua, radiación y luz solar.',
-    stat: en.pages.science.stat,
-    statLabel: 'constantes con cita y URL',
+    nav: 'Ciencia e IA',
+    title: 'Ciencia, IA y evidencia',
+    description: 'La tormenta de polvo real de 2018 y los valores publicados por la NASA en el simulador, cómo se mantiene a raya a la IA y qué probamos: cifras, fuentes y límites.',
   },
-  evidence: {
-    nav: 'Evidencia',
-    title: 'Evidencia: qué probamos y en qué fallamos',
-    description: 'Pruebas automáticas, partidas simuladas con y sin el modelo de IA, las metas que no alcanzamos y lo que funciona hoy.',
-    teaser: 'Jugadores simulados jugaron misiones completas. Publicamos lo que pasó, dónde no alcanzamos nuestras propias metas y lo que aún no existe.',
-    stat: en.pages.evidence.stat,
-    statLabel: 'pruebas automáticas pasan',
-  },
-  classroom: {
-    nav: 'En clase',
-    title: 'Para docentes: un dispositivo para toda la clase',
-    description: 'PHYSIX en el aula: una pantalla compartida, sin cuentas, sin datos personales, en inglés y español, cuatro rangos para edades de 7 a 15 años.',
-    teaser: 'Pensado para una sola pantalla compartida: proyéctalo y deja que la clase discuta hasta llegar a un plan. Sin cuentas ni datos personales.',
-    stat: en.pages.classroom.stat,
-    statLabel: 'pantalla compartida basta',
-  },
-  team: {
+  about: {
     nav: 'Nosotros',
-    title: 'El equipo',
-    description: 'Las seis personas que construyeron PHYSIX para el NASA Space Apps Challenge 2026, y cómo se usó la IA para construirlo.',
-    teaser: 'Quiénes somos, dónde lo construimos y cómo usamos asistentes de programación con IA para hacerlo.',
-    stat: en.pages.team.stat,
-    statLabel: 'personas, un fin de semana',
+    title: 'Nosotros',
+    description: 'Las seis personas que construyeron PHYSIX para el NASA Space Apps Challenge 2026, las decisiones detrás del proyecto y cómo se usó la IA para construirlo.',
   },
   credits: {
     nav: 'Créditos',
     title: 'Créditos y referencias',
     description: 'Cada imagen, fuente tipográfica, biblioteca y fuente de datos usada en PHYSIX y en este sitio.',
-    teaser: '',
-    stat: '',
-    statLabel: '',
   },
+};
+
+export const sciencePage: typeof en.sciencePage = {
+  kicker: 'Ciencia e IA',
+  title: 'Qué es real, qué decide la IA y qué probamos.',
+  lede: 'Tres preguntas que vale la pena hacerle a cualquier juego educativo con IA. Estas son nuestras respuestas, con los números, sus fuentes y sus límites.',
+  tocLabel: 'En esta página',
+  toc: [
+    { href: en.sciencePage.toc[0]!.href, label: 'La regla de la IA', text: 'La IA propone, el simulador decide.' },
+    { href: en.sciencePage.toc[1]!.href, label: 'La ciencia', text: 'Una tormenta real y valores publicados.' },
+    { href: en.sciencePage.toc[2]!.href, label: 'La evidencia', text: 'Qué probamos y en qué fallamos.' },
+    { href: en.sciencePage.toc[3]!.href, label: 'Estado', text: 'Qué funciona hoy y qué sigue.' },
+  ],
 };
 
 export const play: typeof en.play = {
@@ -141,7 +116,7 @@ export const storm: typeof en.storm = {
   chart: {
     title: 'Energía, sol por sol',
     solar: 'Los paneles dieron',
-    used: 'La base usó',
+    need: 'La base necesitaba',
     battery: 'Carga de la batería',
     timeline: 'Opacidad del cielo, soles 1 a 10',
   },
@@ -178,10 +153,34 @@ export const storm: typeof en.storm = {
       alt: 'La base en la tormenta oscura con casi todas las luces apagadas.',
     },
     {
+      tag: 'Apagón parcial',
+      title: 'Sol 6. Otro sol a oscuras.',
+      body: 'El cielo baja a {tau}, pero los paneles dan {solar} kWh y la batería no tiene nada que aportar. El laboratorio se queda sin energía y se pierden {scienceLost} puntos de ciencia.',
+      alt: 'La base con las luces bajas mientras la tormenta empieza a ceder.',
+    },
+    {
+      tag: 'Tormenta de polvo',
+      title: 'Sol 7. El polvo cede.',
+      body: 'Los paneles llegan a {solar} kWh, todavía por debajo de los {demand} que necesita la base, y el laboratorio sigue apagado. El invernadero responde: una cosecha de {harvest} kg de comida fresca.',
+      alt: 'La base bajo una bruma más ligera; el invernadero acaba de cosecharse.',
+    },
+    {
       tag: 'Cielo despejado',
       title: 'Sol 8. El cielo se despeja.',
-      body: 'Los paneles vuelven a dar {solar} kWh y la batería empieza a recuperarse. Esta tripulación terminó sus diez soles. ¿Lo lograría la tuya?',
+      body: 'Los paneles vuelven a dar {solar} kWh, más de lo que necesita la base, y la batería empieza a recuperarse: {battery} kWh al terminar el sol.',
       alt: 'La base otra vez bajo un cielo despejado, con un montículo de regolito apilado contra el hábitat.',
+    },
+    {
+      tag: 'Cielo despejado',
+      title: 'Sol 9. A ponerse al día.',
+      body: 'Con toda la energía, el laboratorio trabaja muchas horas y la ciencia llega a {science} puntos; la misión necesita {scienceTarget}. La tripulación trabaja sin descanso y la moral baja.',
+      alt: 'La base en un día despejado con las luces otra vez encendidas.',
+    },
+    {
+      tag: 'Misión cumplida',
+      title: 'Sol 10. Misión cumplida.',
+      body: 'La tripulación está sana y la ciencia está completa. La dosis de radiación quedó en {dose} de un presupuesto de {doseBudget} mSv, y quedan {battery} kWh para la siguiente tripulación. Esta tripulación lo logró. ¿Lo lograría la tuya?',
+      alt: 'La base en el último sol de la misión, bajo un cielo despejado.',
     },
   ],
 };
@@ -215,11 +214,15 @@ export const move: typeof en.move = {
   more: 'Mira cómo transcurre un sol',
 };
 
-export const explore: typeof en.explore = {
-  kicker: 'Explora el proyecto',
-  title: 'Mira el proyecto por dentro.',
-  body: 'Cómo se juega, cómo se mantiene a raya a la IA, de dónde salen los números, qué probamos, cómo usarlo en clase y quién lo construyó.',
-  open: 'Abrir',
+export const proof: typeof en.proof = {
+  kicker: '¿Se puede confiar?',
+  title: 'Números reales, una IA revisada, pruebas que puedes leer.',
+  stats: [
+    { value: en.proof.stats[0]!.value, label: 'constantes del simulador con cita y URL' },
+    { value: en.proof.stats[1]!.value, label: 'acciones entre las que la IA puede elegir, y nada más' },
+    { value: en.proof.stats[2]!.value, label: 'pruebas automáticas pasan' },
+  ],
+  link: 'Mira la ciencia, la regla de la IA y la evidencia',
 };
 
 export const watch: typeof en.watch = {
@@ -415,34 +418,40 @@ export const evidence: typeof en.evidence = {
   evalsLink: 'Informe completo de evaluación',
 };
 
-export const teachers: typeof en.teachers = {
-  kicker: 'Para docentes',
-  title: 'Un dispositivo basta para toda la clase.',
-  body: 'PHYSIX se diseñó para una sola pantalla compartida. Proyéctalo y deja que la clase discuta hasta llegar a un plan.',
-  points: [
-    { title: 'Una pantalla compartida', body: 'Un proyector o una sola computadora. La clase debate un plan por sol.' },
-    { title: 'Sin cuentas ni datos personales', body: 'No hay que registrarse. Los ajustes y el perfil de habilidades se quedan en el navegador.' },
-    { title: 'Funciona con mala conexión', body: 'Después de la primera carga, el juego sigue funcionando sin conexión, con sus reglas incorporadas.' },
-    { title: 'Inglés y español', body: 'Todos los textos en los dos idiomas; se cambia en la pantalla de inicio.' },
-  ],
-  notice: 'Pensado para edades de 7 a 15 años. Aún no se ha probado en un aula: nos encantaría saber cómo les va.',
-  contactLabel: 'Cuéntanos cómo les fue',
-  contactPending: 'Correo de contacto pendiente',
-  ranksTitle: 'Elige la profundidad para tu grupo',
-  ranksIntro: 'La misión es la misma en todos los rangos. Empieza abajo y sube cuando la clase esté lista.',
-  ranksLink: 'Mira los cuatro rangos en pantalla',
-  practice: 'Quien juega por primera vez empieza con el Sol 0, un sol de práctica guiada. Está guionizado y no usa IA.',
-};
-
-export const team: typeof en.team = {
+export const about: typeof en.about = {
   kicker: 'Nosotros',
-  title: 'Seis personas, un fin de semana.',
-  builtAt: 'Hecho en {event}, NASA Space Apps Challenge 2026.',
-  builtAtPending: 'Hecho para el NASA Space Apps Challenge 2026. Evento local: pendiente.',
+  title: 'Seis personas, un fin de semana, una tormenta.',
+  builtAt: 'PHYSIX es nuestra propuesta para el NASA Space Apps Challenge 2026, hecha en {event} para el reto "Build a Junior Astronaut Mission Trainer".',
+  builtAtPending: 'PHYSIX es nuestra propuesta para el NASA Space Apps Challenge 2026, para el reto "Build a Junior Astronaut Mission Trainer". Evento local: pendiente.',
+  storyKicker: 'El proyecto',
+  storyTitle: 'Cuatro decisiones que dieron forma al juego.',
+  story: [
+    {
+      title: 'Enseñar los dilemas',
+      body: 'El reto pedía un entrenador de misión para estudiantes jóvenes. Queríamos que sintieran la parte que las clases suelen saltarse: en una misión, cada decisión ayuda a un sistema y le cuesta a otro.',
+    },
+    {
+      title: 'Usar una tormenta que ocurrió',
+      body: 'Construimos la misión sobre la tormenta global de polvo de 2018 en Marte, así que la crisis es real. Cada valor que pudimos respaldar lleva su cita y un enlace.',
+    },
+    {
+      title: 'Que la IA proponga y nunca decida',
+      body: 'Un instructor con IA elige los problemas de cada misión y lee planes escritos con palabras sencillas. Nunca escribe un número del juego: un simulador revisa cada propuesta y calcula cada resultado.',
+    },
+    {
+      title: 'Empezar simple y decir lo que falta',
+      body: 'Después de que uno de nosotros probó el juego, agregamos un primer rango más fácil y un sol de práctica guiada. El juego aún no se ha probado con estudiantes, y lo decimos donde importa.',
+    },
+  ],
+  teamKicker: 'El equipo',
+  teamTitle: 'Quiénes somos.',
   memberPending: { name: 'Nombre pendiente', role: 'Rol pendiente', built: 'Qué construyó: pendiente' },
-  closing: 'Construimos con asistentes de programación con IA; cada uso se declara en la página de uso de IA.',
+  photoPending: 'Foto pendiente',
+  workKicker: 'Cómo trabajamos',
+  work: 'Construimos el juego y este sitio con asistentes de programación con IA bajo nuestra dirección. Cada uso de IA, dentro del juego y al construirlo, está declarado.',
   aiLink: 'Leer la declaración completa de IA',
   creditsLink: 'Créditos y referencias',
+  sourcesLink: 'Fuentes y evaluación',
 };
 
 export const roadmap: typeof en.roadmap = {
