@@ -12,6 +12,21 @@ Short record of the choices made while building the site, and why. Newest contex
 - **Teachers section**: no "five-minute warm-up" and no "ten sols in one session"; session lengths were never measured. No teacher guide link, because the guide does not exist.
 - **Two sub-pages instead of links to the repository**: `/ai-use/` (full AI declaration) and `/sources/` (all constants, citations and the evaluation). The repository link is not public yet, and everything linked from the project page must be in English and must work.
 
+## Site structure (second pass, 15 Nov)
+
+The team asked for a website with a menu instead of one long landing page, and said the storm sequence felt empty on computers.
+
+- **Six pages in the menu**, each answering one question: The game (why it exists, how a sol plays, the four ranks), AI + simulator (the rule and the pipeline), Science (the real storm and the published values), Evidence (tests, evaluations, misses, what works today and what is next), Classroom (for teachers, with the ranks at a glance) and Team. Sources, the AI declaration and Credits stay as reference pages linked from the footer.
+- **Home keeps only what sells the game**: first screen, the storm, the four systems, one card per page with a real figure, the video, the play button.
+- **The first section of each page carries the page title** (it becomes the h1), so no page needed new headline copy. Which sections go on which page is a short list in `PageInner.astro`.
+- **The folded menu is a `<details>` element**, so it opens on a phone without JavaScript. Script only adds "close on Escape or outside click".
+- **Team cards show name and initials** until roles, "what they built" and photos are provided. Six cards saying "role pending" looked worse than leaving the line out; `npm run check:pending` still lists what is missing for each person.
+- **Storm on wide screens is now a mission console**, not a full-screen picture with one small caption. The scene sits in a framed viewport with the sol and the readout over it; beside it the caption and a power chart; under it a strip of the ten sols. The picture still changes with the scroll, which was the original idea.
+- **The chart uses all ten sols of the same simulator run** (before, only the six captioned sols had numbers). One axis in kWh: solar made (bars), what the base used (a tick per sol, 65 kWh on sol 8 and 88 on the others) and battery charge (line). It draws itself as the scroll advances and the last scroll stretch plays sols 9 and 10.
+- **Chart colours**: solar keeps the game's own amber for power; the battery is a blue (#6fb1ff) chosen for separation from the amber (checked for colour-blind separation and contrast on the dark panel). Both are brighter than the lightness band the checker recommends for dark backgrounds; kept, to match the game's palette. There is a legend and a hover readout, so colour is never the only cue.
+- **Phones keep the full-screen scene** with the compact readout: it already worked there and the console does not fit.
+- The line under the storm that said where its numbers come from was removed by the team; a short "Simulator run: seed 1, Trainee rank" stays in the console header.
+
 ## Scroll sequence
 
 - **Pre-rendered frames of the real game scene, not live Three.js.** The game's 3D base is rendered ahead of time through its own test bench (`?harness=scene`) at six states, in a wide and a tall framing. On the site they are ordinary images that cross-fade on scroll, with a small 2D canvas for dust. Reasons: it runs smoothly on a modest laptop and a phone, needs no WebGL and no fallback image (it is the image), adds about 5 kB of script instead of a 3D engine, and still shows the actual product.
