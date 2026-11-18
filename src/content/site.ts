@@ -604,7 +604,7 @@ export const about = {
   title: 'Six people, one weekend, one storm.',
   // {event} is pending.localEvent.
   builtAt: 'PHYSIX is our entry to the NASA Space Apps Challenge 2026, built at {event} for the challenge "Build a Junior Astronaut Mission Trainer".',
-  builtAtPending: 'PHYSIX is our entry to the NASA Space Apps Challenge 2026, for the challenge "Build a Junior Astronaut Mission Trainer". Local event: pending.',
+  builtAtPending: 'PHYSIX is our entry to the NASA Space Apps Challenge 2026, for the challenge "Build a Junior Astronaut Mission Trainer".',
   storyKicker: 'The project',
   storyTitle: 'Four decisions that shaped the game.',
   story: [
@@ -628,7 +628,6 @@ export const about = {
   teamKicker: 'The team',
   teamTitle: 'Who we are.',
   memberPending: { name: 'Name pending', role: 'Role pending', built: 'What they built: pending' },
-  photoPending: 'Photo pending',
   workKicker: 'How we worked',
   work: 'We built the game and this site with AI coding assistants under our direction. Every use of AI, inside the game and in building it, is declared.',
   aiLink: 'Read the full AI declaration',

@@ -420,7 +420,7 @@ export const about: typeof en.about = {
   kicker: 'Nosotros',
   title: 'Seis personas, un fin de semana, una tormenta.',
   builtAt: 'PHYSIX es nuestra propuesta para el NASA Space Apps Challenge 2026, hecha en {event} para el reto "Build a Junior Astronaut Mission Trainer".',
-  builtAtPending: 'PHYSIX es nuestra propuesta para el NASA Space Apps Challenge 2026, para el reto "Build a Junior Astronaut Mission Trainer". Evento local: pendiente.',
+  builtAtPending: 'PHYSIX es nuestra propuesta para el NASA Space Apps Challenge 2026, para el reto "Build a Junior Astronaut Mission Trainer".',
   storyKicker: 'El proyecto',
   storyTitle: 'Cuatro decisiones que dieron forma al juego.',
   story: [
@@ -444,7 +444,6 @@ export const about: typeof en.about = {
   teamKicker: 'El equipo',
   teamTitle: 'Quiénes somos.',
   memberPending: { name: 'Nombre pendiente', role: 'Rol pendiente', built: 'Qué construyó: pendiente' },
-  photoPending: 'Foto pendiente',
   workKicker: 'Cómo trabajamos',
   work: 'Construimos el juego y este sitio con asistentes de programación con IA bajo nuestra dirección. Cada uso de IA, dentro del juego y al construirlo, está declarado.',
   aiLink: 'Leer la declaración completa de IA',
